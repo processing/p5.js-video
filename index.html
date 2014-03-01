@@ -3,13 +3,72 @@
   <head>
     <link href="css/screen.css" media="screen" rel="stylesheet" type="text/css"/>
 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
     <script src="js/vendor/p5.js"></script>
     <script src="js/sketch.js"></script>
+
+    <script src="js/vendor/seriously.js"></script>
+    <script src="js/vendor/effects/seriously.chroma.js"></script>
+    <script src="js/vendor/effects/seriously.vignette.js"></script>
+
   </head>
   <body>
 
     <div class="vignette"></div>
+    <!--<img class="overlay" src="assets/dan.png"/>-->
 
-    <img class="overlay" src="assets/dan.png"/>
+
+   	<!--<img id="videoClip" src="assets/video.png" width="960" />-->
+
+   	<video id="videoClip"></video>
+
+    <canvas id="videoCanvas" width="960" height="540"></canvas>
+
+
+    <script>
+
+    var videoClip;
+
+    $(document).ready( function () {
+
+      videoClip= $("#videoClip");
+      videoClip.bind("canplaythrough", function(e) {
+
+        var seriously, 
+          chroma,
+          vignette,
+          target; 
+
+        seriously = new Seriously();
+        target = seriously.target('#videoCanvas');
+
+        chroma = seriously.effect('chroma');
+
+        chroma.weight = 1.32;
+        chroma.balance = 0;
+        chroma.screen = 'rgb(77, 239, 41)';
+        chroma.clipWhite = 0.85;
+        chroma.clipBlack = 0.5125;
+
+        chroma.source = "#videoClip";
+        target.source = chroma;
+
+        seriously.go();
+        videoClip[0].play();
+
+      });
+
+      videoClip[0].innerHTML = '<source src="assets/video.mp4" type="video/mp4" />';
+      videoClip[0].load();
+
+
+});
+
+    </script>
+
+
+
+
   </body>
 </html>

@@ -11,6 +11,22 @@ canvas {
 	z-index: 500;
 }
 
+#videoClip {
+	display: none;
+	pointer-events: none;
+}
+
+#videoCanvas {
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	margin-left: -480px;
+	z-index: 999;
+	width: 960px;
+	height: 540px;
+	pointer-events: none;
+}
+
 .overlay {
 	position: absolute;
 	display: block;

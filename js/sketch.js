@@ -1,12 +1,18 @@
-function setup() {
-  createGraphics(displayWidth, displayHeight);
-}
+var rectangleSketch = function( sketch ) {
 
-function draw() {
-  if (isMousePressed()) {
-    fill(0);
-  } else {
-    fill(255);
+  sketch.setup = function() {
+    sketch.createGraphics(sketch.displayWidth, sketch.displayHeight);
+    sketch.rectangleColor = sketch.color(0, 255, 0);
+  };
+
+  sketch.draw = function() {
+    if (sketch.isMousePressed()) {
+        sketch.fill(255,0,0);
+    } else {
+        sketch.fill(sketch.rectangleColor);
+    }
+    sketch.rect(videoBase.x - 300, videoBase.y - 625 ,200,100);
   }
-  ellipse(mouseX, mouseY, 80, 80);
-}
+
+  return sketch;
+};

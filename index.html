@@ -3,7 +3,9 @@
   <head>
     <link href="css/screen.css" media="screen" rel="stylesheet" type="text/css"/>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="js/vendor/jquery.min.js"></script>
+
+    <script src="js/main.js"></script>
 
     <script src="js/vendor/p5.js"></script>
     <script src="js/sketch.js"></script>
@@ -18,73 +20,10 @@
   <body>
 
     <div class="vignette"></div>
-    <!--<img class="overlay" src="assets/dan.png"/>-->
 
-
-   	<!--<img id="videoClip" src="assets/video.png" width="960" />-->
-
-   	<video id="videoClip">
-    </video>
+   	<video id="videoClip"></video>
 
     <canvas id="videoCanvas" width="960" height="540"></canvas>
-
-
-    <script>
-
-    var pop, videoClip;
-
-    $(document).ready( function () {
-
-      console.log(Processing);
-
-      $(document).click(function() {
-        console.log(pop.currentTime());
-      });
-
-      videoClip= $("#videoClip");
-      videoClip.bind("canplaythrough", function(e) {
-
-        var seriously, 
-          chroma,
-          vignette,
-          target; 
-
-        seriously = new Seriously();
-        target = seriously.target('#videoCanvas');
-
-        chroma = seriously.effect('chroma');
-
-        chroma.weight = 1.32;
-        chroma.balance = 0;
-        chroma.screen = 'rgb(77, 239, 41)';
-        chroma.clipWhite = 0.85;
-        chroma.clipBlack = 0.5125;
-
-        chroma.source = "#videoClip";
-        target.source = chroma;
-
-        seriously.go();
-        pop.play();
-
-      });
-
-      pop = Popcorn.smart("#videoClip", "assets/video_short.mp4");
-      
-      pop.code({
-        start: 3.62176,
-        onStart: function( options ) {
-          console.log("HERE");
-        }
-
-      });      
-
-
-});
-
-    </script>
-
-
-
 
   </body>
 </html>

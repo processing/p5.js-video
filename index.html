@@ -16,6 +16,9 @@
     <script src="js/vendor/effects/seriously.chroma.js"></script>
     <script src="js/vendor/effects/seriously.vignette.js"></script>
 
+  <script src="js/vendor/ace.js" type="text/javascript" charset="utf-8"></script>
+
+
   </head>
   <body>
 
@@ -23,7 +26,28 @@
 
    	<video id="videoClip"></video>
 
-    <canvas id="videoCanvas" width="960" height="540"></canvas>
+    <canvas id="videoCanvas" width="1280" height="720"></canvas>
+    <canvas id="sketchCanvas"></canvas>
+
+    <div id="controls">
+      <div id="showExample">View Example</div>
+      <div id="runExample">Run Example</div>
+    </div>
+
+    <div id="example">
+
+      <div id="exampleEditor">
+      noStroke();
+      fill(255,0,0);
+      rect(10,10,200,100);
+      </div>
+
+    <iframe id="exampleFrame" src="example.html" style="width: 480px; height: 480px;"></iframe>
+
+    </div>
+
+
+
 
   </body>
 </html>

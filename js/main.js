@@ -1,4 +1,5 @@
 var pop,
+  editor,
   sketch,
   videoBase = {x: 0, y: 0};
 
@@ -24,6 +25,22 @@ $(document).ready( function () {
 
   popcornInit();   
 
+  // Ace setup
+  
+  editor = ace.edit("exampleEditor");
+
+  // Buttons
+
+  $("#showExample").click( function () {
+    $("#example").show();
+  });
+
+  $("#runExample").click( function () {
+    var exampleCode = editor.getSession().getValue(); 
+    $("#exampleFrame")[0].contentWindow.background(128);
+    $("#exampleFrame")[0].contentWindow.eval(exampleCode);
+  });
+
 });
 
 
@@ -35,7 +52,7 @@ function popcornInit() {
       pop.code({
         start: 3.3,
         onStart: function( options ) {
-          sketch = new P5("sketchCanvas", rectangleSketch);
+          sketch = new p5(rectangleSketch, "sketchCanvas");
         }
       });
 

@@ -1,8 +1,10 @@
+
 var rectangleSketch = function( sketch ) {
 
   sketch.setup = function() {
-    sketch.createGraphics(sketch.displayWidth, sketch.displayHeight);
+    sketch.createCanvas(sketch.displayWidth, sketch.displayHeight);
     sketch.rectangleColor = sketch.color(0, 255, 0);
+    sketch.noStroke();
   };
 
   sketch.draw = function() {

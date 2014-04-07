@@ -1,14 +1,9 @@
 var pop,
-  editor,
-  sketch,
-  videoBase = {x: 0, y: 0};
+editor,
+sketch,
+videoBase = {x: 0, y: 0};
 
 $(document).ready( function () {
-
-  // $(document).click(function(e) {
-  //   console.log(pop.currentTime());
-  //   console.log(e.pageX + ", " + e.pageY );
-  // });
 
   $(window).resize( function () {
     videoBase.x = $(document).width()/2;
@@ -16,11 +11,12 @@ $(document).ready( function () {
   });
 
   $("#videoClip").bind("canplaythrough", function(e) {
-    seriouslyInit();
-    pop.play();
+    $("#begin").button('reset')
 
-   videoBase.x = $(document).width()/2;
+    videoBase.x = $(document).width()/2;
     videoBase.y = $(document).height();    
+
+    seriouslyInit();
   });
 
   popcornInit();   
@@ -32,47 +28,66 @@ $(document).ready( function () {
   // Buttons
 
   $("#showExample").click( function () {
-    $("#example").show();
+    $("#example").fadeIn("fast");
+    $("#showExample").fadeOut("fast");
+    pop.pause();
   });
+
+  $("#hideExample").click( function () {
+    $("#example").fadeOut("fast");
+    $("#showExample").fadeIn("fast");
+    pop.play();
+  });  
 
   $("#runExample").click( function () {
     var exampleCode = editor.getSession().getValue(); 
-    $("#exampleFrame")[0].contentWindow.background(128);
+    $("#exampleFrame")[0].contentWindow.clear();
     $("#exampleFrame")[0].contentWindow.eval(exampleCode);
   });
 
+  $("#begin").click( function() {
+    $("#welcome").hide();
+    $("#videoCanvas").fadeIn();    
+    pop.play();
+  });
+
+  $("#begin").button('loading'); 
+
 });
 
-
+// Initialize Popcorn
 
 function popcornInit() {
 
-      pop = Popcorn.smart("#videoClip", "assets/video_short.mp4");
-      
-      pop.code({
-        start: 3.3,
-        onStart: function( options ) {
-          sketch = new p5(rectangleSketch, "sketchCanvas");
-        }
-      });
+  pop = Popcorn.smart("#videoClip", "assets/video_short.mp4");
+  pop.autoplay(false);
 
-      pop.code({
-        start:  5.25,
-        onStart: function( options ) {
-          sketch.rectangleColor = sketch.color(0,0,255);
-        }
-      });
+  pop.code({
+    start: 3.3,
+    onStart: function( options ) {
+      sketch = new p5(rectangleSketch, "sketchCanvas");
+      $("#mainControls").fadeIn();
+    }
+  });
+
+  pop.code({
+    start:  5.25,
+    onStart: function( options ) {
+      sketch.rectangleColor = sketch.color(0,0,255);
+    }
+  });
 }
+
+// Initialize Seriously
 
 function seriouslyInit() {
 
   var seriously, 
-    chroma,
-    target; 
+  chroma,
+  target; 
 
   seriously = new Seriously();
   target = seriously.target('#videoCanvas');
-
   chroma = seriously.effect('chroma');
 
   chroma.weight = 1.32;

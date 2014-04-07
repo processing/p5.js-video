@@ -1,4 +1,3 @@
-
 var rectangleSketch = function( sketch ) {
 
   sketch.setup = function() {

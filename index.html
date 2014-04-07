@@ -1,53 +1,70 @@
-<!doctype html>
-<html>
-  <head>
-    <link href="css/screen.css" media="screen" rel="stylesheet" type="text/css"/>
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Welcome to p5.js</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script src="js/vendor/jquery.min.js"></script>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/main.css">
 
-    <script src="js/main.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
-    <script src="js/vendor/p5.js"></script>
-    <script src="js/sketch.js"></script>
+  <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+</head>
+<body>
+  <div>
 
-    <script src="js/vendor/popcorn.js"></script>
+    <div id="welcome">
+      <h1>Welcome to p5.js!</h1>
 
-    <script src="js/vendor/seriously.js"></script>
-    <script src="js/vendor/effects/seriously.chroma.js"></script>
-    <script src="js/vendor/effects/seriously.vignette.js"></script>
+      <button id="begin" type="button" class="btn btn-default" data-loading-text="Loading...">
+        Click to Begin
+      </button>
 
-  <script src="js/vendor/ace.js" type="text/javascript" charset="utf-8"></script>
+    </div>
 
+    <div id="background"></div>
 
-  </head>
-  <body>
-
-    <div class="vignette"></div>
-
-   	<video id="videoClip"></video>
+    <video id="videoClip"></video>
 
     <canvas id="videoCanvas" width="1280" height="720"></canvas>
     <canvas id="sketchCanvas"></canvas>
 
-    <div id="controls">
-      <div id="showExample">View Example</div>
-      <div id="runExample">Run Example</div>
+    <div id="mainControls">
+      <button type="button" class="btn btn-default" id="showExample">View Example</button>
     </div>
 
     <div id="example">
-
       <div id="exampleEditor">
-      noStroke();
-      fill(255,0,0);
-      rect(10,10,200,100);
+        noStroke();
+        fill(255,0,0);
+        rect(10,10,200,100);
       </div>
-
-    <iframe id="exampleFrame" src="example.html" style="width: 480px; height: 480px;"></iframe>
-
+      <iframe id="exampleFrame" src="example.html" style="width: 480px; height: 480px;">
+      </iframe>
+      <div id="exampleControls">
+        <button type="button" class="btn btn-default" id="hideExample">Hide Example</button> 
+        <button type="button" class="btn btn-default" id="runExample">Run Example</button>      
+      </div>
     </div>
 
+  </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
 
+  <script src="js/vendor/bootstrap.min.js"></script>
 
+  <script src="js/vendor/p5.js"></script>
+  <script src="js/vendor/popcorn.js"></script>
+  <script src="js/vendor/ace.js"></script>
 
-  </body>
+  <script src="js/vendor/seriously.js"></script>
+  <script src="js/vendor/effects/seriously.chroma.js"></script>
+  <script src="js/vendor/effects/seriously.vignette.js"></script>
+
+  <script src="js/main.js"></script>
+  <script src="js/sketch.js"></script>
+</body>
 </html>

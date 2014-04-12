@@ -93,6 +93,10 @@ canvas {
   z-index: 6999;  
 }
 
+#exampleCode {
+  display: none;
+}
+
 #background {
   position: fixed;
   top: 0;

@@ -15,5 +15,7 @@ var rectangleSketch = function( sketch ) {
     sketch.rect(videoBase.x - 300, videoBase.y - 625 ,200,100);
   }
 
+  sketch.exampleDiv ="#rectangleSketch";
+
   return sketch;
 };

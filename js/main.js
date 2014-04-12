@@ -24,10 +24,12 @@ $(document).ready( function () {
   // Ace setup
   
   editor = ace.edit("exampleEditor");
+  editor.getSession().setMode("ace/mode/javascript");  
 
   // Buttons
 
   $("#showExample").click( function () {
+    editor.getSession().setValue($.trim($(sketch.exampleDiv).html())); 
     $("#example").fadeIn("fast");
     $("#showExample").fadeOut("fast");
     pop.pause();
@@ -59,7 +61,7 @@ $(document).ready( function () {
 
 function popcornInit() {
 
-  pop = Popcorn.smart("#videoClip", "assets/video_short.mp4");
+  pop = Popcorn.smart("#videoClip", "assets/video.mp4");
   pop.autoplay(false);
 
   pop.code({
@@ -90,11 +92,11 @@ function seriouslyInit() {
   target = seriously.target('#videoCanvas');
   chroma = seriously.effect('chroma');
 
-  chroma.weight = 1.32;
-  chroma.balance = 0;
-  chroma.screen = 'rgb(77, 239, 41)';
+  chroma.weight = 1.25;
+  chroma.balance = .0;
+  chroma.screen = 'RGB(108, 216, 149)';
   chroma.clipWhite = 0.85;
-  chroma.clipBlack = 0.65;
+  chroma.clipBlack = 0.25;
 
   chroma.source = "#videoClip";
   target.source = chroma;

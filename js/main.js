@@ -6,15 +6,15 @@ videoBase = {x: 0, y: 0};
 $(document).ready( function () {
 
   $(window).resize( function () {
-    videoBase.x = $(document).width()/2;
-    videoBase.y = $(document).height();
+    videoBase.x = $(window).width()/2;
+    videoBase.y = $(window).height(); 
   });
 
   $("#videoClip").bind("canplaythrough", function(e) {
     $("#begin").button('reset')
 
-    videoBase.x = $(document).width()/2;
-    videoBase.y = $(document).height();    
+    videoBase.x = $(window).width()/2;
+    videoBase.y = $(window).height();    
 
     seriouslyInit();
   });
@@ -28,7 +28,14 @@ $(document).ready( function () {
 
   // Buttons
 
-  $("#showExample").click( function () {
+  $(document).click( function(e) {
+    console.log( pop.currentTime());
+    var clickX = e.pageX - ($(window).width()/2)
+      clickY = $(window).height() - e.pageY;
+    console.log( "{x:" + clickX + ", y:" + clickY + "}");
+  })
+
+  $("#callout").click( function () {
     editor.getSession().setValue($.trim($(sketch.exampleDiv).html())); 
     $("#example").fadeIn("fast");
     $("#showExample").fadeOut("fast");
@@ -64,11 +71,20 @@ function popcornInit() {
   pop = Popcorn.smart("#videoClip", "assets/video.mp4");
   pop.autoplay(false);
 
+   var hash = top.location.hash.replace('#', '');
+
+  // if (hash.length > 0) {
+  //   console.log(hash);
+  //   pop.currentTime(hash);
+  //   pop.autoplay(true);
+  // }
+
   pop.code({
-    start: 3.3,
+    start: 1,
     onStart: function( options ) {
+      console.log("SUP")
       sketch = new p5(rectangleSketch, "sketchCanvas");
-      $("#mainControls").fadeIn();
+      $("#callout").fadeIn();
     }
   });
 

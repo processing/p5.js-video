@@ -49,7 +49,11 @@ var constants = function (require) {
             AUTO: 'auto',
             NORMAL: 'normal',
             ITALIC: 'italic',
-            BOLD: 'bold'
+            BOLD: 'bold',
+            LINEAR: 'linear',
+            QUADRATIC: 'quadratic',
+            BEZIER: 'bezier',
+            CURVE: 'curve'
         };
     }({});
 var core = function (require, shim, constants) {
@@ -66,6 +70,10 @@ var core = function (require, shim, constants) {
             this.mouseY = 0;
             this.pmouseX = 0;
             this.pmouseY = 0;
+            this.winMouseX = 0;
+            this.winMouseY = 0;
+            this.pwinMouseX = 0;
+            this.pwinMouseY = 0;
             this.mouseButton = 0;
             this.key = '';
             this.keyCode = 0;
@@ -73,9 +81,8 @@ var core = function (require, shim, constants) {
             this.touchX = 0;
             this.touchY = 0;
             this.pWriters = [];
-            this._bezierDetail = 20;
-            this._curveDetail = 20;
             this.curElement = null;
+            this._elements = [];
             this.matrices = [[
                     1,
                     0,
@@ -106,8 +113,11 @@ var core = function (require, shim, constants) {
             this._textFont = 'sans-serif';
             this._textSize = 12;
             this._textStyle = constants.NORMAL;
-            this._curveDetail = 20;
             this.styles = [];
+            this._bezierDetail = 20;
+            this._curveDetail = 20;
+            this._contourInited = false;
+            this._contourVertices = [];
             if (!sketch) {
                 this._isGlobal = true;
                 for (var method in p5.prototype) {
@@ -125,6 +135,44 @@ var core = function (require, shim, constants) {
                 }
             } else {
                 sketch(this);
+                for (var c in constants) {
+                    if (constants.hasOwnProperty(c)) {
+                        p5.prototype[c] = constants[c];
+                    }
+                }
+                window.addEventListener('mousemove', function (e) {
+                    this.onmousemove(e);
+                }.bind(this));
+                window.addEventListener('mousedown', function (e) {
+                    this.onmousedown(e);
+                }.bind(this));
+                window.addEventListener('mouseup', function (e) {
+                    this.onmouseup(e);
+                }.bind(this));
+                window.addEventListener('mouseclick', function (e) {
+                    this.onmouseclick(e);
+                }.bind(this));
+                window.addEventListener('mousewheel', function (e) {
+                    this.onmousewheel(e);
+                }.bind(this));
+                window.addEventListener('keydown', function (e) {
+                    this.onkeydown(e);
+                }.bind(this));
+                window.addEventListener('keyup', function (e) {
+                    this.onkeyup(e);
+                }.bind(this));
+                window.addEventListener('keypress', function (e) {
+                    this.onkeypress(e);
+                }.bind(this));
+                window.addEventListener('touchstart', function (e) {
+                    this.ontouchstart(e);
+                }.bind(this));
+                window.addEventListener('touchmove', function (e) {
+                    this.ontouchmove(e);
+                }.bind(this));
+                window.addEventListener('touchend', function (e) {
+                    this.ontouchend(e);
+                }.bind(this));
             }
             if (document.readyState === 'complete') {
                 this._start();
@@ -168,7 +216,7 @@ var core = function (require, shim, constants) {
         p5.prototype._preload = function (func, path) {
             var context = this._isGlobal ? window : this;
             context._setProperty('preload-count', context._preloadCount + 1);
-            return this[func](path, function (resp) {
+            return p5.prototype[func].call(context, path, function (resp) {
                 context._setProperty('preload-count', context._preloadCount - 1);
                 if (context._preloadCount === 0) {
                     context._setup();
@@ -423,11 +471,15 @@ var colorcreating_reading = function (require, core) {
             }
         };
         p5.prototype.lerpColor = function (c1, c2, amt) {
-            var c = [];
-            for (var i = 0; i < c1.length; i++) {
-                c.push(p5.prototype.lerp(c1[i], c2[i], amt));
+            if (typeof c1 === 'Array') {
+                var c = [];
+                for (var i = 0; i < c1.length; i++) {
+                    c.push(p5.prototype.lerp(c1[i], c2[i], amt));
+                }
+                return c;
+            } else {
+                return p5.prototype.lerp(c1, c2, amt);
             }
-            return c;
         };
         p5.prototype.red = function (rgb) {
             if (rgb.length > 2) {
@@ -491,7 +543,7 @@ var colorsetting = function (require, core, constants) {
                 a = typeof _args[1] === 'number' ? _args[1] : 255;
             }
             if (this.settings.colorMode === constants.HSB) {
-                rgba = this.hsv2rgb(r, g, b).concat(a);
+                rgba = hsv2rgb(r, g, b).concat(a);
             } else {
                 rgba = [
                     r,
@@ -502,13 +554,59 @@ var colorsetting = function (require, core, constants) {
             }
             return rgba;
         };
-        p5.prototype.hsv2rgb = function (h, s, b) {
-            return [
-                h,
-                s,
-                b
-            ];
-        };
+        function hsv2rgb(h, s, v) {
+            var RGB = [];
+            if (s === 0) {
+                RGB = [
+                    Math.round(v * 255),
+                    Math.round(v * 255),
+                    Math.round(v * 255)
+                ];
+            } else {
+                var var_h = h * 6;
+                if (var_h === 6) {
+                    var_h = 0;
+                }
+                var var_i = Math.floor(var_h);
+                var var_1 = v * (1 - s);
+                var var_2 = v * (1 - s * (var_h - var_i));
+                var var_3 = v * (1 - s * (1 - (var_h - var_i)));
+                var var_r;
+                var var_g;
+                var var_b;
+                if (var_i === 0) {
+                    var_r = v;
+                    var_g = var_3;
+                    var_b = var_1;
+                } else if (var_i === 1) {
+                    var_r = var_2;
+                    var_g = v;
+                    var_b = var_1;
+                } else if (var_i === 2) {
+                    var_r = var_1;
+                    var_g = v;
+                    var_b = var_3;
+                } else if (var_i === 3) {
+                    var_r = var_1;
+                    var_g = var_2;
+                    var_b = v;
+                } else if (var_i === 4) {
+                    var_r = var_3;
+                    var_g = var_1;
+                    var_b = v;
+                } else {
+                    var_r = v;
+                    var_g = var_1;
+                    var_b = var_2;
+                }
+                RGB = [
+                    Math.round(var_r * 255),
+                    Math.round(var_g * 255),
+                    Math.round(var_b * 255)
+                ];
+            }
+            return RGB;
+        }
         p5.prototype.getCSSRGBAColor = function (arr) {
             var a = arr.map(function (val) {
                     return Math.floor(val);
@@ -711,15 +809,23 @@ var inputmouse = function (require, core, constants) {
             return this.settings.mousePressed;
         };
         p5.prototype.updateMouseCoords = function (e) {
+            var mousePos = getMousePos(this.curElement.elt, e);
             this._setProperty('pmouseX', this.mouseX);
             this._setProperty('pmouseY', this.mouseY);
-            this._setProperty('mouseX', Math.max(e.pageX - this.curElement.x, 0));
-            this._setProperty('mouseY', Math.max(e.pageY - this.curElement.y, 0));
+            this._setProperty('mouseX', mousePos.x);
+            this._setProperty('mouseY', mousePos.y);
             this._setProperty('pwinMouseX', this.winMouseX);
             this._setProperty('pwinMouseY', this.winMouseY);
             this._setProperty('winMouseX', e.pageX);
             this._setProperty('winMouseY', e.pageY);
         };
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
         p5.prototype.setMouseButton = function (e) {
             if (e.button === 1) {
                 this._setProperty('mouseButton', constants.CENTER);
@@ -815,11 +921,6 @@ var dompelement = function (require, constants) {
             this.pInst = pInst;
             this.width = this.elt.offsetWidth;
             this.height = this.elt.offsetHeight;
-            this.elt.style.position = 'absolute';
-            this.x = 0;
-            this.y = 0;
-            this.elt.style.left = this.x + 'px';
-            this.elt.style.top = this.y + 'px';
             if (elt instanceof HTMLCanvasElement) {
                 this.context = elt.getContext('2d');
             }
@@ -828,8 +929,7 @@ var dompelement = function (require, constants) {
             this.elt.innerHTML = html;
         };
         PElement.prototype.position = function (x, y) {
-            this.x = x;
-            this.y = y;
+            this.elt.style.position = 'absolute';
             this.elt.style.left = x + 'px';
             this.elt.style.top = y + 'px';
         };
@@ -921,6 +1021,7 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 }
             }
             var cnv = new PElement(c, this);
+            this._elements.push(cnv);
             this.context(cnv);
             this._applyDefaults();
             return cnv;
@@ -930,6 +1031,7 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             elt.innerHTML = html;
             document.body.appendChild(elt);
             var c = new PElement(elt, this);
+            this._elements.push(c);
             return c;
         };
         p5.prototype.createHTMLImage = function (src, alt) {
@@ -940,29 +1042,55 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             }
             document.body.appendChild(elt);
             var c = new PElement(elt, this);
+            this._elements.push(c);
             return c;
         };
-        p5.prototype.find = function (e) {
-            var res = document.getElementById(e);
-            if (res) {
-                return [new PElement(res, this)];
-            } else {
-                res = document.getElementsByClassName(e);
-                if (res) {
-                    var arr = [];
-                    for (var i = 0, resl = res.length; i !== resl; i++) {
-                        arr.push(new PElement(res[i], this));
-                    }
-                    return arr;
+        p5.prototype.getId = function (e) {
+            for (var i = 0; i < this._elements.length; i++) {
+                if (this._elements[i].elt.id === e) {
+                    return this._elements[i];
                 }
             }
-            return [];
+            var res = document.getElementById(e);
+            if (res) {
+                var obj = new PElement(res, this);
+                this._elements.push(obj);
+                return obj;
+            } else {
+                return null;
+            }
+        };
+        p5.prototype.getClass = function (e) {
+            console.log(this._elements);
+            var arr = [];
+            for (var i = 0; i < this._elements.length; i++) {
+                if (this._elements[i].elt.className.split(' ').indexOf(e) !== -1) {
+                    arr.push(this._elements[i]);
+                }
+            }
+            if (arr.length === 0) {
+                var res = document.getElementsByClassName(e);
+                if (res) {
+                    for (var j = 0; j < res.length; j++) {
+                        var obj = new PElement(res[j], this);
+                        this._elements.push(obj);
+                        arr.push(obj);
+                    }
+                }
+            }
+            return arr;
         };
         p5.prototype.context = function (e) {
             var obj;
             if (typeof e === 'string' || e instanceof String) {
                 var elt = document.getElementById(e);
-                obj = elt ? new PElement(elt, this) : null;
+                if (elt) {
+                    var pe = new PElement(elt, this);
+                    this._elements.push(pe);
+                    obj = pe;
+                } else {
+                    obj = null;
+                }
             } else {
                 obj = e;
             }
@@ -976,19 +1104,6 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 this.curElement.onblur = function () {
                     this.focused = false;
                 };
-                if (!this._isGlobal) {
-                    this.curElement.context.canvas.onmousemove = this.onmousemove.bind(this);
-                    this.curElement.context.canvas.onmousedown = this.onmousedown.bind(this);
-                    this.curElement.context.canvas.onmouseup = this.onmouseup.bind(this);
-                    this.curElement.context.canvas.onmouseclick = this.onmouseclick.bind(this);
-                    this.curElement.context.canvas.onmousewheel = this.onmousewheel.bind(this);
-                    this.curElement.context.canvas.onkeydown = this.onkeydown.bind(this);
-                    this.curElement.context.canvas.onkeyup = this.onkeyup.bind(this);
-                    this.curElement.context.canvas.onkeypress = this.onkeypress.bind(this);
-                    this.curElement.context.canvas.ontouchstart = this.ontouchstart.bind(this);
-                    this.curElement.context.canvas.ontouchmove = this.ontouchmove.bind(this);
-                    this.curElement.context.canvas.ontouchend = this.ontouchend.bind(this);
-                }
                 if (typeof this.curElement.context !== 'undefined') {
                     this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
                 }
@@ -1347,7 +1462,7 @@ var image = function (require, core, canvas, constants, filters) {
         var constants = constants;
         var Filters = filters;
         p5.prototype.createImage = function (width, height) {
-            return new PImage(width, height, this);
+            return new PImage(width, height);
         };
         p5.prototype.loadImage = function (path, callback) {
             var img = new Image();
@@ -1379,10 +1494,9 @@ var image = function (require, core, canvas, constants, filters) {
                 this.settings.imageMode = m;
             }
         };
-        function PImage(width, height, pInst) {
+        function PImage(width, height) {
             this.width = width;
             this.height = height;
-            this.pInst = pInst;
             this.canvas = document.createElement('canvas');
             this.canvas.width = this.width;
             this.canvas.height = this.height;
@@ -1448,7 +1562,7 @@ var image = function (require, core, canvas, constants, filters) {
             } else {
                 w = Math.min(w, this.width);
                 h = Math.min(h, this.height);
-                var region = new PImage(w, h, this.pInst);
+                var region = new PImage(w, h);
                 region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
                 return region;
             }
@@ -1560,7 +1674,7 @@ var image = function (require, core, canvas, constants, filters) {
         };
         return PImage;
     }({}, core, canvas, constants, filters);
-var imageloading_displaying = function (require, core) {
+var imagepixels = function (require, core) {
         'use strict';
         var p5 = core;
         p5.prototype.blend = function () {
@@ -1615,9 +1729,48 @@ var imageloading_displaying = function (require, core) {
             }
             this._setProperty('pixels', pixels);
         };
-        p5.prototype.set = function () {
+        p5.prototype.set = function (x, y, imgOrCol) {
+            var idx = y * this.width + x;
+            if (typeof imgOrCol === 'number') {
+                if (!this.pixels) {
+                    this.loadPixels();
+                }
+                if (idx < this.pixels.length) {
+                    this.pixels[idx] = [
+                        imgOrCol,
+                        imgOrCol,
+                        imgOrCol,
+                        255
+                    ];
+                    this.updatePixels();
+                }
+            } else if (imgOrCol instanceof Array) {
+                if (imgOrCol.length < 4) {
+                    imgOrCol[3] = 255;
+                }
+                if (!this.pixels) {
+                    this.loadPixels();
+                }
+                if (idx < this.pixels.length) {
+                    this.pixels[idx] = imgOrCol;
+                    this.updatePixels();
+                }
+            } else {
+                this.curElement.context.drawImage(imgOrCol.canvas, x, y);
+                this.loadPixels();
+            }
         };
         p5.prototype.updatePixels = function () {
+            var imageData = this.curElement.context.getImageData(0, 0, this.width, this.height);
+            var data = imageData.data;
+            for (var i = 0; i < this.pixels.length; i += 1) {
+                var j = i * 4;
+                data[j] = this.pixels[i][0];
+                data[j + 1] = this.pixels[i][1];
+                data[j + 2] = this.pixels[i][2];
+                data[j + 3] = this.pixels[i][3];
+            }
+            this.curElement.context.putImageData(imageData, 0, 0, 0, 0, this.width, this.height);
         };
         return p5;
     }({}, core);
@@ -2068,15 +2221,22 @@ var inputfiles = function (require, core, reqwest) {
         };
         p5.prototype.loadBytes = function () {
         };
-        p5.prototype.loadJSON = function (url, callback) {
-            var self = [];
-            reqwest(url, function (resp) {
-                for (var k in resp) {
-                    self[k] = resp[k];
+        p5.prototype.loadJSON = function (path, callback) {
+            var ret = [];
+            var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
+            reqwest({
+                url: path,
+                type: t,
+                success: function (resp) {
+                    for (var k in resp) {
+                        ret[k] = resp[k];
+                    }
+                    if (typeof callback !== 'undefined') {
+                        callback(ret);
+                    }
                 }
-                callback(resp);
             });
-            return self;
+            return ret;
         };
         p5.prototype.loadStrings = function (path, callback) {
             var ret = [];
@@ -2100,16 +2260,17 @@ var inputfiles = function (require, core, reqwest) {
         };
         p5.prototype.loadXML = function (path, callback) {
             var ret = [];
-            var self = this;
-            self.temp = [];
-            reqwest(path, function (resp) {
-                self.print(resp);
-                self.temp = resp;
-                ret[0] = resp;
-                if (typeof callback !== 'undefined') {
-                    callback(ret);
+            reqwest({
+                url: path,
+                type: 'xml',
+                success: function (resp) {
+                    ret[0] = resp;
+                    if (typeof callback !== 'undefined') {
+                        callback(ret);
+                    }
                 }
             });
+            return ret;
         };
         p5.prototype.open = function () {
         };
@@ -2169,7 +2330,7 @@ var inputtime_date = function (require, core) {
             return new Date().getTime() - this._startTime;
         };
         p5.prototype.month = function () {
-            return new Date().getMonth();
+            return new Date().getMonth() + 1;
         };
         p5.prototype.second = function () {
             return new Date().getSeconds();
@@ -2184,8 +2345,8 @@ var mathcalculation = function (require, core) {
         var p5 = core;
         p5.prototype.abs = Math.abs;
         p5.prototype.ceil = Math.ceil;
-        p5.prototype.constrain = function (n, l, h) {
-            return this.max(this.min(n, h), l);
+        p5.prototype.constrain = function (amt, low, high) {
+            return this.max(this.min(amt, high), low);
         };
         p5.prototype.dist = function (x1, y1, x2, y2) {
             var xs = x2 - x1;
@@ -2204,8 +2365,20 @@ var mathcalculation = function (require, core) {
         p5.prototype.map = function (n, start1, stop1, start2, stop2) {
             return (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
         };
-        p5.prototype.max = Math.max;
-        p5.prototype.min = Math.min;
+        p5.prototype.max = function () {
+            if (arguments[0] instanceof Array) {
+                return Math.max.apply(null, arguments[0]);
+            } else {
+                return Math.max.apply(null, arguments);
+            }
+        };
+        p5.prototype.min = function () {
+            if (arguments[0] instanceof Array) {
+                return Math.min.apply(null, arguments[0]);
+            } else {
+                return Math.min.apply(null, arguments);
+            }
+        };
         p5.prototype.norm = function (n, start, stop) {
             return this.map(n, start, stop, 0, 1);
         };
@@ -2367,32 +2540,60 @@ var mathtrigonometry = function (require, core, polargeometry, constants) {
         var p5 = core;
         var polarGeometry = polargeometry;
         var constants = constants;
-        p5.prototype.acos = function (x) {
-            return Math.acos(this.radians(x));
+        p5.prototype.acos = function (ratio) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.acos(ratio);
+            } else {
+                return polarGeometry.radiansToDegrees(Math.acos(ratio));
+            }
         };
-        p5.prototype.asin = function (x) {
-            return Math.asin(this.radians(x));
+        p5.prototype.asin = function (ratio) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.asin(ratio);
+            } else {
+                return polarGeometry.radiansToDegrees(Math.asin(ratio));
+            }
         };
-        p5.prototype.atan = function (x) {
-            return Math.atan(this.radians(x));
+        p5.prototype.atan = function (ratio) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.atan(ratio);
+            } else {
+                return polarGeometry.radiansToDegrees(Math.atan(ratio));
+            }
         };
-        p5.prototype.atan2 = function (x, y) {
-            return Math.atan2(this.radians(x), this.radians(y));
+        p5.prototype.atan2 = function (y, x) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.atan2(y, x);
+            } else {
+                return polarGeometry.radiansToDegrees(Math.atan2(y, x));
+            }
         };
-        p5.prototype.cos = function (x) {
-            return Math.cos(this.radians(x));
+        p5.prototype.cos = function (angle) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.cos(angle);
+            } else {
+                return Math.cos(this.radians(angle));
+            }
         };
-        p5.prototype.sin = function (x) {
-            return Math.sin(this.radians(x));
+        p5.prototype.sin = function (angle) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.sin(angle);
+            } else {
+                return Math.sin(this.radians(angle));
+            }
         };
-        p5.prototype.tan = function (x) {
-            return Math.tan(this.radians(x));
+        p5.prototype.tan = function (angle) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.tan(angle);
+            } else {
+                return Math.tan(this.radians(angle));
+            }
         };
         p5.prototype.degrees = function (angle) {
-            return this.settings.angleMode === constants.DEGREES ? angle : polarGeometry.radiansToDegrees(angle);
+            return polarGeometry.radiansToDegrees(angle);
         };
         p5.prototype.radians = function (angle) {
-            return this.settings.angleMode === constants.RADIANS ? angle : polarGeometry.degreesToRadians(angle);
+            return polarGeometry.degreesToRadians(angle);
         };
         p5.prototype.angleMode = function (mode) {
             if (mode === constants.DEGREES || mode === constants.RADIANS) {
@@ -2469,11 +2670,12 @@ var outputimage = function (require, core) {
 var outputtext_area = function (require, core) {
         'use strict';
         var p5 = core;
-        p5.prototype.print = function () {
-            if (window.console && console.log) {
-                console.log.apply(console, arguments);
-            }
-        };
+        if (window.console && console.log) {
+            p5.prototype.print = console.log.bind(console);
+        } else {
+            p5.prototype.print = function () {
+            };
+        }
         p5.prototype.println = p5.prototype.print;
         return p5;
     }({}, core);
@@ -2482,8 +2684,8 @@ var shape2d_primitives = function (require, core, canvas, constants) {
         var p5 = core;
         var canvas = canvas;
         var constants = constants;
-        p5.prototype.arc = function (a, b, c, d, start, stop, mode) {
-            var vals = canvas.arcModeAdjust(a, b, c, d, this.settings.ellipseMode);
+        p5.prototype.arc = function (x, y, width, height, start, stop, mode) {
+            var vals = canvas.arcModeAdjust(x, y, width, height, this.settings.ellipseMode);
             var radius = vals.h > vals.w ? vals.h / 2 : vals.w / 2, xScale = vals.h > vals.w ? vals.w / vals.h : 1, yScale = vals.h > vals.w ? 1 : vals.h / vals.w;
             this.curElement.context.scale(xScale, yScale);
             this.curElement.context.beginPath();
@@ -2501,8 +2703,8 @@ var shape2d_primitives = function (require, core, canvas, constants) {
             }
             return this;
         };
-        p5.prototype.ellipse = function (a, b, c, d) {
-            var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
+        p5.prototype.ellipse = function (x, y, width, height) {
+            var vals = canvas.modeAdjust(x, y, width, height, this.settings.ellipseMode);
             var kappa = 0.5522848, ox = vals.w / 2 * kappa, oy = vals.h / 2 * kappa, xe = vals.x + vals.w, ye = vals.y + vals.h, xm = vals.x + vals.w / 2, ym = vals.y + vals.h / 2;
             this.curElement.context.beginPath();
             this.curElement.context.moveTo(vals.x, ym);
@@ -2684,6 +2886,9 @@ var shapevertex = function (require, core, constants) {
         var p5 = core;
         var constants = constants;
         p5.prototype.beginContour = function () {
+            this._contourVertices = [];
+            this._contourInited = true;
+            return this;
         };
         p5.prototype.beginShape = function (kind) {
             if (kind === constants.POINTS || kind === constants.LINES || kind === constants.TRIANGLES || kind === constants.TRIANGLE_FAN || kind === constants.TRIANGLE_STRIP || kind === constants.QUADS || kind === constants.QUAD_STRIP) {
@@ -2695,13 +2900,46 @@ var shapevertex = function (require, core, constants) {
             this.curElement.context.beginPath();
             return this;
         };
-        p5.prototype.bezierVertex = function (x1, y1, x2, y2, x3, y3) {
-            this.curElement.context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+        p5.prototype.bezierVertex = function (x2, y2, x3, y3, x4, y4) {
+            if (this._contourInited) {
+                var pt = {};
+                pt.x = x2;
+                pt.y = y2;
+                pt.x3 = x3;
+                pt.y3 = y3;
+                pt.x4 = x4;
+                pt.y4 = y4;
+                pt.type = constants.BEZIER;
+                this._contourVertices.push(pt);
+                return this;
+            }
+            this.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
             return this;
         };
         p5.prototype.curveVertex = function () {
         };
         p5.prototype.endContour = function () {
+            this._contourVertices.reverse();
+            this.curElement.context.moveTo(this._contourVertices[0].x, this._contourVertices[0].y);
+            var ctx = this.curElement.context;
+            this._contourVertices.slice(1).forEach(function (pt, i) {
+                switch (pt.type) {
+                case constants.LINEAR:
+                    ctx.lineTo(pt.x, pt.y);
+                    break;
+                case constants.QUADRATIC:
+                    ctx.quadraticCurveTo(pt.x, pt.y, pt.x3, pt.y3);
+                    break;
+                case constants.BEZIER:
+                    ctx.bezierCurveTo(pt.x, pt.y, pt.x3, pt.y3, pt.x4, pt.y4);
+                    break;
+                case constants.CURVE:
+                    break;
+                }
+            });
+            this.curElement.context.closePath();
+            this._contourInited = false;
+            return this;
         };
         p5.prototype.endShape = function (mode) {
             if (mode === constants.CLOSE) {
@@ -2712,10 +2950,28 @@ var shapevertex = function (require, core, constants) {
             return this;
         };
         p5.prototype.quadraticVertex = function (cx, cy, x3, y3) {
+            if (this._contourInited) {
+                var pt = {};
+                pt.x = cx;
+                pt.y = cy;
+                pt.x3 = x3;
+                pt.y3 = y3;
+                pt.type = constants.QUADRATIC;
+                this._contourVertices.push(pt);
+                return this;
+            }
             this.curElement.context.quadraticCurveTo(cx, cy, x3, y3);
             return this;
         };
         p5.prototype.vertex = function (x, y) {
+            if (this._contourInited) {
+                var pt = {};
+                pt.x = x;
+                pt.y = y;
+                pt.type = constants.LINEAR;
+                this._contourVertices.push(pt);
+                return this;
+            }
             if (this.shapeInited) {
                 this.curElement.context.moveTo(x, y);
             } else {
@@ -2802,9 +3058,10 @@ var linearalgebra = function (require) {
             }
         };
     }({});
-var transform = function (require, core, linearalgebra, outputtext_area) {
+var transform = function (require, core, constants, linearalgebra, outputtext_area) {
         'use strict';
         var p5 = core;
+        var constants = constants;
         var linearAlgebra = linearalgebra;
         p5.prototype.applyMatrix = function (n00, n01, n02, n10, n11, n12) {
             this.curElement.context.transform(n00, n01, n02, n10, n11, n12);
@@ -2853,7 +3110,9 @@ var transform = function (require, core, linearalgebra, outputtext_area) {
             return this;
         };
         p5.prototype.rotate = function (r) {
-            r = this.radians(r);
+            if (this.settings.angleMode === constants.DEGREES) {
+                r = this.radians(r);
+            }
             this.curElement.context.rotate(r);
             var m = this.matrices[this.matrices.length - 1];
             var c = Math.cos(r);
@@ -2924,7 +3183,7 @@ var transform = function (require, core, linearalgebra, outputtext_area) {
             return this;
         };
         return p5;
-    }({}, core, linearalgebra, outputtext_area);
+    }({}, core, constants, linearalgebra, outputtext_area);
 var typographyattributes = function (require, core, constants) {
         'use strict';
         var p5 = core;
@@ -2933,9 +3192,6 @@ var typographyattributes = function (require, core, constants) {
             if (a === constants.LEFT || a === constants.RIGHT || a === constants.CENTER) {
                 this.curElement.context.textAlign = a;
             }
-        };
-        p5.prototype.textFont = function (str) {
-            this._setProperty('_textFont', str);
         };
         p5.prototype.textHeight = function (s) {
             return this.curElement.context.measureText(s).height;
@@ -2956,9 +3212,10 @@ var typographyattributes = function (require, core, constants) {
         };
         return p5;
     }({}, core, constants);
-var typographyloading_displaying = function (require, core) {
+var typographyloading_displaying = function (require, core, canvas) {
         'use strict';
         var p5 = core;
+        var canvas = canvas;
         p5.prototype.text = function () {
             this.curElement.context.font = this._textStyle + ' ' + this._textSize + 'px ' + this._textFont;
             if (arguments.length === 3) {
@@ -2967,8 +3224,8 @@ var typographyloading_displaying = function (require, core) {
             } else if (arguments.length === 5) {
                 var words = arguments[0].split(' ');
                 var line = '';
-                var vals = this.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this.rectMode);
-                vals.y += this.textLeading;
+                var vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this.settings.rectMode);
+                vals.y += this._textLeading;
                 for (var n = 0; n < words.length; n++) {
                     var testLine = line + words[n] + ' ';
                     var metrics = this.curElement.context.measureText(testLine);
@@ -2979,7 +3236,7 @@ var typographyloading_displaying = function (require, core) {
                         this.curElement.context.fillText(line, vals.x, vals.y);
                         this.curElement.context.strokeText(line, vals.x, vals.y);
                         line = words[n] + ' ';
-                        vals.y += this.textLeading;
+                        vals.y += this._textLeading;
                     } else {
                         line = testLine;
                     }
@@ -2990,15 +3247,20 @@ var typographyloading_displaying = function (require, core) {
                 }
             }
         };
+        p5.prototype.textFont = function (str) {
+            this._setProperty('_textFont', str);
+        };
         return p5;
-    }({}, core);
-var src_app = function (require, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying) {
+    }({}, core, canvas);
+var src_app = function (require, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying) {
         'use strict';
         var p5 = core;
         var PVector = mathpvector;
         var _globalInit = function () {
-            if (window.setup && typeof window.setup === 'function' || window.draw && typeof window.draw === 'function') {
-                new p5();
+            if (!window.PHANTOMJS) {
+                if (window.setup && typeof window.setup === 'function' || window.draw && typeof window.draw === 'function') {
+                    new p5();
+                }
             }
         };
         if (document.readyState === 'complete') {
@@ -3009,4 +3271,4 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());

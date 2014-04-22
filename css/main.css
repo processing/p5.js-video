@@ -1,16 +1,86 @@
-html, body {
+@font-face {
+  font-family: 'theSerifItalic';
+  src: url(/fonts/TheSerif_B4_Italic.eot),
+     url(/fonts/TheSerif_B4_Italic.woff) format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'theSerif';
+  src: url(/fonts/TheSerif_B4_Plain_.eot),
+     url(/fonts/TheSerif_B4_Plain_.woff) format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'theSerif';
+  src: url(/fonts/TheSerif_B4_Bold_.eot),
+     url(/fonts/TheSerif_B4_Bold_.woff) format("woff");
+  font-weight: 800;
+  font-style: normal;
+}
+
+body {
   height: 100%;
+  width: 100%;
   overflow: none;
+
+  font-size: 16px;
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-weight: 300;
 }
 
 h1 {
-  font-family: 'Roboto', sans-serif;
-  color:#369;
-  text-transform: uppercase;
+  font-family: 'theSerif', sans-serif;
+  font-weight: 400;
+  color:#2B4A90;
 }
 
 canvas {
   z-index: 500;
+}
+
+#p5 {
+  position:absolute;
+  right: 20px;
+  bottom: 10px;
+}
+
+#p5 a {
+  font-family: 'theSerif', sans-serif;
+  font-size: 2.5em;  
+  font-weight: 400;
+  color: black;
+  opacity: .15;
+}
+
+#p5 a:hover {
+  text-decoration: none;
+  opacity: 1;
+  color:#2B4A90;
+}
+
+#callout {
+  position:absolute;
+  bottom: 30%;
+  left: 15%;
+  cursor: pointer;
+  z-index: 1200;
+  display: none;
+}
+
+#callout .title {
+  font-family: 'theSerif', sans-serif;
+  font-weight: 400;
+  font-size: 2.2em;
+  color:#2B4A90;
+}
+
+#callout .pause {
+  font-size: 1.2em;
+  color:#aaa;
 }
 
 #welcome {
@@ -35,22 +105,14 @@ canvas {
   position: fixed;
   bottom: 0;
   left: 50%;
-  margin-left: -640px;
+  margin-left: -480px;
   z-index: 999;
-  width: 1280;
-  height: 720;
+  width: 960px;
+  height: 540px;
   pointer-events: none;
   display:none;
 }
 
-#mainControls {
-  position: fixed;
-  left: 10px;
-  bottom: 10px;
-  width: 256px;
-  z-index: 2999;
-  display:none;
-}
 
 #example {
   position: absolute;
@@ -98,6 +160,7 @@ canvas {
 }
 
 #background {
+  z-index: -1;
   position: fixed;
   top: 0;
   left: 0;

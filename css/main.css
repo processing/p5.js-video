@@ -39,7 +39,15 @@ h1 {
 }
 
 canvas {
-  z-index: 500;
+}
+
+#main {
+  overflow:none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 #p5 {
@@ -67,8 +75,8 @@ canvas {
   bottom: 30%;
   left: 15%;
   cursor: pointer;
-  z-index: 1200;
   display: none;
+  z-index: 1000;
 }
 
 #callout .title {
@@ -81,6 +89,13 @@ canvas {
 #callout .pause {
   font-size: 1.2em;
   color:#aaa;
+  position: relative;
+  top: -6px;
+}
+
+#sketchCanvas {
+  position: absolute;
+  display: none;
 }
 
 #welcome {
@@ -92,7 +107,6 @@ canvas {
   left: 50%;
   margin-left: -250px;
   margin-top: -62px;
-  z-index: 5999;
 }
 
 #videoClip {
@@ -106,7 +120,6 @@ canvas {
   bottom: 0;
   left: 50%;
   margin-left: -480px;
-  z-index: 999;
   width: 960px;
   height: 540px;
   pointer-events: none;
@@ -123,9 +136,9 @@ canvas {
   margin-top: -250px;
   margin-left: -490px;
   background: #ccc;
-  z-index: 1999;
   display:none;
-  background: #369;  
+  background: #369;
+  z-index: 5000;  
 }
 
 #exampleEditor { 
@@ -152,7 +165,6 @@ canvas {
   position: absolute;
   right: 500px;
   bottom: 20px;
-  z-index: 6999;  
 }
 
 #exampleCode {
@@ -160,12 +172,12 @@ canvas {
 }
 
 #background {
-  z-index: -1;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: -1;
 
   background: rgb(255,255,255);
   background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(187,187,187,1) 100%);
@@ -175,4 +187,12 @@ canvas {
   background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
   background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#bbbbbb',GradientType=0 );
+}
+
+.textExample {
+  z-index: 5000;
+  font-size: 2em;
+  font-weight: bold;
+  color: yellow;
+}
 }

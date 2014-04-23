@@ -18,12 +18,12 @@ title: Home
   <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
 </head>
 <body>
-  <div>
+  <div id="main">
 
     <div id="p5"><a href="http://p5js.org/">p5.js</a></div>
 
     <div id="callout">
-      <div class="title">Rectangles</div>
+      <div id="sketchTitle" class="title">Title</div>
       <div class="pause">Pause and view code</div>
 
     </div>
@@ -37,12 +37,10 @@ title: Home
 
     </div>
 
+    <div id="videoClip"></div>
     <div id="background"></div>
-
-    <video id="videoClip"></video>
-
-    <canvas id="videoCanvas" width="1280" height="720"></canvas>
     <canvas id="sketchCanvas"></canvas>
+    <canvas id="videoCanvas" width="1280" height="720"></canvas>
 
     <div id="example">
       <div id="exampleEditor">
@@ -72,6 +70,7 @@ title: Home
   <script src="js/vendor/effects/seriously.chroma.js"></script>
   <script src="js/vendor/effects/seriously.vignette.js"></script>
 
+  <script src="js/script.js"></script>
   <script src="js/main.js"></script>
   <script src="js/sketch.js"></script>
 </body>

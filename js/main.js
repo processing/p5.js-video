@@ -1,6 +1,6 @@
 var pop,
 editor,
-sketch,
+sketch = null,
 videoBase = {x: 0, y: 0};
 
 $(document).ready( function () {
@@ -8,15 +8,7 @@ $(document).ready( function () {
   $(window).resize( function () {
     videoBase.x = $(window).width()/2;
     videoBase.y = $(window).height(); 
-  });
 
-  $("#videoClip").bind("canplaythrough", function(e) {
-    $("#begin").button('reset')
-
-    videoBase.x = $(window).width()/2;
-    videoBase.y = $(window).height();    
-
-    seriouslyInit();
   });
 
   popcornInit();   
@@ -36,7 +28,7 @@ $(document).ready( function () {
   })
 
   $("#callout").click( function () {
-    editor.getSession().setValue($.trim($(sketch.exampleDiv).html())); 
+    editor.getSession().setValue($.trim($(sketch.exampleDiv).text())); 
     $("#example").fadeIn("fast");
     $("#showExample").fadeOut("fast");
     pop.pause();
@@ -55,14 +47,23 @@ $(document).ready( function () {
   });
 
   $("#begin").click( function() {
-    $("#welcome").hide();
-    $("#videoCanvas").fadeIn();    
-    pop.play();
+    begin();
   });
 
   $("#begin").button('loading'); 
 
 });
+
+function begin() {
+  $("#welcome").hide();
+  $("#videoCanvas").fadeIn(); 
+
+  var hash = top.location.hash.replace('#', ''), time = 0;
+  if (hash.length > 0) {
+    time = hash;
+  }
+  pop.play(time);  
+}
 
 // Initialize Popcorn
 
@@ -71,29 +72,18 @@ function popcornInit() {
   pop = Popcorn.smart("#videoClip", "assets/video.mp4");
   pop.autoplay(false);
 
-   var hash = top.location.hash.replace('#', '');
+  pop.on( "canplayall", function(e) {
+    $("#begin").button('reset');
 
-  // if (hash.length > 0) {
-  //   console.log(hash);
-  //   pop.currentTime(hash);
-  //   pop.autoplay(true);
-  // }
+    videoBase.x = $(window).width()/2;
+    videoBase.y = $(window).height();    
+    
+    seriouslyInit();
 
-  pop.code({
-    start: 1,
-    onStart: function( options ) {
-      console.log("SUP")
-      sketch = new p5(rectangleSketch, "sketchCanvas");
-      $("#callout").fadeIn();
-    }
   });
 
-  pop.code({
-    start:  5.25,
-    onStart: function( options ) {
-      sketch.rectangleColor = sketch.color(0,0,255);
-    }
-  });
+  script.init();
+
 }
 
 // Initialize Seriously
@@ -114,8 +104,21 @@ function seriouslyInit() {
   chroma.clipWhite = 0.85;
   chroma.clipBlack = 0.25;
 
-  chroma.source = "#videoClip";
+  chroma.source = "#"+pop.media.id;
   target.source = chroma;
-
   seriously.go();
+}
+
+function positionSketch(position, relative) {
+
+  if (relative) {
+    position.left = videoBase.x + position.left;
+    position.top = videoBase.y - position.top;
+  }
+
+  $("#sketchCanvas").css({
+    left: position.left,
+    top: position.top,
+  });
+
 }

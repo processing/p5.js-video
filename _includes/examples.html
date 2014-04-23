@@ -1,7 +1,11 @@
 <div id="rectangleSketch">
-
-noStroke();
-fill(255,0,0);
-rect(10,10,200,100);
+function draw() {
+	if (mouseIsPressed() && mouseX > 5 && mouseX < 205 && mouseY > 5 && mouseY < 105) {
+		fill(0,0,255);
+	} else {
+		fill(255,0,0);
+	}
+	rect(5,5,200,100);
+}
 
 </div>

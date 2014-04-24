@@ -1,3 +1,37 @@
+var shapeSketch = function( sketch ) {
+
+  sketch.counter = 0;
+  sketch.baseHue = .5;
+
+  sketch.setup = function() {
+    sketch.createCanvas(window.innerWidth, window.innerHeight);    
+    sketch.noStroke();
+    
+  };
+
+  sketch.draw = function() {
+
+      var size = 100 + sketch.random(100),
+          hue = (sketch.baseHue + sketch.random(-.1,.1));
+      
+      sketch.colorMode(sketch.HSB);
+      sketch.fill(hue, .5, .5, 128);
+
+      sketch.ellipse(
+        sketch.random(sketch.width),
+        sketch.random(sketch.height),
+        size, size);
+
+      sketch.counter++;
+
+      if (sketch.counter > 50) sketch.noLoop();
+
+  }
+
+  return sketch;
+
+}
+
 var rectangleSketch = function( sketch ) {
 
   sketch.setup = function() {

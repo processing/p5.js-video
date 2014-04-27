@@ -1,6 +1,37 @@
 var script = {
-
+  popcorn: null,
   init: function() {
+
+    var pop = Popcorn.smart("#videoClip", "assets/video.mp4");
+    pop.autoplay(false);
+
+    pop.on( "canplayall", function(e) {
+
+      // Setup Seriously
+
+      var seriously, 
+      chroma,
+      target; 
+
+      seriously = new Seriously();
+      target = seriously.target('#videoCanvas');
+      chroma = seriously.effect('chroma');
+
+      chroma.weight = 1.25;
+      chroma.balance = .0;
+      chroma.screen = 'RGB(108, 216, 149)';
+      chroma.clipWhite = 0.85;
+      chroma.clipBlack = 0.25;
+
+      chroma.source = "#"+script.popcorn.media.id;
+      target.source = chroma;
+      seriously.go();
+
+      // Set button state
+      
+      $("#begin").button('reset');
+
+    });    
 
     // Shapes
     
@@ -9,7 +40,6 @@ var script = {
       onStart: function( options ) {
         $("#sketchCanvas").show();
         sketch = new p5(shapeSketch, "sketchCanvas");
-        //positionSketch({left:0, top:0}, false);
 
       }
     });
@@ -25,13 +55,12 @@ var script = {
         sketch.clear();
 
         sketch = new p5(textSketch, "sketchCanvas");
-        positionSketch({left:0, top:0}, false);        
+        script.positionSketch({left:265, top:408}, false);        
 
         var html = sketch.createHTML("HELLO WORLD!");
         html.id("textZero");
         html.class("textExample");
-        html.position(videoBase.x -80, videoBase.y - 75);        
-
+        html.position((window.innerWidth/2) - 80, window.innerHeight - 75 );
       }
     });   
 
@@ -54,7 +83,7 @@ var script = {
         $("#sketchCanvas").show();
 
         sketch = new p5(rectangleSketch, "sketchCanvas");
-        positionSketch({left:265, top:408}, true);
+        script.positionSketch({left:265, top:408}, true);
 
       }
     });
@@ -105,7 +134,7 @@ var script = {
         sketch.clear();
 
         sketch = new p5(rectangleArraySketch, "sketchCanvas");
-        positionSketch({left:0, top:0}, false);
+        script.positionSketch({left:0, top:0}, false);
 
         $("#sketchTitle").text(sketch.title);
       }
@@ -131,12 +160,12 @@ var script = {
         sketch.clear();  
 
         sketch = new p5(textSketch, "sketchCanvas");
-        positionSketch({left:0, top:0}, false);        
+        script.positionSketch({left:0, top:0}, false);        
 
         var html = sketch.createHTML("Some text!");
         html.id("textOne");
         html.class("textExample");
-        html.position(videoBase.x + 285, videoBase.y - 75);
+        html.position((window.innerWidth/2) + 285, window.innerHeight - 75 );
 
       }
     }); 
@@ -150,9 +179,7 @@ var script = {
         var html = sketch.createHTML("Some text!");
         html.id("textTwo");
         html.class("textExample");
-        console.log(html);
-        html.position(videoBase.x + -345, videoBase.y - 75);    
-
+        html.position((window.innerWidth/2) - 345, window.innerHeight - 75 );  
       }
     });  
 
@@ -167,6 +194,28 @@ var script = {
 
       }
     }); 
+
+    // Set external
+    
+    script.popcorn = pop;
+
+  },
+
+  positionSketch: function(position, relative) {
+
+    if (relative) {
+
+      videoBaseX = $(window).width()/2;
+      videoBaseY = $(window).height(); 
+
+      position.left = videoBaseX + position.left;
+      position.top = videoBaseY - position.top;
+    }
+
+    $("#sketchCanvas").css({
+      left: position.left,
+      top: position.top,
+    });
 
   }
 }

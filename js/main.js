@@ -1,124 +1,86 @@
-var pop,
-editor,
-sketch = null,
-videoBase = {x: 0, y: 0};
-
 $(document).ready( function () {
 
   $(window).resize( function () {
-    videoBase.x = $(window).width()/2;
-    videoBase.y = $(window).height(); 
 
   });
 
-  popcornInit();   
-
-  // Ace setup
-  
-  editor = ace.edit("exampleEditor");
-  editor.getSession().setMode("ace/mode/javascript");  
-
-  // Buttons
-
-  $(document).click( function(e) {
-    console.log( pop.currentTime());
-    var clickX = e.pageX - ($(window).width()/2)
-      clickY = $(window).height() - e.pageY;
-    console.log( "{x:" + clickX + ", y:" + clickY + "}");
-  })
-
-  $("#callout").click( function () {
-    editor.getSession().setValue($.trim($(sketch.exampleDiv).text())); 
-    $("#example").fadeIn("fast");
-    $("#showExample").fadeOut("fast");
-    pop.pause();
-  });
-
-  $("#hideExample").click( function () {
-    $("#example").fadeOut("fast");
-    $("#showExample").fadeIn("fast");
-    pop.play();
-  });  
-
-  $("#runExample").click( function () {
-    var exampleCode = editor.getSession().getValue(); 
-    $("#exampleFrame")[0].contentWindow.clear();
-    $("#exampleFrame")[0].contentWindow.eval(exampleCode);
-  });
-
-  $("#begin").click( function() {
-    begin();
-  });
-
-  $("#begin").button('loading'); 
+  main.init();
 
 });
 
-function begin() {
-  $("#welcome").hide();
-  $("#videoCanvas").fadeIn(); 
+//
 
-  var hash = top.location.hash.replace('#', ''), time = 0;
-  if (hash.length > 0) {
-    time = hash;
-  }
-  pop.play(time);  
-}
+var main = {
+  editor: null,
+  sketch: null,
 
-// Initialize Popcorn
+  // Initalize Demo
 
-function popcornInit() {
+  init: function() {
 
-  pop = Popcorn.smart("#videoClip", "assets/video.mp4");
-  pop.autoplay(false);
+    // Popcorn Setup
 
-  pop.on( "canplayall", function(e) {
-    $("#begin").button('reset');
+    script.init();  
 
-    videoBase.x = $(window).width()/2;
-    videoBase.y = $(window).height();    
+    // Ace setup
     
-    seriouslyInit();
+    editor = ace.edit("exampleEditor");
+    editor.getSession().setMode("ace/mode/javascript");  
 
-  });
+    // Events
 
-  script.init();
+    $(document).click( function(e) {
+      console.log( script.popcorn.currentTime());
+      var clickX = e.pageX - ($(window).width()/2)
+        clickY = $(window).height() - e.pageY;
+      console.log( "{x:" + clickX + ", y:" + clickY + "}");
+    })
 
-}
+    // Buttons
 
-// Initialize Seriously
+    $("#callout").click( function () {
+      editor.getSession().setValue($.trim($(sketch.exampleDiv).text())); 
+      $("#example").fadeIn("fast");
+      $("#showExample").fadeOut("fast");
+      script.popcorn.pause();
+    });
 
-function seriouslyInit() {
+    $("#hideExample").click( function () {
+      $("#example").fadeOut("fast");
+      $("#showExample").fadeIn("fast");
+      script.popcorn.play();
+    });  
 
-  var seriously, 
-  chroma,
-  target; 
+    $("#runExample").click( function () {
+      var exampleCode = editor.getSession().getValue(); 
+      $("#exampleFrame")[0].contentWindow.clear();
+      $("#exampleFrame")[0].contentWindow.eval(exampleCode);
+    });
 
-  seriously = new Seriously();
-  target = seriously.target('#videoCanvas');
-  chroma = seriously.effect('chroma');
+    $("#begin").click( function() {
+      main.start();
+    });
+    $("#begin").button('loading'); 
 
-  chroma.weight = 1.25;
-  chroma.balance = .0;
-  chroma.screen = 'RGB(108, 216, 149)';
-  chroma.clipWhite = 0.85;
-  chroma.clipBlack = 0.25;
+    // Set externals
 
-  chroma.source = "#"+pop.media.id;
-  target.source = chroma;
-  seriously.go();
-}
+    main.editor = editor;
 
-function positionSketch(position, relative) {
+  },
 
-  if (relative) {
-    position.left = videoBase.x + position.left;
-    position.top = videoBase.y - position.top;
+  // Start Video
+
+  start: function() {
+
+    $("#welcome").hide();
+    $("#videoCanvas").fadeIn(); 
+
+    var hash = top.location.hash.replace('#', ''), time = 0;
+    if (hash.length > 0) {
+      time = hash;
+    }
+    script.popcorn.play(time);  
+
   }
-
-  $("#sketchCanvas").css({
-    left: position.left,
-    top: position.top,
-  });
 
 }

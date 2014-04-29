@@ -1,12 +1,14 @@
 
-// 3:14
+// 3:24
 
-var y = 200;
+var y;
 var yspeed = 0;
 var gravity = 0.1;
 
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
+  y = height;
+  yspeed = -10;
 }
 
 function draw() {
@@ -19,8 +21,7 @@ function draw() {
   yspeed = yspeed + gravity;
 
 
-  if (y > height) {
-    y = 200;
-    yspeed = 0;
+  if (yspeed > 0) {
+    y = 5000;
   }
 }

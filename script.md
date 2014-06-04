@@ -24,4 +24,5 @@
 * Look, video!
 
 * EVELYN -- closing remarks
+   * Much more to come!
    * p5.js is in BETA, and if you like you can help develop it as well as use it! __link to github__

@@ -16,6 +16,12 @@
 * Look, you can make text!
 * Look, you can animate!
 * Look, you can make things interactive with html!
+   * Button
+   * Slider
+   * Input box
 * A particle system! (flocking?)
 
-* (somewhere in there...) p5.js is in BETA, and if you like you can help develop it as well as use it! __link to github__
+* Look, video!
+
+* EVELYN -- closing remarks
+   * p5.js is in BETA, and if you like you can help develop it as well as use it! __link to github__

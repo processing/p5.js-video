@@ -10,8 +10,8 @@
    
    * p5.js introduces concepts of HTML, JavaScript, and CSS, and how they all fit together to let you start creating visual and interactive compositions immediately! __simple, fun graphics fill the screen, quick__
    
-   * It also plays nice with the rest of the web.. doing things like letting you access HTML5 features beyond the drawing canvas __some other HTML5 feature?__, and integrating other JS libraries. __quick library example__
-
+   * It also plays nice with the rest of the web.. so you can access HTML5 features beyond the drawing canvas __some other HTML5 feature?__, and integrate other JS libraries. __quick library example__
+  
 * Look, you can draw stuff!
 * Look, you can make text!
 * Look, you can animate!

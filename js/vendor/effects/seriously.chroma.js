@@ -2,12 +2,12 @@
 (function (root, factory) {
 	'use strict';
 
-	if (typeof exports === 'object') {
-		// Node/CommonJS
-		factory(require('seriously'));
-	} else if (typeof define === 'function' && define.amd) {
+	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
 		define(['seriously'], factory);
+	} else if (typeof exports === 'object') {
+		// Node/CommonJS
+		factory(require('seriously'));
 	} else {
 		if (!root.Seriously) {
 			root.Seriously = { plugin: function (name, opt) { this[name] = opt; } };
@@ -28,9 +28,7 @@
 		commonShader: true,
 		shader: function (inputs, shaderSource) {
 			shaderSource.vertex = [
-				'#ifdef GL_ES',
 				'precision mediump float;',
-				'#endif ',
 
 				'attribute vec4 position;',
 				'attribute vec2 texCoord;',
@@ -39,7 +37,6 @@
 				'uniform mat4 transform;',
 
 				'varying vec2 vTexCoord;',
-				'varying vec4 vPosition;',
 
 				'uniform vec4 screen;',
 				'uniform float balance;',
@@ -66,16 +63,12 @@
 				'	gl_Position.xy = screenPosition.xy * 2.0 / resolution;',
 				'	gl_Position.z = screenPosition.z * 2.0 / (resolution.x / resolution.y);',
 				'	vTexCoord = texCoord;',
-				'	vPosition = gl_Position;',
 				'}'
 			].join('\n');
 			shaderSource.fragment = [
-				'#ifdef GL_ES',
 				'precision mediump float;',
-				'#endif',
 
 				'varying vec2 vTexCoord;',
-				'varying vec4 vPosition;',
 
 				'uniform sampler2D source;',
 				'uniform vec4 screen;',

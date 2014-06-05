@@ -28,7 +28,7 @@ body {
   overflow: none;
 
   font-size: 16px;
-  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 300;
 }
 
@@ -58,7 +58,7 @@ canvas {
 
 #p5 a {
   font-family: 'theSerif', sans-serif;
-  font-size: 2.5em;  
+  font-size: 2.5em;
   font-weight: 400;
   color: black;
   opacity: .15;
@@ -121,7 +121,7 @@ canvas {
   left: 50%;
   margin-left: -480px;
   width: 960px;
-  height: 540px;
+  height: 720px;
   pointer-events: none;
   display:none;
 }
@@ -138,10 +138,10 @@ canvas {
   background: #ccc;
   display:none;
   background: #369;
-  z-index: 5000;  
+  z-index: 5000;
 }
 
-#exampleEditor { 
+#exampleEditor {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -180,6 +180,8 @@ canvas {
   z-index: -1;
 
   background: rgb(255,255,255);
+
+  /*
   background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(187,187,187,1) 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(187,187,187,1)));
   background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
@@ -187,6 +189,9 @@ canvas {
   background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
   background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#bbbbbb',GradientType=0 );
+
+  */
+
 }
 
 .textExample {
@@ -194,5 +199,15 @@ canvas {
   font-size: 2em;
   font-weight: bold;
   color: yellow;
+  cursor:pointer;
+
+   -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
 }
-}
+
+.textExample:active {
+  color: #FF00FE;
+};

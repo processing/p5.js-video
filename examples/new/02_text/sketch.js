@@ -40,18 +40,6 @@ function setup() {
     slider.elt.oninput = function() {
       for (var i = 0; i < txt.length; i++) {
         //txt[i].size(input.elt.value);
-        txt[i].style('font-size: '+input.elt.value+'pt');
-      }
-    }
-  },2500);
-
-  setTimeout(function() {
-    var slider = createSlider(4,72,12);
-    slider.position(w/4,h/2-50);
-     
-    slider.elt.oninput = function() {
-      for (var i = 0; i < txt.length; i++) {
-        //txt[i].size(input.elt.value);
         txt[i].style('font-size: '+slider.elt.value+'pt');
       }
     };

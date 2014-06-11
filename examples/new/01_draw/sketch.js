@@ -9,20 +9,20 @@ function setup() {
   },0);
   setTimeout(function() { 
     addShapes(24,0,width/2,0,height/2,'rect'); 
-  },1000);
+  },500);
   setTimeout(function() { 
     addShapes(24,width/2,width,height/2,height,'line');    
-  },2000);
+  },1000);
   setTimeout(function() { 
     addShapes(24,0,width/2,height/2,height,'curve');    
-  },3000);
+  },1500);
   setTimeout(function() { 
     addShapes(24,width/2-144,width/2+144,height/2-144,height/2+144,'square');
-  },4000);
+  },2000);
   setTimeout(function() { 
     addShapes(24,width/2-72,width/2+72,height/2-72,height/2+72,'triangle');
-  },5000);
-  setTimeout(colorize,6000);
+  },2500);
+  setTimeout(colorize,3000);
 }
 
 function draw() {
@@ -96,7 +96,7 @@ Shape.prototype.display = function() {
 }
 
 Shape.prototype.attract = function(x,y) {
-  if (dist(x,y,this.x,this.y) < 200) {
+  if (dist(x,y,this.x,this.y) < 100) {
     this.x = lerp(this.x,x,0.05);
     this.y = lerp(this.y,y,0.05);
     this.x += random(-5,5);

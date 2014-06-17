@@ -4,7 +4,6 @@ var slider;
 
 function setup() {
   createCanvas(displayWidth,displayHeight);
-  circlecolor = color(255);
   
   slider = createSlider(0,255,127);
   slider.position(width/4-56,height/4+128);
@@ -16,5 +15,3 @@ function draw() {
   fill(slider.value());
   ellipse(width/4,height/4,128,128);
 }
-
-

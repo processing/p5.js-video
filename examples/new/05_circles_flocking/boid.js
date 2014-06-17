@@ -30,11 +30,11 @@ Boid.prototype.flock = function(boids) {
   var sep = this.separate(boids);   // Separation
   var ali = this.align(boids);      // Alignment
   var coh = this.cohesion(boids);   // Cohesion
-  // Arbitrarily weight these forces
+  //Arbitrarily weight these forces
   sep.mult(1.5);
   ali.mult(1.0);
   coh.mult(1.0);
-  // Add the force vectors to acceleration
+  //Add the force vectors to acceleration
   this.applyForce(sep);
   this.applyForce(ali);
   this.applyForce(coh);
@@ -139,11 +139,17 @@ Boid.prototype.align = function(boids) {
   }
 };
 
+
+var sum = new PVector(0,0);
+var zero = new PVector(0,0);
+
 // Cohesion
 // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
 Boid.prototype.cohesion = function(boids) {
   var neighbordist = 50;
-  var sum = new PVector(0,0);   // Start with empty vector to accumulate all locations
+  sum.x = 0;
+  sum.y = 0;
+  //var sum = new PVector(0,0);   // Start with empty vector to accumulate all locations
   var count = 0;
   for (var i = 0; i < boids.length; i++) {
     var d = PVector.dist(this.position,boids[i].position);
@@ -156,6 +162,6 @@ Boid.prototype.cohesion = function(boids) {
     sum.div(count);
     return this.seek(sum);  // Steer towards the location
   } else {
-    return new PVector(0,0);
+    return zero;
   }
 };

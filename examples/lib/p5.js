@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -65,7 +64,13 @@ var core = function (require, shim, constants) {
             this.displayWidth = screen.width;
             this.displayHeight = screen.height;
             this.windowWidth = window.innerWidth;
+            window.addEventListener('resize', function (e) {
+                this.windowWidth = window.innerWidth;
+            });
             this.windowHeight = window.innerHeight;
+            window.addEventListener('resize', function (e) {
+                this.windowHeight = window.windowHeight;
+            });
             this.width = 0;
             this.height = 0;
             this.remove = function () {
@@ -214,10 +219,6 @@ var core = function (require, shim, constants) {
                     window[prop] = value;
                 }
             }.bind(this);
-            window.addEventListener('resize', function (e) {
-                this.windowWidth = window.innerWidth;
-                this.windowHeight = window.innerHeight;
-            });
             if (!sketch) {
                 this._isGlobal = true;
                 for (var method in p5.prototype) {
@@ -289,14 +290,20 @@ var mathpvector = function (require, core, polargeometry, constants) {
             return new PVector(this, arguments);
         };
         function PVector() {
-            var nums = arguments;
+            var x, y, z;
             if (arguments[0] instanceof p5) {
                 this.p5 = arguments[0];
-                nums = arguments[1];
+                x = arguments[1][0] || 0;
+                y = arguments[1][1] || 0;
+                z = arguments[1][2] || 0;
+            } else {
+                x = arguments[0] || 0;
+                y = arguments[1] || 0;
+                z = arguments[2] || 0;
             }
-            this.x = nums[0] || 0;
-            this.y = nums[1] || 0;
-            this.z = nums[2] || 0;
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
         PVector.prototype.set = function (x, y, z) {
             if (x instanceof PVector) {
@@ -398,7 +405,12 @@ var mathpvector = function (require, core, polargeometry, constants) {
                 return h;
             }
         };
-        PVector.prototype.rotate2D = function (a) {
+        PVector.prototype.rotate = function (a) {
+            if (this.p5) {
+                if (this.p5._angleMode === constants.DEGREES) {
+                    a = polarGeometry.degreesToRadians(a);
+                }
+            }
             var newHeading = this.heading() + a;
             var mag = this.mag();
             this.x = Math.cos(newHeading) * mag;
@@ -422,14 +434,35 @@ var mathpvector = function (require, core, polargeometry, constants) {
             ];
         };
         PVector.fromAngle = function (angle) {
+            if (this.p5) {
+                if (this.p5._angleMode === constants.DEGREES) {
+                    angle = polarGeometry.degreesToRadians(angle);
+                }
+            }
             return new PVector(Math.cos(angle), Math.sin(angle), 0);
         };
         PVector.random2D = function () {
-            return this.fromAngle(Math.random() * Math.PI * 2);
+            var angle;
+            if (this.p5) {
+                if (this.p5._angleMode === constants.DEGREES) {
+                    angle = this.p5.random(360);
+                } else {
+                    angle = this.p5.random(constants.TWO_PI);
+                }
+            } else {
+                angle = Math.random() * Math.PI * 2;
+            }
+            return this.fromAngle(angle);
         };
         PVector.random3D = function () {
-            var angle = Math.random() * Math.PI * 2;
-            var vz = Math.random() * 2 - 1;
+            var angle, vz;
+            if (this.p5) {
+                angle = this.p5.random(0, constants.TWO_PI);
+                vz = this.p5.random(-1, 1);
+            } else {
+                angle = Math.random() * Math.PI * 2;
+                vz = Math.random() * 2 - 1;
+            }
             var vx = Math.sqrt(1 - vz * vz) * Math.cos(angle);
             var vy = Math.sqrt(1 - vz * vz) * Math.sin(angle);
             return new PVector(vx, vy, vz);
@@ -459,7 +492,13 @@ var mathpvector = function (require, core, polargeometry, constants) {
             return v1.get().lerp(v2, amt);
         };
         PVector.angleBetween = function (v1, v2) {
-            return Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
+            var angle = Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
+            if (this.p5) {
+                if (this.p5._angleMode === constants.DEGREES) {
+                    angle = polarGeometry.radiansToDegrees(angle);
+                }
+            }
+            return angle;
         };
         return PVector;
     }({}, core, polargeometry, constants);
@@ -987,9 +1026,8 @@ var inputtouch = function (require, core) {
         };
         return p5;
     }({}, core);
-var dompelement = function (require, core, constants) {
+var dompelement = function (require, core) {
         var p5 = core;
-        var constants = constants;
         function PElement(elt, pInst) {
             this.elt = elt;
             this.pInst = pInst;
@@ -1014,33 +1052,6 @@ var dompelement = function (require, core, constants) {
             this.elt.style.left = x + 'px';
             this.elt.style.top = y + 'px';
         };
-        PElement.prototype.size = function (w, h) {
-            var aW = w;
-            var aH = h;
-            var AUTO = constants.AUTO;
-            if (aW !== AUTO || aH !== AUTO) {
-                if (aW === AUTO) {
-                    aW = h * this.elt.width / this.elt.height;
-                } else if (aH === AUTO) {
-                    aH = w * this.elt.height / this.elt.width;
-                }
-                if (this.elt instanceof HTMLCanvasElement) {
-                    this.elt.setAttribute('width', aW);
-                    this.elt.setAttribute('height', aH);
-                } else {
-                    this.elt.style.width = aW;
-                    this.elt.style.height = aH;
-                }
-                this.width = this.elt.offsetWidth;
-                this.height = this.elt.offsetHeight;
-                if (this.pInst) {
-                    if (this.pInst.curElement.elt === this.elt) {
-                        this.pInst._setProperty('width', this.elt.offsetWidth);
-                        this.pInst._setProperty('height', this.elt.offsetHeight);
-                    }
-                }
-            }
-        };
         PElement.prototype.style = function (s) {
             this.elt.style.cssText += s;
         };
@@ -1048,13 +1059,7 @@ var dompelement = function (require, core, constants) {
             this.elt.id = id;
         };
         PElement.prototype.class = function (c) {
-            this.elt.className = c;
-        };
-        PElement.prototype.show = function () {
-            this.elt.style.display = 'block';
-        };
-        PElement.prototype.hide = function () {
-            this.elt.style.display = 'none';
+            this.elt.className += ' ' + c;
         };
         PElement.prototype.mousePressed = function (fxn) {
             attachListener('click', fxn, this);
@@ -1080,7 +1085,7 @@ var dompelement = function (require, core, constants) {
         }
         p5.PElement = PElement;
         return PElement;
-    }({}, core, constants);
+    }({}, core);
 var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement) {
         var p5 = core;
         var PElement = dompelement;
@@ -2923,6 +2928,7 @@ var shapevertex = function (require, core, constants) {
         p5.prototype._shapeInited = false;
         p5.prototype._contourInited = false;
         p5.prototype._contourVertices = [];
+        p5.prototype._curveVertices = [];
         p5.prototype.beginContour = function () {
             this._contourVertices = [];
             this._contourInited = true;
@@ -2954,8 +2960,16 @@ var shapevertex = function (require, core, constants) {
             this._curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
             return this;
         };
-        p5.prototype.curveVertex = function () {
-            throw 'not yet implemented';
+        p5.prototype.curveVertex = function (x, y) {
+            var pt = {};
+            pt.x = x;
+            pt.y = y;
+            this._curveVertices.push(pt);
+            if (this._curveVertices.length >= 4) {
+                this.curve(this._curveVertices[0].x, this._curveVertices[0].y, this._curveVertices[1].x, this._curveVertices[1].y, this._curveVertices[2].x, this._curveVertices[2].y, this._curveVertices[3].x, this._curveVertices[3].y);
+                this._curveVertices.shift();
+            }
+            return this;
         };
         p5.prototype.endContour = function () {
             this._contourVertices.reverse();
@@ -2985,7 +2999,11 @@ var shapevertex = function (require, core, constants) {
                 this._curElement.context.closePath();
                 this._curElement.context.fill();
             }
-            this._curElement.context.stroke();
+            if (this._curveVertices.length <= 0) {
+                this._curElement.context.stroke();
+            } else {
+                this._curveVertices = [];
+            }
             return this;
         };
         p5.prototype.quadraticVertex = function (cx, cy, x3, y3) {
@@ -3081,32 +3099,10 @@ var structure = function (require, core) {
         };
         return p5;
     }({}, core);
-var linearalgebra = function (require) {
-        return {
-            pMultiplyMatrix: function (m1, m2) {
-                var result = [];
-                var m1Length = m1.length;
-                var m2Length = m2.length;
-                var m10Length = m1[0].length;
-                for (var j = 0; j < m2Length; j++) {
-                    result[j] = [];
-                    for (var k = 0; k < m10Length; k++) {
-                        var sum = 0;
-                        for (var i = 0; i < m1Length; i++) {
-                            sum += m1[i][k] * m2[j][i];
-                        }
-                        result[j].push(sum);
-                    }
-                }
-                return result;
-            }
-        };
-    }({});
-var transform = function (require, core, constants, linearalgebra, outputtext_area) {
+var transform = function (require, core, constants, outputtext_area) {
         'use strict';
         var p5 = core;
         var constants = constants;
-        var linearAlgebra = linearalgebra;
         p5.prototype._matrices = [[
                 1,
                 0,
@@ -3118,7 +3114,7 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
         p5.prototype.applyMatrix = function (n00, n01, n02, n10, n11, n12) {
             this._curElement.context.transform(n00, n01, n02, n10, n11, n12);
             var m = this._matrices[this._matrices.length - 1];
-            m = linearAlgebra.pMultiplyMatrix(m, [
+            m = multiplyMatrix(m, [
                 n00,
                 n01,
                 n02,
@@ -3206,7 +3202,7 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             }
             this._curElement.context.transform(1, 0, this.tan(angle), 1, 0, 0);
             var m = this._matrices[this._matrices.length - 1];
-            m = linearAlgebra.pMultiplyMatrix(m, [
+            m = multiplyMatrix(m, [
                 1,
                 0,
                 this.tan(angle),
@@ -3222,7 +3218,7 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             }
             this._curElement.context.transform(1, this.tan(angle), 0, 1, 0, 0);
             var m = this._matrices[this._matrices.length - 1];
-            m = linearAlgebra.pMultiplyMatrix(m, [
+            m = multiplyMatrix(m, [
                 1,
                 this.tan(angle),
                 0,
@@ -3239,8 +3235,25 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             m[5] += m[1] * x + m[3] * y;
             return this;
         };
+        function multiplyMatrix(m1, m2) {
+            var result = [];
+            var m1Length = m1.length;
+            var m2Length = m2.length;
+            var m10Length = m1[0].length;
+            for (var j = 0; j < m2Length; j++) {
+                result[j] = [];
+                for (var k = 0; k < m10Length; k++) {
+                    var sum = 0;
+                    for (var i = 0; i < m1Length; i++) {
+                        sum += m1[i][k] * m2[j][i];
+                    }
+                    result[j].push(sum);
+                }
+            }
+            return result;
+        }
         return p5;
-    }({}, core, constants, linearalgebra, outputtext_area);
+    }({}, core, constants, outputtext_area);
 var typographyattributes = function (require, core, constants) {
         'use strict';
         var p5 = core;
@@ -3313,7 +3326,7 @@ var typographyloading_displaying = function (require, core, canvas) {
         };
         return p5;
     }({}, core, canvas);
-var src_app = function (require, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying) {
+var src_app = function (require, core, mathpvector, colorcreating_reading, colorsetting, constants, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying) {
         'use strict';
         var p5 = core;
         var PVector = mathpvector;
@@ -3332,4 +3345,5 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, constants, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());

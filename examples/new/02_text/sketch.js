@@ -27,9 +27,9 @@ function setup() {
      
      input.elt.oninput = function() {
       for (var i = 0; i < txt.length; i++) {
-        txt[i].html(input.elt.value);
+        txt[i].html(input.value());
       }
-     }
+     };
   },2000);
 
 
@@ -40,35 +40,33 @@ function setup() {
     slider.elt.oninput = function() {
       for (var i = 0; i < txt.length; i++) {
         //txt[i].size(input.elt.value);
-        txt[i].style('font-size: '+slider.elt.value+'pt');
+        txt[i].style('font-size: '+slider.value()+'pt');
       }
     };
   },2500);
 
   setTimeout(function() {
-    var button = createButton('red');
-    button.position(w/4,h/4);  
-    button.elt.onclick = function() {
+    var button1 = createButton('red');
+    button1.position(w/4,h/4);
+    button1.mousePressed(function() {
       for (var i = 0; i < txt.length; i++) {
         txt[i].style('color: #FF0000');
       }
-    };
-    var button = createButton('green');
-    button.position(w/4+50,h/4);  
-    button.elt.onclick = function() {
+    });
+    var button2 = createButton('green');
+    button2.position(w/4+50,h/4);
+    button2.mousePressed(function() {
       for (var i = 0; i < txt.length; i++) {
         txt[i].style('color: #00FF00');
       }
-    };
-    var button = createButton('blue');
-    button.position(w/4+100,h/4);  
-    button.elt.onclick = function() {
+    });
+    var button3 = createButton('blue');
+    button3.position(w/4+100,h/4);
+    button3.mousePressed(function() {
       for (var i = 0; i < txt.length; i++) {
         txt[i].style('color: #0000FF');
       }
-    };
+    });
   },3000);
-
-
 }
 

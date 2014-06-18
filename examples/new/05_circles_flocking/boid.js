@@ -68,6 +68,7 @@ Boid.prototype.display = function() {
   // Draw a triangle rotated in the direction of velocity
   fill(0,100);
   stroke(0);
+  strokeWeight(1);
   ellipse(this.position.x,this.position.y,16,16);
 };
 

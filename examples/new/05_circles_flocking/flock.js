@@ -25,3 +25,16 @@ Flock.prototype.run = function() {
 Flock.prototype.addBoid = function(b) {
   this.boids.push(b);
 };
+
+Flock.prototype.applyForce = function(f) {
+  for (var i = 0; i < this.boids.length; i++) {
+    this.boids[i].applyForce(f);  // Passing the entire list of boids to each boid individually
+  }
+};
+
+Flock.prototype.seek = function(x,y) {
+  for (var i = 0; i < this.boids.length; i++) {
+    var v = this.boids[i].seek(new PVector(x,y));  // Passing the entire list of boids to each boid individually
+    this.boids[i].applyForce(v);
+  }
+};

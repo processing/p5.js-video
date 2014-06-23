@@ -33,213 +33,118 @@ var script = {
 
     });
 
-    // Shapes
+
+    // Circle Sketch
 
     pop.code({
-      start: 20.25,
-      onStart: function( options ) {
-        $("#sketchCanvas").show();
-        sketch = new p5(shapeSketch, "sketchCanvas");
-      }
-    });
-
-    // Text
-
-    pop.code({
-      start: 22.9,
+      start: 72 ,
       onStart: function( options ) {
 
-        sketch.remove();
-
-        var html = p5DOM.createDiv("CLICK ME!");
-        html.id("textZero");
-        html.class("textExample");
-        html.position((window.innerWidth/2) - 60, window.innerHeight - 75 );
-      }
-    });
-
-    // Remove Text
-
-    pop.code({
-      start: 27,
-      onStart: function( options ) {
-
-        sketch.remove();
-        $("#textZero").remove();
+        sketch = new p5(circleSketch, "sketchCanvas");
+        script.positionSketch({left:-340, top:540} , true);
 
       }
     });
 
-    // Rectangle
+    // Turn Circle Red
 
     pop.code({
-      start: 74.25,
+      start: 73.35,
       onStart: function( options ) {
-
-        sketch = new p5(rectangleSketch, "sketchCanvas");
-        script.positionSketch({left:265, top:408}, true);
-
-      }
-    });
-
-    // Turn Rectangle Red
-
-    pop.code({
-      start: 77.5,
-      onStart: function( options ) {
-        sketch.rectangleColor = sketch.color(255, 0, 0);
+        sketch.hue = 65;
       }
     });
 
     // Turn Rectangle Green
 
     pop.code({
-      start: 81,
+      start: 73.95,
       onStart: function( options ) {
-        sketch.rectangleColor = sketch.color(0, 255, 0);
-      }
-    });
-
-    // Turn Rectangle Red
-
-    pop.code({
-      start: 82,
-      onStart: function( options ) {
-        sketch.rectangleColor = sketch.color(255, 0, 0);
+        sketch.hue = 50;
       }
     });
 
     // Show Code Callout
 
     pop.code({
-      start: 91,
+      start: 80.5,
       onStart: function( options ) {
         $("#sketchTitle").text(sketch.title);
         $("#callout").show();
       }
     });
 
-    // Rectangle Array
+    // Slider Sketch
 
     pop.code({
-      start: 111,
+      start: 96.5 ,
       onStart: function( options ) {
         sketch.remove();
 
-        sketch = new p5(rectangleArraySketch, "sketchCanvas");
+        sketch = new p5(circleSliderSketch, "sketchCanvas");
+        script.positionSketch({left:-340, top:540} , true);
+
+        $("#sketchTitle").text(sketch.title);
+      }
+    });
+
+    // Flocking
+
+    pop.code({
+      start: 109.7,
+      onStart: function( options ) {
+        
+        sketch.remove();
+        $("#sketchCanvas").empty();
+
+        sketch = new p5(flockingSketch, "sketchCanvas");
         script.positionSketch({left:0, top:0}, false);
 
         $("#sketchTitle").text(sketch.title);
       }
     });
 
-    // Clear Example
+    // Start Flocking
 
     pop.code({
-      start: 118.5,
+      start: 113.25,
+      onStart: function( options ) {
+        sketch.startFlocking();
+      }
+    });
+
+    // Weater
+
+    pop.code({
+      start: 129,
+      onStart: function( options ) {
+        sketch.getWeather();
+      }
+    });
+
+    // Remove Sketch
+
+    pop.code({
+      start: 144.25,
       onStart: function( options ) {
         sketch.remove();
-        $("#callout").hide();
+        $("#sketchCanvas").empty();
       }
     });
 
-    // Text Here
-
+    // CTA
+    
     pop.code({
-      start: 165.25,
+      start: 202.25,
       onStart: function( options ) {
-
-        var html = p5DOM.createDiv("CLICK ME!");
-        html.id("textOne");
-        html.class("textExample");
-        html.position((window.innerWidth/2) + 285, window.innerHeight - 75 );
-
-      }
-    });
-
-    // Text There
-
-    pop.code({
-      start: 167.25,
-      onStart: function( options ) {
-
-        var html = p5DOM.createDiv("NO, CLICK ME!");
-        html.id("textTwo");
-        html.class("textExample");
-        html.position((window.innerWidth/2) - 345, window.innerHeight - 75 );
-      }
-    });
-
-    // Remove Text
-
-    pop.code({
-      start: 180,
-      onStart: function( options ) {
-
-        sketch.remove();
-        $("#textOne").remove();
-        $("#textTwo").remove();
-
-      }
-    });
-
-    // Single Particle
-
-    pop.code({
-      start: 191.35,
-      onStart: function( options ) {
-
-        sketch = new p5(particleSketch, "sketchCanvas");
-        script.positionSketch({left:0, top:0}, false);
-
-      }
-    });
-
-    // Falling Particle
-
-    pop.code({
-      start: 195.35,
-      onStart: function( options ) {
-        sketch.remove();
-
-        sketch = new p5(paticleFallSketch, "sketchCanvas");
-        script.positionSketch({left:0, top:0}, false);
-      }
-    });
-
-    // Rising Particle
-
-    pop.code({
-      start: 204.35,
-      onStart: function( options ) {
-        sketch.remove();
-
-        sketch = new p5(paticleRiseSketch, "sketchCanvas");
-        script.positionSketch({left:0, top:0}, false);
-      }
-    });
-
-    // Multiple Particles
-
-    pop.code({
-      start: 223.75,
-      onStart: function( options ) {
-        sketch.remove();
-
-        sketch = new p5(paticlesSketch, "sketchCanvas");
-        script.positionSketch({left:0, top:0}, false);
-      }
-    });
-
-    // Fireworks
-
-    pop.code({
-      start: 230.75,
-      onStart: function( options ) {
-        sketch.remove();
-
-        sketch = new p5(fireworkSketch, "sketchCanvas");
-        script.positionSketch({left:0, top:0}, false);
+        $("#cta")
+          .css({top:'-96px'})
+          .show()
+          .animate({top:'50%'}, 
+            {
+              duration: 1800
+            }
+          );
       }
     });
 

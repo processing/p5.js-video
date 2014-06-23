@@ -65,83 +65,56 @@ var core = function (require, shim, constants) {
             this.displayWidth = screen.width;
             this.displayHeight = screen.height;
             this.windowWidth = window.innerWidth;
-            this.windowHeight = window.innerHeight;
-            this.width = 0;
-            this.height = 0;
             window.addEventListener('resize', function (e) {
                 this.windowWidth = window.innerWidth;
-                this.windowHeight = window.innerHeight;
             });
-            this.shapeKind = null;
-            this.shapeInited = false;
-            this.mouseX = 0;
-            this.mouseY = 0;
-            this.pmouseX = 0;
-            this.pmouseY = 0;
-            this.winMouseX = 0;
-            this.winMouseY = 0;
-            this.pwinMouseX = 0;
-            this.pwinMouseY = 0;
-            this.mouseButton = 0;
-            this.isMousePressed = false;
-            this.mouseIsPressed = false;
-            this.key = '';
-            this.keyCode = 0;
-            this.isKeyPressed = false;
-            this.keyIsPressed = false;
-            this.touchX = 0;
-            this.touchY = 0;
-            this.pWriters = [];
-            this.pixels = [];
-            this.curElement = null;
-            this.matrices = [[
-                    1,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0
-                ]];
-            this.settings = {
-                loop: true,
-                fill: false,
-                updateInterval: 0,
-                rectMode: constants.CORNER,
-                imageMode: constants.CORNER,
-                ellipseMode: constants.CENTER,
-                colorMode: constants.RGB,
-                maxC0: 255,
-                maxC1: 255,
-                maxC2: 255,
-                maxA: 255,
-                angleMode: constants.RADIANS,
-                tint: null
+            this.windowHeight = window.innerHeight;
+            window.addEventListener('resize', function (e) {
+                this.windowHeight = window.windowHeight;
+            });
+            this.width = 0;
+            this.height = 0;
+            this.remove = function () {
+                if (this._curElement) {
+                    if (this._timeout) {
+                        clearTimeout(this._timeout);
+                        this._loop = false;
+                    }
+                    for (var ev in this._events) {
+                        var pairs = this._events[ev];
+                        for (var i = 0; i < pairs.length; i++) {
+                            pairs[i][0].removeEventListener(ev, pairs[i][1]);
+                        }
+                    }
+                    if (this._isGlobal) {
+                        for (var method in p5.prototype) {
+                            delete window[method];
+                        }
+                        for (var prop in this) {
+                            if (this.hasOwnProperty(prop)) {
+                                delete window[prop];
+                            }
+                        }
+                        for (var constant in constants) {
+                            delete window[constant];
+                        }
+                    }
+                    var elt = this._curElement.elt;
+                    elt.parentNode.removeChild(elt);
+                }
             };
             this._startTime = new Date().getTime();
             this._userNode = node;
-            if (this._userNode) {
-                if (typeof this._userNode === 'string') {
-                    this._userNode = document.getElementById(this._userNode);
-                }
-            }
+            this._curElement = null;
             this._preloadCount = 0;
+            this._updateInterval = 0;
             this._isGlobal = false;
+            this._loop = true;
+            this.styles = [];
             this._defaultCanvasSize = {
                 width: 100,
                 height: 100
             };
-            this._frameRate = 0;
-            this._lastFrameTime = 0;
-            this._targetFrameRate = 60;
-            this._textLeading = 15;
-            this._textFont = 'sans-serif';
-            this._textSize = 12;
-            this._textStyle = constants.NORMAL;
-            this.styles = [];
-            this._bezierDetail = 20;
-            this._curveDetail = 20;
-            this._contourInited = false;
-            this._contourVertices = [];
             this._events = {
                 'mousemove': [],
                 'mousedown': [],
@@ -157,24 +130,114 @@ var core = function (require, shim, constants) {
                 'touchmove': [],
                 'touchend': []
             };
+            this._start = function () {
+                if (this._userNode) {
+                    if (typeof this._userNode === 'string') {
+                        this._userNode = document.getElementById(this._userNode);
+                    }
+                }
+                this.createCanvas(this._defaultCanvasSize.width, this._defaultCanvasSize.height, true);
+                var userPreload = this.preload || window.preload;
+                var context = this._isGlobal ? window : this;
+                if (userPreload) {
+                    context.loadJSON = function (path) {
+                        return context._preload('loadJSON', path);
+                    };
+                    context.loadStrings = function (path) {
+                        return context._preload('loadStrings', path);
+                    };
+                    context.loadXML = function (path) {
+                        return context._preload('loadXML', path);
+                    };
+                    context.loadImage = function (path) {
+                        return context._preload('loadImage', path);
+                    };
+                    userPreload();
+                    context.loadJSON = p5.prototype.loadJSON;
+                    context.loadStrings = p5.prototype.loadStrings;
+                    context.loadXML = p5.prototype.loadXML;
+                    context.loadImage = p5.prototype.loadImage;
+                    if (this._preloadCount === 0) {
+                        this._setup();
+                        this._runFrames();
+                        this._draw();
+                    }
+                } else {
+                    this._setup();
+                    this._runFrames();
+                    this._draw();
+                }
+            }.bind(this);
+            this._preload = function (func, path) {
+                var context = this._isGlobal ? window : this;
+                context._setProperty('_preloadCount', context._preloadCount + 1);
+                return p5.prototype[func].call(context, path, function (resp) {
+                    context._setProperty('_preloadCount', context._preloadCount - 1);
+                    if (context._preloadCount === 0) {
+                        context._setup();
+                        context._runFrames();
+                        context._draw();
+                    }
+                });
+            }.bind(this);
+            this._setup = function () {
+                var userSetup = this.setup || window.setup;
+                if (typeof userSetup === 'function') {
+                    userSetup();
+                }
+            }.bind(this);
+            this._draw = function () {
+                var now = new Date().getTime();
+                this._frameRate = 1000 / (now - this._lastFrameTime);
+                this._lastFrameTime = now;
+                var userDraw = this.draw || window.draw;
+                if (this._loop) {
+                    this._timeout = setTimeout(function () {
+                        window.requestDraw(this._draw.bind(this));
+                    }.bind(this), 1000 / this._targetFrameRate);
+                }
+                if (typeof userDraw === 'function') {
+                    userDraw();
+                }
+                this._curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+            }.bind(this);
+            this._runFrames = function () {
+                if (this._updateInterval) {
+                    clearInterval(this._updateInterval);
+                }
+                this._updateInterval = setInterval(function () {
+                    this._setProperty('frameCount', this.frameCount + 1);
+                }.bind(this), 1000 / this._targetFrameRate);
+            }.bind(this);
+            this._applyDefaults = function () {
+                this._curElement.context.fillStyle = '#FFFFFF';
+                this._curElement.context.strokeStyle = '#000000';
+                this._curElement.context.lineCap = constants.ROUND;
+            }.bind(this);
+            this._setProperty = function (prop, value) {
+                this[prop] = value;
+                if (this._isGlobal) {
+                    window[prop] = value;
+                }
+            }.bind(this);
             if (!sketch) {
                 this._isGlobal = true;
                 for (var method in p5.prototype) {
                     var ev = method.substring(2);
-                    if (this._events.hasOwnProperty(ev)) {
-                        var meth = p5.prototype[method].bind(this);
-                        window.addEventListener(ev, meth);
-                        this._events[ev].push([
-                            window,
-                            meth
-                        ]);
-                    } else {
-                        window[method] = p5.prototype[method].bind(this);
+                    if (!this._events.hasOwnProperty(ev)) {
+                        if (typeof p5.prototype[method] === 'function') {
+                            window[method] = p5.prototype[method].bind(this);
+                        }
                     }
                 }
                 for (var prop in this) {
                     if (this.hasOwnProperty(prop)) {
                         window[prop] = this[prop];
+                    }
+                }
+                for (var p in p5.prototype) {
+                    if (p5.prototype.hasOwnProperty(p) && typeof p5.prototype[p] !== 'function') {
+                        window[p] = this[p];
                     }
                 }
                 for (var constant in constants) {
@@ -189,17 +252,16 @@ var core = function (require, shim, constants) {
                         p5.prototype[c] = constants[c];
                     }
                 }
-                var ctx = this._userNode ? this._userNode : window;
-                for (var e in this._events) {
-                    var f = this['on' + e];
-                    if (f) {
-                        var m = f.bind(this);
-                        ctx.addEventListener(e, m);
-                        this._events[e].push([
-                            ctx,
-                            m
-                        ]);
-                    }
+            }
+            for (var e in this._events) {
+                var f = this['on' + e];
+                if (f) {
+                    var m = f.bind(this);
+                    window.addEventListener(e, m);
+                    this._events[e].push([
+                        window,
+                        m
+                    ]);
                 }
             }
             if (document.readyState === 'complete') {
@@ -208,122 +270,647 @@ var core = function (require, shim, constants) {
                 window.addEventListener('load', this._start.bind(this), false);
             }
         };
-        p5.prototype._start = function () {
-            this.createCanvas(this._defaultCanvasSize.width, this._defaultCanvasSize.height, true);
-            var userPreload = this.preload || window.preload;
-            var context = this._isGlobal ? window : this;
-            if (userPreload) {
-                context.loadJSON = function (path) {
-                    return context._preload('loadJSON', path);
-                };
-                context.loadStrings = function (path) {
-                    return context._preload('loadStrings', path);
-                };
-                context.loadXML = function (path) {
-                    return context._preload('loadXML', path);
-                };
-                context.loadImage = function (path) {
-                    return context._preload('loadImage', path);
-                };
-                userPreload();
-                context.loadJSON = p5.prototype.loadJSON;
-                context.loadStrings = p5.prototype.loadStrings;
-                context.loadXML = p5.prototype.loadXML;
-                context.loadImage = p5.prototype.loadImage;
-                if (this._preloadCount === 0) {
-                    this._setup();
-                    this._runFrames();
-                    this._draw();
-                }
-            } else {
-                this._setup();
-                this._runFrames();
-                this._draw();
+        for (var c in constants) {
+            if (constants.hasOwnProperty(c)) {
+                p5.prototype[c] = constants[c];
             }
-        };
-        p5.prototype._preload = function (func, path) {
-            var context = this._isGlobal ? window : this;
-            context._setProperty('_preloadCount', context._preloadCount + 1);
-            return p5.prototype[func].call(context, path, function (resp) {
-                context._setProperty('_preloadCount', context._preloadCount - 1);
-                if (context._preloadCount === 0) {
-                    context._setup();
-                    context._runFrames();
-                    context._draw();
-                }
-            });
-        };
-        p5.prototype._setup = function () {
-            var userSetup = this.setup || window.setup;
-            if (typeof userSetup === 'function') {
-                userSetup();
-            }
-        };
-        p5.prototype._draw = function () {
-            var now = new Date().getTime();
-            this._frameRate = 1000 / (now - this._lastFrameTime);
-            this._lastFrameTime = now;
-            var userDraw = this.draw || window.draw;
-            if (this.settings.loop) {
-                this._timeout = setTimeout(function () {
-                    window.requestDraw(this._draw.bind(this));
-                }.bind(this), 1000 / this._targetFrameRate);
-            }
-            if (typeof userDraw === 'function') {
-                userDraw();
-            }
-            this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
-        };
-        p5.prototype._runFrames = function () {
-            if (this.updateInterval) {
-                clearInterval(this.updateInterval);
-            }
-            this.updateInterval = setInterval(function () {
-                this._setProperty('frameCount', this.frameCount + 1);
-            }.bind(this), 1000 / this._targetFrameRate);
-        };
-        p5.prototype._applyDefaults = function () {
-            this.curElement.context.fillStyle = '#FFFFFF';
-            this.curElement.context.strokeStyle = '#000000';
-            this.curElement.context.lineCap = constants.ROUND;
-        };
-        p5.prototype._setProperty = function (prop, value) {
-            this[prop] = value;
-            if (this._isGlobal) {
-                window[prop] = value;
-            }
-        };
-        p5.prototype.remove = function () {
-            if (this.curElement) {
-                if (this._timeout) {
-                    clearTimeout(this._timeout);
-                    this.settings.loop = false;
-                }
-                for (var ev in this._events) {
-                    var pairs = this._events[ev];
-                    for (var i = 0; i < pairs.length; i++) {
-                        pairs[i][0].removeEventListener(ev, pairs[i][1]);
-                    }
-                }
-                if (this._isGlobal) {
-                    for (var method in p5.prototype) {
-                        delete window[method];
-                    }
-                    for (var prop in this) {
-                        if (this.hasOwnProperty(prop)) {
-                            delete window[prop];
-                        }
-                    }
-                    for (var constant in constants) {
-                        delete window[constant];
-                    }
-                }
-                var elt = this.curElement.elt;
-                elt.parentNode.removeChild(elt);
-            }
-        };
+        }
         return p5;
     }({}, shim, constants);
+var p5Element = function (require, core) {
+        var p5 = core;
+        p5.Element = function (elt, pInst) {
+            this.elt = elt;
+            this.pInst = pInst;
+            this.width = this.elt.offsetWidth;
+            this.height = this.elt.offsetHeight;
+            if (elt instanceof HTMLCanvasElement && this.pInst) {
+                this.context = elt.getContext('2d');
+                this.pInst._setProperty('canvas', elt);
+            }
+        };
+        p5.Element.prototype.parent = function (parent) {
+            if (typeof parent === 'string') {
+                parent = document.getElementById(parent);
+            }
+            parent.appendChild(this.elt);
+        };
+        p5.Element.prototype.html = function (html) {
+            this.elt.innerHTML = html;
+        };
+        p5.Element.prototype.position = function (x, y) {
+            this.elt.style.position = 'absolute';
+            this.elt.style.left = x + 'px';
+            this.elt.style.top = y + 'px';
+        };
+        p5.Element.prototype.style = function (s) {
+            this.elt.style.cssText += s;
+        };
+        p5.Element.prototype.id = function (id) {
+            this.elt.id = id;
+        };
+        p5.Element.prototype.class = function (c) {
+            this.elt.className += ' ' + c;
+        };
+        p5.Element.prototype.mousePressed = function (fxn) {
+            attachListener('click', fxn, this);
+        };
+        p5.Element.prototype.mouseOver = function (fxn) {
+            attachListener('mouseover', fxn, this);
+        };
+        p5.Element.prototype.mouseOut = function (fxn) {
+            attachListener('mouseout', fxn, this);
+        };
+        function attachListener(ev, fxn, ctx) {
+            var _this = ctx;
+            var f = function (e) {
+                fxn(e, _this);
+            };
+            ctx.elt.addEventListener(ev, f, false);
+            if (ctx.pInst) {
+                ctx.pInst._events[ev].push([
+                    ctx.elt,
+                    f
+                ]);
+            }
+        }
+        return p5.Element;
+    }({}, core);
+var canvas = function (require, constants) {
+        var constants = constants;
+        return {
+            modeAdjust: function (a, b, c, d, mode) {
+                if (mode === constants.CORNER) {
+                    return {
+                        x: a,
+                        y: b,
+                        w: c,
+                        h: d
+                    };
+                } else if (mode === constants.CORNERS) {
+                    return {
+                        x: a,
+                        y: b,
+                        w: c - a,
+                        h: d - b
+                    };
+                } else if (mode === constants.RADIUS) {
+                    return {
+                        x: a - c,
+                        y: b - d,
+                        w: 2 * c,
+                        h: 2 * d
+                    };
+                } else if (mode === constants.CENTER) {
+                    return {
+                        x: a - c * 0.5,
+                        y: b - d * 0.5,
+                        w: c,
+                        h: d
+                    };
+                }
+            },
+            arcModeAdjust: function (a, b, c, d, mode) {
+                if (mode === constants.CORNER) {
+                    return {
+                        x: a + c * 0.5,
+                        y: b + d * 0.5,
+                        w: c,
+                        h: d
+                    };
+                } else if (mode === constants.CORNERS) {
+                    return {
+                        x: a,
+                        y: b,
+                        w: c + a,
+                        h: d + b
+                    };
+                } else if (mode === constants.RADIUS) {
+                    return {
+                        x: a,
+                        y: b,
+                        w: 2 * c,
+                        h: 2 * d
+                    };
+                } else if (mode === constants.CENTER) {
+                    return {
+                        x: a,
+                        y: b,
+                        w: c,
+                        h: d
+                    };
+                }
+            }
+        };
+    }({}, constants);
+var filters = function (require) {
+        'use strict';
+        var Filters = {};
+        Filters._toPixels = function (canvas) {
+            if (canvas instanceof ImageData) {
+                return canvas.data;
+            } else {
+                return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+            }
+        };
+        Filters._getARGB = function (data, i) {
+            var offset = i * 4;
+            return data[offset + 3] << 24 & 4278190080 | data[offset] << 16 & 16711680 | data[offset + 1] << 8 & 65280 | data[offset + 2] & 255;
+        };
+        Filters._setPixels = function (pixels, data) {
+            var offset = 0;
+            for (var i = 0, al = pixels.length; i < al; i++) {
+                offset = i * 4;
+                pixels[offset + 0] = (data[i] & 16711680) >>> 16;
+                pixels[offset + 1] = (data[i] & 65280) >>> 8;
+                pixels[offset + 2] = data[i] & 255;
+                pixels[offset + 3] = (data[i] & 4278190080) >>> 24;
+            }
+        };
+        Filters._toImageData = function (canvas) {
+            if (canvas instanceof ImageData) {
+                return canvas;
+            } else {
+                return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+            }
+        };
+        Filters._createImageData = function (width, height) {
+            Filters._tmpCanvas = document.createElement('canvas');
+            Filters._tmpCtx = Filters._tmpCanvas.getContext('2d');
+            return this._tmpCtx.createImageData(width, height);
+        };
+        Filters.apply = function (canvas, func, filterParam) {
+            var ctx = canvas.getContext('2d');
+            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            var newImageData = func(imageData, filterParam);
+            if (newImageData instanceof ImageData) {
+                ctx.putImageData(newImageData, 0, 0, 0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.putImageData(imageData, 0, 0, 0, 0, canvas.width, canvas.height);
+            }
+        };
+        Filters.threshold = function (canvas, level) {
+            var pixels = Filters._toPixels(canvas);
+            if (level === undefined) {
+                level = 0.5;
+            }
+            var thresh = Math.floor(level * 255);
+            for (var i = 0; i < pixels.length; i += 4) {
+                var r = pixels[i];
+                var g = pixels[i + 1];
+                var b = pixels[i + 2];
+                var grey = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                var val;
+                if (grey >= thresh) {
+                    val = 255;
+                } else {
+                    val = 0;
+                }
+                pixels[i] = pixels[i + 1] = pixels[i + 2] = val;
+            }
+        };
+        Filters.gray = function (canvas) {
+            var pixels = Filters._toPixels(canvas);
+            for (var i = 0; i < pixels.length; i += 4) {
+                var r = pixels[i];
+                var g = pixels[i + 1];
+                var b = pixels[i + 2];
+                var gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                pixels[i] = pixels[i + 1] = pixels[i + 2] = gray;
+            }
+        };
+        Filters.opaque = function (canvas) {
+            var pixels = Filters._toPixels(canvas);
+            for (var i = 0; i < pixels.length; i += 4) {
+                pixels[i + 3] = 255;
+            }
+            return pixels;
+        };
+        Filters.invert = function (canvas) {
+            var pixels = Filters._toPixels(canvas);
+            for (var i = 0; i < pixels.length; i += 4) {
+                pixels[i] = 255 - pixels[i];
+                pixels[i + 1] = 255 - pixels[i + 1];
+                pixels[i + 2] = 255 - pixels[i + 2];
+            }
+        };
+        Filters.posterize = function (canvas, level) {
+            var pixels = Filters._toPixels(canvas);
+            if (level < 2 || level > 255) {
+                throw new Error('Level must be greater than 2 and less than 255 for posterize');
+            }
+            var levels1 = level - 1;
+            for (var i = 0; i < pixels.length; i += 4) {
+                var rlevel = pixels[i];
+                var glevel = pixels[i + 1];
+                var blevel = pixels[i + 2];
+                pixels[i] = (rlevel * level >> 8) * 255 / levels1;
+                pixels[i + 1] = (glevel * level >> 8) * 255 / levels1;
+                pixels[i + 2] = (blevel * level >> 8) * 255 / levels1;
+            }
+        };
+        Filters.dilate = function (canvas) {
+            var pixels = Filters._toPixels(canvas);
+            var currIdx = 0;
+            var maxIdx = pixels.length ? pixels.length / 4 : 0;
+            var out = new Int32Array(maxIdx);
+            var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
+            var idxRight, idxLeft, idxUp, idxDown, colRight, colLeft, colUp, colDown, lumRight, lumLeft, lumUp, lumDown;
+            while (currIdx < maxIdx) {
+                currRowIdx = currIdx;
+                maxRowIdx = currIdx + canvas.width;
+                while (currIdx < maxRowIdx) {
+                    colOrig = colOut = Filters._getARGB(pixels, currIdx);
+                    idxLeft = currIdx - 1;
+                    idxRight = currIdx + 1;
+                    idxUp = currIdx - canvas.width;
+                    idxDown = currIdx + canvas.width;
+                    if (idxLeft < currRowIdx) {
+                        idxLeft = currIdx;
+                    }
+                    if (idxRight >= maxRowIdx) {
+                        idxRight = currIdx;
+                    }
+                    if (idxUp < 0) {
+                        idxUp = 0;
+                    }
+                    if (idxDown >= maxIdx) {
+                        idxDown = currIdx;
+                    }
+                    colUp = Filters._getARGB(pixels, idxUp);
+                    colLeft = Filters._getARGB(pixels, idxLeft);
+                    colDown = Filters._getARGB(pixels, idxDown);
+                    colRight = Filters._getARGB(pixels, idxRight);
+                    currLum = 77 * (colOrig >> 16 & 255) + 151 * (colOrig >> 8 & 255) + 28 * (colOrig & 255);
+                    lumLeft = 77 * (colLeft >> 16 & 255) + 151 * (colLeft >> 8 & 255) + 28 * (colLeft & 255);
+                    lumRight = 77 * (colRight >> 16 & 255) + 151 * (colRight >> 8 & 255) + 28 * (colRight & 255);
+                    lumUp = 77 * (colUp >> 16 & 255) + 151 * (colUp >> 8 & 255) + 28 * (colUp & 255);
+                    lumDown = 77 * (colDown >> 16 & 255) + 151 * (colDown >> 8 & 255) + 28 * (colDown & 255);
+                    if (lumLeft > currLum) {
+                        colOut = colLeft;
+                        currLum = lumLeft;
+                    }
+                    if (lumRight > currLum) {
+                        colOut = colRight;
+                        currLum = lumRight;
+                    }
+                    if (lumUp > currLum) {
+                        colOut = colUp;
+                        currLum = lumUp;
+                    }
+                    if (lumDown > currLum) {
+                        colOut = colDown;
+                        currLum = lumDown;
+                    }
+                    out[currIdx++] = colOut;
+                }
+            }
+            Filters._setPixels(pixels, out);
+        };
+        Filters.erode = function (canvas) {
+            var pixels = Filters._toPixels(canvas);
+            var currIdx = 0;
+            var maxIdx = pixels.length ? pixels.length / 4 : 0;
+            var out = new Int32Array(maxIdx);
+            var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
+            var idxRight, idxLeft, idxUp, idxDown, colRight, colLeft, colUp, colDown, lumRight, lumLeft, lumUp, lumDown;
+            while (currIdx < maxIdx) {
+                currRowIdx = currIdx;
+                maxRowIdx = currIdx + canvas.width;
+                while (currIdx < maxRowIdx) {
+                    colOrig = colOut = Filters._getARGB(pixels, currIdx);
+                    idxLeft = currIdx - 1;
+                    idxRight = currIdx + 1;
+                    idxUp = currIdx - canvas.width;
+                    idxDown = currIdx + canvas.width;
+                    if (idxLeft < currRowIdx) {
+                        idxLeft = currIdx;
+                    }
+                    if (idxRight >= maxRowIdx) {
+                        idxRight = currIdx;
+                    }
+                    if (idxUp < 0) {
+                        idxUp = 0;
+                    }
+                    if (idxDown >= maxIdx) {
+                        idxDown = currIdx;
+                    }
+                    colUp = Filters._getARGB(pixels, idxUp);
+                    colLeft = Filters._getARGB(pixels, idxLeft);
+                    colDown = Filters._getARGB(pixels, idxDown);
+                    colRight = Filters._getARGB(pixels, idxRight);
+                    currLum = 77 * (colOrig >> 16 & 255) + 151 * (colOrig >> 8 & 255) + 28 * (colOrig & 255);
+                    lumLeft = 77 * (colLeft >> 16 & 255) + 151 * (colLeft >> 8 & 255) + 28 * (colLeft & 255);
+                    lumRight = 77 * (colRight >> 16 & 255) + 151 * (colRight >> 8 & 255) + 28 * (colRight & 255);
+                    lumUp = 77 * (colUp >> 16 & 255) + 151 * (colUp >> 8 & 255) + 28 * (colUp & 255);
+                    lumDown = 77 * (colDown >> 16 & 255) + 151 * (colDown >> 8 & 255) + 28 * (colDown & 255);
+                    if (lumLeft < currLum) {
+                        colOut = colLeft;
+                        currLum = lumLeft;
+                    }
+                    if (lumRight < currLum) {
+                        colOut = colRight;
+                        currLum = lumRight;
+                    }
+                    if (lumUp < currLum) {
+                        colOut = colUp;
+                        currLum = lumUp;
+                    }
+                    if (lumDown < currLum) {
+                        colOut = colDown;
+                        currLum = lumDown;
+                    }
+                    out[currIdx++] = colOut;
+                }
+            }
+            Filters._setPixels(pixels, out);
+        };
+        var blurRadius;
+        var blurKernelSize;
+        var blurKernel;
+        var blurMult;
+        function buildBlurKernel(r) {
+            var radius = r * 3.5 | 0;
+            radius = radius < 1 ? 1 : radius < 248 ? radius : 248;
+            if (blurRadius !== radius) {
+                blurRadius = radius;
+                blurKernelSize = 1 + blurRadius << 1;
+                blurKernel = new Int32Array(blurKernelSize);
+                blurMult = new Array(blurKernelSize);
+                for (var l = 0; l < blurKernelSize; l++) {
+                    blurMult[l] = new Int32Array(256);
+                }
+                var bk, bki;
+                var bm, bmi;
+                for (var i = 1, radiusi = radius - 1; i < radius; i++) {
+                    blurKernel[radius + i] = blurKernel[radiusi] = bki = radiusi * radiusi;
+                    bm = blurMult[radius + i];
+                    bmi = blurMult[radiusi--];
+                    for (var j = 0; j < 256; j++) {
+                        bm[j] = bmi[j] = bki * j;
+                    }
+                }
+                bk = blurKernel[radius] = radius * radius;
+                bm = blurMult[radius];
+                for (var k = 0; k < 256; k++) {
+                    bm[k] = bk * k;
+                }
+            }
+        }
+        function blurRGB(canvas, radius) {
+            var pixels = Filters._toPixels(canvas);
+            var width = canvas.width;
+            var height = canvas.height;
+            var numPackedPixels = width * height;
+            var argb = new Int32Array(numPackedPixels);
+            for (var j = 0; j < numPackedPixels; j++) {
+                argb[j] = Filters._getARGB(pixels, j);
+            }
+            var sum, cr, cg, cb;
+            var read, ri, ym, ymi, bk0;
+            var r2 = new Int32Array(numPackedPixels);
+            var g2 = new Int32Array(numPackedPixels);
+            var b2 = new Int32Array(numPackedPixels);
+            var yi = 0;
+            buildBlurKernel(radius);
+            var x, y, i;
+            var bm;
+            for (y = 0; y < height; y++) {
+                for (x = 0; x < width; x++) {
+                    cb = cg = cr = sum = 0;
+                    read = x - blurRadius;
+                    if (read < 0) {
+                        bk0 = -read;
+                        read = 0;
+                    } else {
+                        if (read >= width) {
+                            break;
+                        }
+                        bk0 = 0;
+                    }
+                    for (i = bk0; i < blurKernelSize; i++) {
+                        if (read >= width) {
+                            break;
+                        }
+                        var c = argb[read + yi];
+                        bm = blurMult[i];
+                        cr += bm[(c & 16711680) >> 16];
+                        cg += bm[(c & 65280) >> 8];
+                        cb += bm[c & 255];
+                        sum += blurKernel[i];
+                        read++;
+                    }
+                    ri = yi + x;
+                    r2[ri] = cr / sum;
+                    g2[ri] = cg / sum;
+                    b2[ri] = cb / sum;
+                }
+                yi += width;
+            }
+            yi = 0;
+            ym = -blurRadius;
+            ymi = ym * width;
+            for (y = 0; y < height; y++) {
+                for (x = 0; x < width; x++) {
+                    cb = cg = cr = sum = 0;
+                    if (ym < 0) {
+                        bk0 = ri = -ym;
+                        read = x;
+                    } else {
+                        if (ym >= height) {
+                            break;
+                        }
+                        bk0 = 0;
+                        ri = ym;
+                        read = x + ymi;
+                    }
+                    for (i = bk0; i < blurKernelSize; i++) {
+                        if (ri >= height) {
+                            break;
+                        }
+                        bm = blurMult[i];
+                        cr += bm[r2[read]];
+                        cg += bm[g2[read]];
+                        cb += bm[b2[read]];
+                        sum += blurKernel[i];
+                        ri++;
+                        read += width;
+                    }
+                    argb[x + yi] = 4278190080 | cr / sum << 16 | cg / sum << 8 | cb / sum;
+                }
+                yi += width;
+                ymi += width;
+                ym++;
+            }
+            Filters._setPixels(pixels, argb);
+        }
+        Filters.blur = function (canvas, radius) {
+            blurRGB(canvas, radius);
+        };
+        return Filters;
+    }({});
+var p5Image = function (require, core, canvas, constants, filters) {
+        'use strict';
+        var p5 = core;
+        var canvas = canvas;
+        var constants = constants;
+        var Filters = filters;
+        p5.prototype._imageMode = constants.CORNER;
+        p5.prototype._tint = null;
+        p5.prototype.createImage = function (width, height) {
+            return new p5.Image(width, height);
+        };
+        p5.prototype.loadImage = function (path, callback) {
+            var img = new Image();
+            var pImg = new p5.Image(1, 1, this);
+            img.onload = function () {
+                pImg.width = pImg.canvas.width = img.width;
+                pImg.height = pImg.canvas.height = img.height;
+                pImg.canvas.getContext('2d').drawImage(img, 0, 0);
+                if (typeof callback !== 'undefined') {
+                    callback(pImg);
+                }
+            };
+            img.crossOrigin = 'Anonymous';
+            img.src = path;
+            return pImg;
+        };
+        p5.prototype.image = function (image, x, y, width, height) {
+            if (width === undefined) {
+                width = image.width;
+            }
+            if (height === undefined) {
+                height = image.height;
+            }
+            var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
+            if (this._tint) {
+                this._curElement.context.drawImage(this._getTintedImageCanvas(image), vals.x, vals.y, vals.w, vals.h);
+            } else {
+                this._curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
+            }
+        };
+        p5.prototype.tint = function () {
+            var c = this.getNormalizedColor(arguments);
+            this._tint = c;
+        };
+        p5.prototype.noTint = function () {
+            this._tint = null;
+        };
+        p5.prototype._getTintedImageCanvas = function (image) {
+            var pixels = Filters._toPixels(image.canvas);
+            var tmpCanvas = document.createElement('canvas');
+            tmpCanvas.width = image.canvas.width;
+            tmpCanvas.height = image.canvas.height;
+            var tmpCtx = tmpCanvas.getContext('2d');
+            var id = tmpCtx.createImageData(image.canvas.width, image.canvas.height);
+            var newPixels = id.data;
+            for (var i = 0; i < pixels.length; i += 4) {
+                var r = pixels[i];
+                var g = pixels[i + 1];
+                var b = pixels[i + 2];
+                var a = pixels[i + 3];
+                newPixels[i] = r * this._tint[0] / 255;
+                newPixels[i + 1] = g * this._tint[1] / 255;
+                newPixels[i + 2] = b * this._tint[2] / 255;
+                newPixels[i + 3] = a * this._tint[3] / 255;
+            }
+            tmpCtx.putImageData(id, 0, 0);
+            return tmpCanvas;
+        };
+        p5.prototype.imageMode = function (m) {
+            if (m === constants.CORNER || m === constants.CORNERS || m === constants.CENTER) {
+                this._imageMode = m;
+            }
+        };
+        p5.Image = function (width, height) {
+            this.width = width;
+            this.height = height;
+            this.canvas = document.createElement('canvas');
+            this.canvas.width = this.width;
+            this.canvas.height = this.height;
+            this.pixels = [];
+        };
+        p5.Image.prototype._setProperty = function (prop, value) {
+            this[prop] = value;
+        };
+        p5.Image.prototype.loadPixels = function () {
+            p5.prototype.loadPixels.call(this);
+        };
+        p5.Image.prototype.updatePixels = function (x, y, w, h) {
+            p5.prototype.updatePixels.call(this, x, y, w, h);
+        };
+        p5.Image.prototype.get = function (x, y, w, h) {
+            return p5.prototype.get.call(this, x, y, w, h);
+        };
+        p5.Image.prototype.set = function (x, y, imgOrCol) {
+            p5.prototype.set.call(this, x, y, imgOrCol);
+        };
+        p5.Image.prototype.resize = function (width, height) {
+            var tempCanvas = document.createElement('canvas');
+            tempCanvas.width = width;
+            tempCanvas.height = height;
+            tempCanvas.getContext('2d').drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, 0, 0, tempCanvas.width, tempCanvas.width);
+            this.canvas.width = this.width = width;
+            this.canvas.height = this.height = height;
+            this.canvas.getContext('2d').drawImage(tempCanvas, 0, 0, width, height, 0, 0, width, height);
+            if (this.pixels.length > 0) {
+                this.loadPixels();
+            }
+        };
+        p5.Image.prototype.copy = function () {
+            p5.prototype.copy.apply(this, arguments);
+        };
+        p5.Image.prototype.mask = function (p5Image) {
+            if (p5Image === undefined) {
+                p5Image = this;
+            }
+            var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
+            var copyArgs = [
+                    p5Image,
+                    0,
+                    0,
+                    p5Image.width,
+                    p5Image.height,
+                    0,
+                    0,
+                    this.width,
+                    this.height
+                ];
+            this.canvas.getContext('2d').globalCompositeOperation = 'destination-out';
+            this.copy.apply(this, copyArgs);
+            this.canvas.getContext('2d').globalCompositeOperation = currBlend;
+        };
+        p5.Image.prototype.filter = function (operation, value) {
+            Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
+        };
+        p5.Image.prototype.blend = function () {
+            p5.prototype.blend.apply(this, arguments);
+        };
+        p5.Image.prototype.save = function (extension) {
+            var mimeType;
+            switch (extension.toLowerCase()) {
+            case 'png':
+                mimeType = 'image/png';
+                break;
+            case 'jpeg':
+                mimeType = 'image/jpeg';
+                break;
+            case 'jpg':
+                mimeType = 'image/jpeg';
+                break;
+            default:
+                mimeType = 'image/png';
+                break;
+            }
+            if (mimeType !== undefined) {
+                var downloadMime = 'image/octet-stream';
+                var imageData = this.canvas.toDataURL(mimeType);
+                imageData = imageData.replace(mimeType, downloadMime);
+                window.location.href = imageData;
+            }
+        };
+        return p5.Image;
+    }({}, core, canvas, constants, filters);
 var polargeometry = function (require) {
         return {
             degreesToRadians: function (x) {
@@ -334,26 +921,32 @@ var polargeometry = function (require) {
             }
         };
     }({});
-var mathpvector = function (require, core, polargeometry, constants) {
+var p5Vector = function (require, core, polargeometry, constants) {
         'use strict';
         var p5 = core;
         var polarGeometry = polargeometry;
         var constants = constants;
         p5.prototype.createVector = function () {
-            return new PVector(this, arguments);
+            return new p5.Vector(this, arguments);
         };
-        function PVector() {
-            var nums = arguments;
+        p5.Vector = function () {
+            var x, y, z;
             if (arguments[0] instanceof p5) {
                 this.p5 = arguments[0];
-                nums = arguments[1];
+                x = arguments[1][0] || 0;
+                y = arguments[1][1] || 0;
+                z = arguments[1][2] || 0;
+            } else {
+                x = arguments[0] || 0;
+                y = arguments[1] || 0;
+                z = arguments[2] || 0;
             }
-            this.x = nums[0] || 0;
-            this.y = nums[1] || 0;
-            this.z = nums[2] || 0;
-        }
-        PVector.prototype.set = function (x, y, z) {
-            if (x instanceof PVector) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        };
+        p5.Vector.prototype.set = function (x, y, z) {
+            if (x instanceof p5.Vector) {
                 return this.set(x.x, x.y, x.z);
             }
             if (x instanceof Array) {
@@ -364,11 +957,19 @@ var mathpvector = function (require, core, polargeometry, constants) {
             this.z = z || 0;
             return this;
         };
-        PVector.prototype.get = function () {
-            return new PVector(this.x, this.y, this.z);
+        p5.Vector.prototype.get = function () {
+            if (this.p5) {
+                return new p5.Vector(this.p5, [
+                    this.x,
+                    this.y,
+                    this.z
+                ]);
+            } else {
+                return new p5.Vector(this.x, this.y, this.z);
+            }
         };
-        PVector.prototype.add = function (x, y, z) {
-            if (x instanceof PVector) {
+        p5.Vector.prototype.add = function (x, y, z) {
+            if (x instanceof p5.Vector) {
                 return this.add(x.x, x.y, x.z);
             }
             if (x instanceof Array) {
@@ -379,8 +980,8 @@ var mathpvector = function (require, core, polargeometry, constants) {
             this.z += z || 0;
             return this;
         };
-        PVector.prototype.sub = function (x, y, z) {
-            if (x instanceof PVector) {
+        p5.Vector.prototype.sub = function (x, y, z) {
+            if (x instanceof p5.Vector) {
                 return this.sub(x.x, x.y, x.z);
             }
             if (x instanceof Array) {
@@ -391,45 +992,53 @@ var mathpvector = function (require, core, polargeometry, constants) {
             this.z -= z || 0;
             return this;
         };
-        PVector.prototype.mult = function (n) {
+        p5.Vector.prototype.mult = function (n) {
             this.x *= n || 0;
             this.y *= n || 0;
             this.z *= n || 0;
             return this;
         };
-        PVector.prototype.div = function (n) {
+        p5.Vector.prototype.div = function (n) {
             this.x /= n;
             this.y /= n;
             this.z /= n;
             return this;
         };
-        PVector.prototype.mag = function () {
+        p5.Vector.prototype.mag = function () {
             return Math.sqrt(this.magSq());
         };
-        PVector.prototype.magSq = function () {
+        p5.Vector.prototype.magSq = function () {
             var x = this.x, y = this.y, z = this.z;
             return x * x + y * y + z * z;
         };
-        PVector.prototype.dot = function (x, y, z) {
-            if (x instanceof PVector) {
+        p5.Vector.prototype.dot = function (x, y, z) {
+            if (x instanceof p5.Vector) {
                 return this.dot(x.x, x.y, x.z);
             }
             return this.x * (x || 0) + this.y * (y || 0) + this.z * (z || 0);
         };
-        PVector.prototype.cross = function (v) {
+        p5.Vector.prototype.cross = function (v) {
             var x = this.y * v.z - this.z * v.y;
             var y = this.z * v.x - this.x * v.z;
             var z = this.x * v.y - this.y * v.x;
-            return new PVector(x, y, z);
+            if (this.p5) {
+                return new p5.Vector(this.p5, [
+                    x,
+                    y,
+                    z
+                ]);
+            } else {
+                return new p5.Vector(x, y, z);
+            }
         };
-        PVector.prototype.dist = function (v) {
+        p5.Vector.prototype.dist = function (v) {
             var d = v.get().sub(this);
             return d.mag();
         };
-        PVector.prototype.normalize = function () {
+        p5.Vector.prototype.normalize = function () {
             return this.div(this.mag());
         };
-        PVector.prototype.limit = function (l) {
+        p5.Vector.prototype.limit = function (l) {
             var mSq = this.magSq();
             if (mSq > l * l) {
                 this.div(Math.sqrt(mSq));
@@ -437,13 +1046,13 @@ var mathpvector = function (require, core, polargeometry, constants) {
             }
             return this;
         };
-        PVector.prototype.setMag = function (n) {
+        p5.Vector.prototype.setMag = function (n) {
             return this.normalize().mult(n);
         };
-        PVector.prototype.heading = function () {
+        p5.Vector.prototype.heading = function () {
             var h = Math.atan2(this.y, this.x);
             if (this.p5) {
-                if (this.p5.settings.angleMode === constants.RADIANS) {
+                if (this.p5._angleMode === constants.RADIANS) {
                     return h;
                 } else {
                     return polarGeometry.radiansToDegrees(h);
@@ -452,15 +1061,20 @@ var mathpvector = function (require, core, polargeometry, constants) {
                 return h;
             }
         };
-        PVector.prototype.rotate2D = function (a) {
+        p5.Vector.prototype.rotate = function (a) {
+            if (this.p5) {
+                if (this.p5._angleMode === constants.DEGREES) {
+                    a = polarGeometry.degreesToRadians(a);
+                }
+            }
             var newHeading = this.heading() + a;
             var mag = this.mag();
             this.x = Math.cos(newHeading) * mag;
             this.y = Math.sin(newHeading) * mag;
             return this;
         };
-        PVector.prototype.lerp = function (x, y, z, amt) {
-            if (x instanceof PVector) {
+        p5.Vector.prototype.lerp = function (x, y, z, amt) {
+            if (x instanceof p5.Vector) {
                 return this.lerp(x.x, x.y, x.z, y);
             }
             this.x += (x - this.x) * amt || 0;
@@ -468,54 +1082,97 @@ var mathpvector = function (require, core, polargeometry, constants) {
             this.z += (z - this.z) * amt || 0;
             return this;
         };
-        PVector.prototype.array = function () {
+        p5.Vector.prototype.array = function () {
             return [
                 this.x || 0,
                 this.y || 0,
                 this.z || 0
             ];
         };
-        PVector.fromAngle = function (angle) {
-            return new PVector(Math.cos(angle), Math.sin(angle), 0);
+        p5.Vector.fromAngle = function (angle) {
+            if (this.p5) {
+                if (this.p5._angleMode === constants.DEGREES) {
+                    angle = polarGeometry.degreesToRadians(angle);
+                }
+            }
+            if (this.p5) {
+                return new p5.Vector(this.p5, [
+                    Math.cos(angle),
+                    Math.sin(angle),
+                    0
+                ]);
+            } else {
+                return new p5.Vector(Math.cos(angle), Math.sin(angle), 0);
+            }
         };
-        PVector.random2D = function () {
-            return this.fromAngle(Math.random() * Math.PI * 2);
+        p5.Vector.random2D = function () {
+            var angle;
+            if (this.p5) {
+                if (this.p5._angleMode === constants.DEGREES) {
+                    angle = this.p5.random(360);
+                } else {
+                    angle = this.p5.random(constants.TWO_PI);
+                }
+            } else {
+                angle = Math.random() * Math.PI * 2;
+            }
+            return this.fromAngle(angle);
         };
-        PVector.random3D = function () {
-            var angle = Math.random() * Math.PI * 2;
-            var vz = Math.random() * 2 - 1;
+        p5.Vector.random3D = function () {
+            var angle, vz;
+            if (this.p5) {
+                angle = this.p5.random(0, constants.TWO_PI);
+                vz = this.p5.random(-1, 1);
+            } else {
+                angle = Math.random() * Math.PI * 2;
+                vz = Math.random() * 2 - 1;
+            }
             var vx = Math.sqrt(1 - vz * vz) * Math.cos(angle);
             var vy = Math.sqrt(1 - vz * vz) * Math.sin(angle);
-            return new PVector(vx, vy, vz);
+            if (this.p5) {
+                return new p5.Vector(this.p5, [
+                    vx,
+                    vy,
+                    vz
+                ]);
+            } else {
+                return new p5.Vector(vx, vy, vz);
+            }
         };
-        PVector.add = function (v1, v2) {
+        p5.Vector.add = function (v1, v2) {
             return v1.get().add(v2);
         };
-        PVector.sub = function (v1, v2) {
+        p5.Vector.sub = function (v1, v2) {
             return v1.get().sub(v2);
         };
-        PVector.mult = function (v, n) {
+        p5.Vector.mult = function (v, n) {
             return v.get().mult(n);
         };
-        PVector.div = function (v, n) {
+        p5.Vector.div = function (v, n) {
             return v.get().div(n);
         };
-        PVector.dot = function (v1, v2) {
+        p5.Vector.dot = function (v1, v2) {
             return v1.dot(v2);
         };
-        PVector.cross = function (v1, v2) {
+        p5.Vector.cross = function (v1, v2) {
             return v1.cross(v2);
         };
-        PVector.dist = function (v1, v2) {
+        p5.Vector.dist = function (v1, v2) {
             return v1.dist(v2);
         };
-        PVector.lerp = function (v1, v2, amt) {
+        p5.Vector.lerp = function (v1, v2, amt) {
             return v1.get().lerp(v2, amt);
         };
-        PVector.angleBetween = function (v1, v2) {
-            return Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
+        p5.Vector.angleBetween = function (v1, v2) {
+            var angle = Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
+            if (this.p5) {
+                if (this.p5._angleMode === constants.DEGREES) {
+                    angle = polarGeometry.radiansToDegrees(angle);
+                }
+            }
+            return angle;
         };
-        return PVector;
+        return p5.Vector;
     }({}, core, polargeometry, constants);
 var colorcreating_reading = function (require, core) {
         'use strict';
@@ -589,46 +1246,51 @@ var colorsetting = function (require, core, constants) {
         'use strict';
         var p5 = core;
         var constants = constants;
+        p5.prototype._colorMode = constants.RGB;
+        p5.prototype._maxC0 = 255;
+        p5.prototype._maxC1 = 255;
+        p5.prototype._maxC2 = 255;
+        p5.prototype._maxA = 255;
         p5.prototype.background = function () {
             var c = this.getNormalizedColor(arguments);
-            var curFill = this.curElement.context.fillStyle;
-            this.curElement.context.fillStyle = this.getCSSRGBAColor(c);
-            this.curElement.context.fillRect(0, 0, this.width, this.height);
-            this.curElement.context.fillStyle = curFill;
+            var curFill = this._curElement.context.fillStyle;
+            this._curElement.context.fillStyle = this.getCSSRGBAColor(c);
+            this._curElement.context.fillRect(0, 0, this.width, this.height);
+            this._curElement.context.fillStyle = curFill;
         };
         p5.prototype.clear = function () {
-            this.curElement.context.clearRect(0, 0, this.width, this.height);
+            this._curElement.context.clearRect(0, 0, this.width, this.height);
         };
         p5.prototype.colorMode = function () {
             if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
-                this.settings.colorMode = arguments[0];
+                this._colorMode = arguments[0];
             }
             if (arguments.length === 2) {
-                this.settings.maxC0 = arguments[1];
-                this.settings.maxC1 = arguments[1];
-                this.settings.maxC2 = arguments[1];
+                this._maxC0 = arguments[1];
+                this._maxC1 = arguments[1];
+                this._maxC2 = arguments[1];
             } else if (arguments.length > 2) {
-                this.settings.maxC0 = arguments[1];
-                this.settings.maxC1 = arguments[2];
-                this.settings.maxC2 = arguments[3];
+                this._maxC0 = arguments[1];
+                this._maxC1 = arguments[2];
+                this._maxC2 = arguments[3];
             }
             if (arguments.length === 5) {
-                this.settings.maxA = arguments[4];
+                this._maxA = arguments[4];
             }
         };
         p5.prototype.fill = function () {
             var c = this.getNormalizedColor(arguments);
-            this.curElement.context.fillStyle = this.getCSSRGBAColor(c);
+            this._curElement.context.fillStyle = this.getCSSRGBAColor(c);
         };
         p5.prototype.noFill = function () {
-            this.curElement.context.fillStyle = 'rgba(0,0,0,0)';
+            this._curElement.context.fillStyle = 'rgba(0,0,0,0)';
         };
         p5.prototype.noStroke = function () {
-            this.curElement.context.strokeStyle = 'rgba(0,0,0,0)';
+            this._curElement.context.strokeStyle = 'rgba(0,0,0,0)';
         };
         p5.prototype.stroke = function () {
             var c = this.getNormalizedColor(arguments);
-            this.curElement.context.strokeStyle = this.getCSSRGBAColor(c);
+            this._curElement.context.strokeStyle = this.getCSSRGBAColor(c);
         };
         p5.prototype.getNormalizedColor = function (args) {
             var r, g, b, a, rgba;
@@ -637,16 +1299,16 @@ var colorsetting = function (require, core, constants) {
                 r = _args[0];
                 g = _args[1];
                 b = _args[2];
-                a = typeof _args[3] === 'number' ? _args[3] : this.settings.maxA;
+                a = typeof _args[3] === 'number' ? _args[3] : this._maxA;
             } else {
                 r = g = b = _args[0];
-                a = typeof _args[1] === 'number' ? _args[1] : this.settings.maxA;
+                a = typeof _args[1] === 'number' ? _args[1] : this._maxA;
             }
-            r *= 255 / this.settings.maxC0;
-            g *= 255 / this.settings.maxC1;
-            b *= 255 / this.settings.maxC2;
-            a *= 255 / this.settings.maxA;
-            if (this.settings.colorMode === constants.HSB) {
+            r *= 255 / this._maxC0;
+            g *= 255 / this._maxC1;
+            b *= 255 / this._maxC2;
+            a *= 255 / this._maxA;
+            if (this._colorMode === constants.HSB) {
                 rgba = hsv2rgb(r, g, b).concat(a);
             } else {
                 rgba = [
@@ -912,8 +1574,19 @@ var inputmouse = function (require, core, constants) {
         'use strict';
         var p5 = core;
         var constants = constants;
+        p5.prototype.mouseX = 0;
+        p5.prototype.mouseY = 0;
+        p5.prototype.pmouseX = 0;
+        p5.prototype.pmouseY = 0;
+        p5.prototype.winMouseX = 0;
+        p5.prototype.winMouseY = 0;
+        p5.prototype.pwinMouseX = 0;
+        p5.prototype.pwinMouseY = 0;
+        p5.prototype.mouseButton = 0;
+        p5.prototype.isMousePressed = false;
+        p5.prototype.mouseIsPressed = false;
         p5.prototype.updateMouseCoords = function (e) {
-            var mousePos = getMousePos(this.curElement.elt, e);
+            var mousePos = getMousePos(this._curElement.elt, e);
             this._setProperty('pmouseX', this.mouseX);
             this._setProperty('pmouseY', this.mouseY);
             this._setProperty('mouseX', mousePos.x);
@@ -945,8 +1618,12 @@ var inputmouse = function (require, core, constants) {
             if (!this.isMousePressed && typeof context.mouseMoved === 'function') {
                 context.mouseMoved(e);
             }
-            if (this.isMousePressed && typeof context.mouseDragged === 'function') {
-                context.mouseDragged(e);
+            if (this.isMousePressed) {
+                if (typeof context.mouseDragged === 'function') {
+                    context.mouseDragged(e);
+                } else if (typeof context.touchMoved === 'function') {
+                    context.touchMoved(e);
+                }
             }
         };
         p5.prototype.onmousedown = function (e) {
@@ -956,6 +1633,8 @@ var inputmouse = function (require, core, constants) {
             this.setMouseButton(e);
             if (typeof context.mousePressed === 'function') {
                 context.mousePressed(e);
+            } else if (typeof context.touchStarted === 'function') {
+                context.touchStarted(e);
             }
         };
         p5.prototype.onmouseup = function (e) {
@@ -964,9 +1643,11 @@ var inputmouse = function (require, core, constants) {
             this._setProperty('mouseIsPressed', false);
             if (typeof context.mouseReleased === 'function') {
                 context.mouseReleased(e);
+            } else if (typeof context.touchEnded === 'function') {
+                context.touchEnded(e);
             }
         };
-        p5.prototype.onmouseclick = function (e) {
+        p5.prototype.onclick = function (e) {
             var context = this._isGlobal ? window : this;
             if (typeof context.mouseClicked === 'function') {
                 context.mouseClicked(e);
@@ -983,6 +1664,8 @@ var inputmouse = function (require, core, constants) {
 var inputtouch = function (require, core) {
         'use strict';
         var p5 = core;
+        p5.prototype.touchX = 0;
+        p5.prototype.touchY = 0;
         p5.prototype.setTouchPoints = function (e) {
             var context = this._isGlobal ? window : this;
             context._setProperty('touchX', e.changedTouches[0].pageX);
@@ -1003,6 +1686,8 @@ var inputtouch = function (require, core) {
             if (typeof context.touchStarted === 'function') {
                 e.preventDefault();
                 context.touchStarted(e);
+            } else if (typeof context.mousePressed === 'function') {
+                context.mousePressed(e);
             }
         };
         p5.prototype.ontouchmove = function (e) {
@@ -1011,6 +1696,8 @@ var inputtouch = function (require, core) {
             if (typeof context.touchMoved === 'function') {
                 e.preventDefault();
                 context.touchMoved(e);
+            } else if (typeof context.mouseDragged === 'function') {
+                context.mouseDragged(e);
             }
         };
         p5.prototype.ontouchend = function (e) {
@@ -1019,107 +1706,14 @@ var inputtouch = function (require, core) {
             if (typeof context.touchEnded === 'function') {
                 e.preventDefault();
                 context.touchEnded(e);
+            } else if (typeof context.mouseReleased === 'function') {
+                context.mouseReleased(e);
             }
         };
         return p5;
     }({}, core);
-var dompelement = function (require, core, constants) {
+var dommanipulate = function (require, core, inputmouse, inputtouch) {
         var p5 = core;
-        var constants = constants;
-        function PElement(elt, pInst) {
-            this.elt = elt;
-            this.pInst = pInst;
-            this.width = this.elt.offsetWidth;
-            this.height = this.elt.offsetHeight;
-            if (elt instanceof HTMLCanvasElement && this.pInst) {
-                this.context = elt.getContext('2d');
-                this.pInst._setProperty('canvas', elt);
-            }
-        }
-        PElement.prototype.parent = function (parent) {
-            if (typeof parent === 'string') {
-                parent = document.getElementById(parent);
-            }
-            parent.appendChild(this.elt);
-        };
-        PElement.prototype.html = function (html) {
-            this.elt.innerHTML = html;
-        };
-        PElement.prototype.position = function (x, y) {
-            this.elt.style.position = 'absolute';
-            this.elt.style.left = x + 'px';
-            this.elt.style.top = y + 'px';
-        };
-        PElement.prototype.size = function (w, h) {
-            var aW = w;
-            var aH = h;
-            var AUTO = constants.AUTO;
-            if (aW !== AUTO || aH !== AUTO) {
-                if (aW === AUTO) {
-                    aW = h * this.elt.width / this.elt.height;
-                } else if (aH === AUTO) {
-                    aH = w * this.elt.height / this.elt.width;
-                }
-                if (this.elt instanceof HTMLCanvasElement) {
-                    this.elt.setAttribute('width', aW);
-                    this.elt.setAttribute('height', aH);
-                } else {
-                    this.elt.style.width = aW;
-                    this.elt.style.height = aH;
-                }
-                this.width = this.elt.offsetWidth;
-                this.height = this.elt.offsetHeight;
-                if (this.pInst) {
-                    if (this.pInst.curElement.elt === this.elt) {
-                        this.pInst._setProperty('width', this.elt.offsetWidth);
-                        this.pInst._setProperty('height', this.elt.offsetHeight);
-                    }
-                }
-            }
-        };
-        PElement.prototype.style = function (s) {
-            this.elt.style.cssText += s;
-        };
-        PElement.prototype.id = function (id) {
-            this.elt.id = id;
-        };
-        PElement.prototype.class = function (c) {
-            this.elt.className = c;
-        };
-        PElement.prototype.show = function () {
-            this.elt.style.display = 'block';
-        };
-        PElement.prototype.hide = function () {
-            this.elt.style.display = 'none';
-        };
-        PElement.prototype.mousePressed = function (fxn) {
-            attachListener('click', fxn, this);
-        };
-        PElement.prototype.mouseOver = function (fxn) {
-            attachListener('mouseover', fxn, this);
-        };
-        PElement.prototype.mouseOut = function (fxn) {
-            attachListener('mouseout', fxn, this);
-        };
-        function attachListener(ev, fxn, ctx) {
-            var _this = ctx;
-            var f = function (e) {
-                fxn(e, _this);
-            };
-            ctx.elt.addEventListener(ev, f, false);
-            if (ctx.pInst) {
-                ctx.pInst._events[ev].push([
-                    ctx.elt,
-                    f
-                ]);
-            }
-        }
-        p5.PElement = PElement;
-        return PElement;
-    }({}, core, constants);
-var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement) {
-        var p5 = core;
-        var PElement = dompelement;
         p5.prototype.createCanvas = function (w, h, isDefault) {
             var c = document.createElement('canvas');
             c.setAttribute('width', w);
@@ -1137,7 +1731,7 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             } else {
                 document.body.appendChild(c);
             }
-            var cnv = new PElement(c, this);
+            var cnv = new p5.Element(c, this);
             this.context(cnv);
             this._applyDefaults();
             return cnv;
@@ -1147,7 +1741,7 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             if (typeof e === 'string' || e instanceof String) {
                 var elt = document.getElementById(e);
                 if (elt) {
-                    var pe = new PElement(elt, this);
+                    var pe = new p5.Element(elt, this);
                     obj = pe;
                 } else {
                     obj = null;
@@ -1156,7 +1750,7 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 obj = e;
             }
             if (typeof obj !== 'undefined') {
-                this.curElement = obj;
+                this._curElement = obj;
                 this._setProperty('width', obj.elt.offsetWidth);
                 this._setProperty('height', obj.elt.offsetHeight);
                 var p = this;
@@ -1166,13 +1760,13 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 window.onblur = function () {
                     p._setProperty('focused', false);
                 };
-                if (typeof this.curElement.context !== 'undefined') {
-                    this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+                if (typeof this._curElement.context !== 'undefined') {
+                    this._curElement.context.setTransform(1, 0, 0, 1, 0, 0);
                 }
             }
         };
         return p5;
-    }({}, core, inputmouse, inputtouch, dompelement);
+    }({}, core, inputmouse, inputtouch);
 var environment = function (require, core, constants) {
         'use strict';
         var p5 = core;
@@ -1185,9 +1779,12 @@ var environment = function (require, core, constants) {
                 C.TEXT,
                 C.WAIT
             ];
+        p5.prototype._frameRate = 0;
+        p5.prototype._lastFrameTime = 0;
+        p5.prototype._targetFrameRate = 60;
         p5.prototype.cursor = function (type, x, y) {
             var cursor = 'auto';
-            var canvas = this.curElement.elt;
+            var canvas = this._curElement.elt;
             if (standardCursors.indexOf(type) > -1) {
                 cursor = type;
             } else if (typeof type === 'string') {
@@ -1221,467 +1818,15 @@ var environment = function (require, core, constants) {
             return this.frameRate(fps);
         };
         p5.prototype.noCursor = function () {
-            this.curElement.elt.style.cursor = 'none';
+            this._curElement.elt.style.cursor = 'none';
         };
         return p5;
     }({}, core, constants);
-var canvas = function (require, constants) {
-        var constants = constants;
-        return {
-            modeAdjust: function (a, b, c, d, mode) {
-                if (mode === constants.CORNER) {
-                    return {
-                        x: a,
-                        y: b,
-                        w: c,
-                        h: d
-                    };
-                } else if (mode === constants.CORNERS) {
-                    return {
-                        x: a,
-                        y: b,
-                        w: c - a,
-                        h: d - b
-                    };
-                } else if (mode === constants.RADIUS) {
-                    return {
-                        x: a - c,
-                        y: b - d,
-                        w: 2 * c,
-                        h: 2 * d
-                    };
-                } else if (mode === constants.CENTER) {
-                    return {
-                        x: a - c * 0.5,
-                        y: b - d * 0.5,
-                        w: c,
-                        h: d
-                    };
-                }
-            },
-            arcModeAdjust: function (a, b, c, d, mode) {
-                if (mode === constants.CORNER) {
-                    return {
-                        x: a + c * 0.5,
-                        y: b + d * 0.5,
-                        w: c,
-                        h: d
-                    };
-                } else if (mode === constants.CORNERS) {
-                    return {
-                        x: a,
-                        y: b,
-                        w: c + a,
-                        h: d + b
-                    };
-                } else if (mode === constants.RADIUS) {
-                    return {
-                        x: a,
-                        y: b,
-                        w: 2 * c,
-                        h: 2 * d
-                    };
-                } else if (mode === constants.CENTER) {
-                    return {
-                        x: a,
-                        y: b,
-                        w: c,
-                        h: d
-                    };
-                }
-            }
-        };
-    }({}, constants);
-var filters = function (require) {
-        'use strict';
-        var Filters = {};
-        Filters._toPixels = function (canvas) {
-            if (canvas instanceof ImageData) {
-                return canvas.data;
-            } else {
-                return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
-            }
-        };
-        Filters._getARGB = function (data, i) {
-            var offset = i * 4;
-            return data[offset + 3] << 24 & 4278190080 | data[offset] << 16 & 16711680 | data[offset + 1] << 8 & 65280 | data[offset + 2] & 255;
-        };
-        Filters._setPixels = function (pixels, data) {
-            var offset = 0;
-            for (var i = 0, al = pixels.length; i < al; i++) {
-                offset = i * 4;
-                pixels[offset + 0] = (data[i] & 16711680) >>> 16;
-                pixels[offset + 1] = (data[i] & 65280) >>> 8;
-                pixels[offset + 2] = data[i] & 255;
-                pixels[offset + 3] = (data[i] & 4278190080) >>> 24;
-            }
-        };
-        Filters._toImageData = function (canvas) {
-            if (canvas instanceof ImageData) {
-                return canvas;
-            } else {
-                return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
-            }
-        };
-        Filters._createImageData = function (width, height) {
-            Filters._tmpCanvas = document.createElement('canvas');
-            Filters._tmpCtx = Filters._tmpCanvas.getContext('2d');
-            return this._tmpCtx.createImageData(width, height);
-        };
-        Filters.apply = function (canvas, func, filterParam) {
-            var ctx = canvas.getContext('2d');
-            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            var newImageData = func(imageData, filterParam);
-            if (newImageData instanceof ImageData) {
-                ctx.putImageData(newImageData, 0, 0, 0, 0, canvas.width, canvas.height);
-            } else {
-                ctx.putImageData(imageData, 0, 0, 0, 0, canvas.width, canvas.height);
-            }
-        };
-        Filters.threshold = function (canvas, level) {
-            var pixels = Filters._toPixels(canvas);
-            if (level === undefined) {
-                level = 0.5;
-            }
-            var thresh = Math.floor(level * 255);
-            for (var i = 0; i < pixels.length; i += 4) {
-                var r = pixels[i];
-                var g = pixels[i + 1];
-                var b = pixels[i + 2];
-                var grey = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-                var val;
-                if (grey >= thresh) {
-                    val = 255;
-                } else {
-                    val = 0;
-                }
-                pixels[i] = pixels[i + 1] = pixels[i + 2] = val;
-            }
-        };
-        Filters.gray = function (canvas) {
-            var pixels = Filters._toPixels(canvas);
-            for (var i = 0; i < pixels.length; i += 4) {
-                var r = pixels[i];
-                var g = pixels[i + 1];
-                var b = pixels[i + 2];
-                var gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-                pixels[i] = pixels[i + 1] = pixels[i + 2] = gray;
-            }
-        };
-        Filters.opaque = function (canvas) {
-            var pixels = Filters._toPixels(canvas);
-            for (var i = 0; i < pixels.length; i += 4) {
-                pixels[i + 3] = 255;
-            }
-            return pixels;
-        };
-        Filters.invert = function (canvas) {
-            var pixels = Filters._toPixels(canvas);
-            for (var i = 0; i < pixels.length; i += 4) {
-                pixels[i] = 255 - pixels[i];
-                pixels[i + 1] = 255 - pixels[i + 1];
-                pixels[i + 2] = 255 - pixels[i + 2];
-            }
-        };
-        Filters.posterize = function (canvas, level) {
-            var pixels = Filters._toPixels(canvas);
-            if (level < 2 || level > 255) {
-                throw new Error('Level must be greater than 2 and less than 255 for posterize');
-            }
-            var levels1 = level - 1;
-            for (var i = 0; i < pixels.length; i++) {
-                var rlevel = pixels[i] >> 16 & 255;
-                var glevel = pixels[i] >> 8 & 255;
-                var blevel = pixels[i] & 255;
-                rlevel = (rlevel * level >> 8) * 255 / levels1;
-                glevel = (glevel * level >> 8) * 255 / levels1;
-                blevel = (blevel * level >> 8) * 255 / levels1;
-                pixels[i] = 4278190080 & pixels[i] | rlevel << 16 | glevel << 8 | blevel;
-            }
-        };
-        Filters.dilate = function (canvas) {
-            var pixels = Filters._toPixels(canvas);
-            var currIdx = 0;
-            var maxIdx = pixels.length ? pixels.length / 4 : 0;
-            var out = new Int32Array(maxIdx);
-            var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
-            var idxRight, idxLeft, idxUp, idxDown, colRight, colLeft, colUp, colDown, lumRight, lumLeft, lumUp, lumDown;
-            while (currIdx < maxIdx) {
-                currRowIdx = currIdx;
-                maxRowIdx = currIdx + canvas.width;
-                while (currIdx < maxRowIdx) {
-                    colOrig = colOut = Filters._getARGB(pixels, currIdx);
-                    idxLeft = currIdx - 1;
-                    idxRight = currIdx + 1;
-                    idxUp = currIdx - canvas.width;
-                    idxDown = currIdx + canvas.width;
-                    if (idxLeft < currRowIdx) {
-                        idxLeft = currIdx;
-                    }
-                    if (idxRight >= maxRowIdx) {
-                        idxRight = currIdx;
-                    }
-                    if (idxUp < 0) {
-                        idxUp = 0;
-                    }
-                    if (idxDown >= maxIdx) {
-                        idxDown = currIdx;
-                    }
-                    colUp = Filters._getARGB(pixels, idxUp);
-                    colLeft = Filters._getARGB(pixels, idxLeft);
-                    colDown = Filters._getARGB(pixels, idxDown);
-                    colRight = Filters._getARGB(pixels, idxRight);
-                    currLum = 77 * (colOrig >> 16 & 255) + 151 * (colOrig >> 8 & 255) + 28 * (colOrig & 255);
-                    lumLeft = 77 * (colLeft >> 16 & 255) + 151 * (colLeft >> 8 & 255) + 28 * (colLeft & 255);
-                    lumRight = 77 * (colRight >> 16 & 255) + 151 * (colRight >> 8 & 255) + 28 * (colRight & 255);
-                    lumUp = 77 * (colUp >> 16 & 255) + 151 * (colUp >> 8 & 255) + 28 * (colUp & 255);
-                    lumDown = 77 * (colDown >> 16 & 255) + 151 * (colDown >> 8 & 255) + 28 * (colDown & 255);
-                    if (lumLeft > currLum) {
-                        colOut = colLeft;
-                        currLum = lumLeft;
-                    }
-                    if (lumRight > currLum) {
-                        colOut = colRight;
-                        currLum = lumRight;
-                    }
-                    if (lumUp > currLum) {
-                        colOut = colUp;
-                        currLum = lumUp;
-                    }
-                    if (lumDown > currLum) {
-                        colOut = colDown;
-                        currLum = lumDown;
-                    }
-                    out[currIdx++] = colOut;
-                }
-            }
-            Filters._setPixels(pixels, out);
-        };
-        Filters.erode = function (canvas) {
-            var pixels = Filters._toPixels(canvas);
-            var currIdx = 0;
-            var maxIdx = pixels.length ? pixels.length / 4 : 0;
-            var out = new Int32Array(maxIdx);
-            var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
-            var idxRight, idxLeft, idxUp, idxDown, colRight, colLeft, colUp, colDown, lumRight, lumLeft, lumUp, lumDown;
-            while (currIdx < maxIdx) {
-                currRowIdx = currIdx;
-                maxRowIdx = currIdx + canvas.width;
-                while (currIdx < maxRowIdx) {
-                    colOrig = colOut = Filters._getARGB(pixels, currIdx);
-                    idxLeft = currIdx - 1;
-                    idxRight = currIdx + 1;
-                    idxUp = currIdx - canvas.width;
-                    idxDown = currIdx + canvas.width;
-                    if (idxLeft < currRowIdx) {
-                        idxLeft = currIdx;
-                    }
-                    if (idxRight >= maxRowIdx) {
-                        idxRight = currIdx;
-                    }
-                    if (idxUp < 0) {
-                        idxUp = 0;
-                    }
-                    if (idxDown >= maxIdx) {
-                        idxDown = currIdx;
-                    }
-                    colUp = Filters._getARGB(pixels, idxUp);
-                    colLeft = Filters._getARGB(pixels, idxLeft);
-                    colDown = Filters._getARGB(pixels, idxDown);
-                    colRight = Filters._getARGB(pixels, idxRight);
-                    currLum = 77 * (colOrig >> 16 & 255) + 151 * (colOrig >> 8 & 255) + 28 * (colOrig & 255);
-                    lumLeft = 77 * (colLeft >> 16 & 255) + 151 * (colLeft >> 8 & 255) + 28 * (colLeft & 255);
-                    lumRight = 77 * (colRight >> 16 & 255) + 151 * (colRight >> 8 & 255) + 28 * (colRight & 255);
-                    lumUp = 77 * (colUp >> 16 & 255) + 151 * (colUp >> 8 & 255) + 28 * (colUp & 255);
-                    lumDown = 77 * (colDown >> 16 & 255) + 151 * (colDown >> 8 & 255) + 28 * (colDown & 255);
-                    if (lumLeft < currLum) {
-                        colOut = colLeft;
-                        currLum = lumLeft;
-                    }
-                    if (lumRight < currLum) {
-                        colOut = colRight;
-                        currLum = lumRight;
-                    }
-                    if (lumUp < currLum) {
-                        colOut = colUp;
-                        currLum = lumUp;
-                    }
-                    if (lumDown < currLum) {
-                        colOut = colDown;
-                        currLum = lumDown;
-                    }
-                    out[currIdx++] = colOut;
-                }
-            }
-            Filters._setPixels(pixels, out);
-        };
-        return Filters;
-    }({});
-var image = function (require, core, canvas, constants, filters) {
-        'use strict';
-        var p5 = core;
-        var canvas = canvas;
-        var constants = constants;
-        var Filters = filters;
-        p5.prototype.createImage = function (width, height) {
-            return new PImage(width, height);
-        };
-        p5.prototype.loadImage = function (path, callback) {
-            var img = new Image();
-            var pImg = new PImage(1, 1, this);
-            img.onload = function () {
-                pImg.width = pImg.canvas.width = img.width;
-                pImg.height = pImg.canvas.height = img.height;
-                pImg.canvas.getContext('2d').drawImage(img, 0, 0);
-                if (typeof callback !== 'undefined') {
-                    callback(pImg);
-                }
-            };
-            img.crossOrigin = 'Anonymous';
-            img.src = path;
-            return pImg;
-        };
-        p5.prototype.image = function (image, x, y, width, height) {
-            if (width === undefined) {
-                width = image.width;
-            }
-            if (height === undefined) {
-                height = image.height;
-            }
-            var vals = canvas.modeAdjust(x, y, width, height, this.settings.imageMode);
-            if (this.settings.tint) {
-                this.curElement.context.drawImage(this._getTintedImageCanvas(image), vals.x, vals.y, vals.w, vals.h);
-            } else {
-                this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
-            }
-        };
-        p5.prototype.tint = function () {
-            var c = this.getNormalizedColor(arguments);
-            this.settings.tint = c;
-        };
-        p5.prototype.noTint = function () {
-            this.settings.tint = null;
-        };
-        p5.prototype._getTintedImageCanvas = function (image) {
-            var pixels = Filters._toPixels(image.canvas);
-            var tmpCanvas = document.createElement('canvas');
-            tmpCanvas.width = image.canvas.width;
-            tmpCanvas.height = image.canvas.height;
-            var tmpCtx = tmpCanvas.getContext('2d');
-            var id = tmpCtx.createImageData(image.canvas.width, image.canvas.height);
-            var newPixels = id.data;
-            for (var i = 0; i < pixels.length; i += 4) {
-                var r = pixels[i];
-                var g = pixels[i + 1];
-                var b = pixels[i + 2];
-                var a = pixels[i + 3];
-                newPixels[i] = r * this.settings.tint[0] / 255;
-                newPixels[i + 1] = g * this.settings.tint[1] / 255;
-                newPixels[i + 2] = b * this.settings.tint[2] / 255;
-                newPixels[i + 3] = a * this.settings.tint[3] / 255;
-            }
-            tmpCtx.putImageData(id, 0, 0);
-            return tmpCanvas;
-        };
-        p5.prototype.imageMode = function (m) {
-            if (m === constants.CORNER || m === constants.CORNERS || m === constants.CENTER) {
-                this.settings.imageMode = m;
-            }
-        };
-        function PImage(width, height) {
-            this.width = width;
-            this.height = height;
-            this.canvas = document.createElement('canvas');
-            this.canvas.width = this.width;
-            this.canvas.height = this.height;
-            this.pixels = [];
-        }
-        p5.prototype.PImage = PImage;
-        PImage.prototype._setProperty = function (prop, value) {
-            this[prop] = value;
-        };
-        PImage.prototype.loadPixels = function () {
-            p5.prototype.loadPixels.call(this);
-        };
-        PImage.prototype.updatePixels = function (x, y, w, h) {
-            p5.prototype.updatePixels.call(this, x, y, w, h);
-        };
-        PImage.prototype.get = function (x, y, w, h) {
-            return p5.prototype.get.call(this, x, y, w, h);
-        };
-        PImage.prototype.set = function (x, y, imgOrCol) {
-            p5.prototype.set.call(this, x, y, imgOrCol);
-        };
-        PImage.prototype.resize = function (width, height) {
-            var tempCanvas = document.createElement('canvas');
-            tempCanvas.width = width;
-            tempCanvas.height = height;
-            tempCanvas.getContext('2d').drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, 0, 0, tempCanvas.width, tempCanvas.width);
-            this.canvas.width = this.width = width;
-            this.canvas.height = this.height = height;
-            this.canvas.getContext('2d').drawImage(tempCanvas, 0, 0, width, height, 0, 0, width, height);
-            if (this.pixels.length > 0) {
-                this.loadPixels();
-            }
-        };
-        PImage.prototype.copy = function () {
-            p5.prototype.copy.apply(this, arguments);
-        };
-        PImage.prototype.mask = function (pImage) {
-            if (pImage === undefined) {
-                pImage = this;
-            }
-            var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
-            var copyArgs = [
-                    pImage,
-                    0,
-                    0,
-                    pImage.width,
-                    pImage.height,
-                    0,
-                    0,
-                    this.width,
-                    this.height
-                ];
-            this.canvas.getContext('2d').globalCompositeOperation = 'destination-out';
-            this.copy.apply(this, copyArgs);
-            this.canvas.getContext('2d').globalCompositeOperation = currBlend;
-        };
-        PImage.prototype.filter = function (operation, value) {
-            Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
-        };
-        PImage.prototype.blend = function () {
-            p5.prototype.blend.apply(this, arguments);
-        };
-        PImage.prototype.save = function (extension) {
-            var mimeType;
-            switch (extension.toLowerCase()) {
-            case 'png':
-                mimeType = 'image/png';
-                break;
-            case 'jpeg':
-                mimeType = 'image/jpeg';
-                break;
-            case 'jpg':
-                mimeType = 'image/jpeg';
-                break;
-            default:
-                mimeType = 'image/png';
-                break;
-            }
-            if (mimeType !== undefined) {
-                var downloadMime = 'image/octet-stream';
-                var imageData = this.canvas.toDataURL(mimeType);
-                imageData = imageData.replace(mimeType, downloadMime);
-                window.location.href = imageData;
-            }
-        };
-        return PImage;
-    }({}, core, canvas, constants, filters);
 var imagepixels = function (require, core, filters) {
         'use strict';
         var p5 = core;
         var Filters = filters;
+        p5.prototype.pixels = [];
         p5.prototype.blend = function () {
             var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
             var blendMode = arguments[arguments.length - 1];
@@ -1749,7 +1894,7 @@ var imagepixels = function (require, core, filters) {
             } else {
                 w = Math.min(w, this.width);
                 h = Math.min(h, this.height);
-                var region = new p5.prototype.PImage(w, h);
+                var region = new p5.Image(w, h);
                 region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
                 return region;
             }
@@ -2339,6 +2484,10 @@ var inputfiles = function (require, core, reqwest) {
 var inputkeyboard = function (require, core) {
         'use strict';
         var p5 = core;
+        p5.prototype.isKeyPressed = false;
+        p5.prototype.keyIsPressed = false;
+        p5.prototype.key = '';
+        p5.prototype.keyCode = 0;
         p5.prototype.onkeydown = function (e) {
             this._setProperty('isKeyPressed', true);
             this._setProperty('keyIsPressed', true);
@@ -2582,50 +2731,51 @@ var mathtrigonometry = function (require, core, polargeometry, constants) {
         var p5 = core;
         var polarGeometry = polargeometry;
         var constants = constants;
+        p5.prototype._angleMode = constants.RADIANS;
         p5.prototype.acos = function (ratio) {
-            if (this.settings.angleMode === constants.RADIANS) {
+            if (this._angleMode === constants.RADIANS) {
                 return Math.acos(ratio);
             } else {
                 return polarGeometry.radiansToDegrees(Math.acos(ratio));
             }
         };
         p5.prototype.asin = function (ratio) {
-            if (this.settings.angleMode === constants.RADIANS) {
+            if (this._angleMode === constants.RADIANS) {
                 return Math.asin(ratio);
             } else {
                 return polarGeometry.radiansToDegrees(Math.asin(ratio));
             }
         };
         p5.prototype.atan = function (ratio) {
-            if (this.settings.angleMode === constants.RADIANS) {
+            if (this._angleMode === constants.RADIANS) {
                 return Math.atan(ratio);
             } else {
                 return polarGeometry.radiansToDegrees(Math.atan(ratio));
             }
         };
         p5.prototype.atan2 = function (y, x) {
-            if (this.settings.angleMode === constants.RADIANS) {
+            if (this._angleMode === constants.RADIANS) {
                 return Math.atan2(y, x);
             } else {
                 return polarGeometry.radiansToDegrees(Math.atan2(y, x));
             }
         };
         p5.prototype.cos = function (angle) {
-            if (this.settings.angleMode === constants.RADIANS) {
+            if (this._angleMode === constants.RADIANS) {
                 return Math.cos(angle);
             } else {
                 return Math.cos(this.radians(angle));
             }
         };
         p5.prototype.sin = function (angle) {
-            if (this.settings.angleMode === constants.RADIANS) {
+            if (this._angleMode === constants.RADIANS) {
                 return Math.sin(angle);
             } else {
                 return Math.sin(this.radians(angle));
             }
         };
         p5.prototype.tan = function (angle) {
-            if (this.settings.angleMode === constants.RADIANS) {
+            if (this._angleMode === constants.RADIANS) {
                 return Math.tan(angle);
             } else {
                 return Math.tan(this.radians(angle));
@@ -2639,7 +2789,7 @@ var mathtrigonometry = function (require, core, polargeometry, constants) {
         };
         p5.prototype.angleMode = function (mode) {
             if (mode === constants.DEGREES || mode === constants.RADIANS) {
-                this.settings.angleMode = mode;
+                this._angleMode = mode;
             }
         };
         return p5;
@@ -2647,6 +2797,7 @@ var mathtrigonometry = function (require, core, polargeometry, constants) {
 var outputfiles = function (require, core) {
         'use strict';
         var p5 = core;
+        p5.prototype.pWriters = [];
         p5.prototype.beginRaw = function () {
             throw 'not yet implemented';
         };
@@ -2716,7 +2867,7 @@ var outputimage = function (require, core) {
         'use strict';
         var p5 = core;
         p5.prototype.save = function () {
-            window.open(this.curElement.elt.toDataURL('image/png'));
+            window.open(this._curElement.elt.toDataURL('image/png'));
         };
         return p5;
     }({}, core);
@@ -2738,94 +2889,94 @@ var shape2d_primitives = function (require, core, canvas, constants) {
         var canvas = canvas;
         var constants = constants;
         p5.prototype.arc = function (x, y, width, height, start, stop, mode) {
-            var vals = canvas.arcModeAdjust(x, y, width, height, this.settings.ellipseMode);
+            var vals = canvas.arcModeAdjust(x, y, width, height, this._ellipseMode);
             var radius = vals.h > vals.w ? vals.h / 2 : vals.w / 2, xScale = vals.h > vals.w ? vals.w / vals.h : 1, yScale = vals.h > vals.w ? 1 : vals.h / vals.w;
-            this.curElement.context.scale(xScale, yScale);
-            this.curElement.context.beginPath();
-            this.curElement.context.arc(vals.x, vals.y, radius, start, stop);
-            this.curElement.context.stroke();
+            this._curElement.context.scale(xScale, yScale);
+            this._curElement.context.beginPath();
+            this._curElement.context.arc(vals.x, vals.y, radius, start, stop);
+            this._curElement.context.stroke();
             if (mode === constants.CHORD || mode === constants.OPEN) {
-                this.curElement.context.closePath();
+                this._curElement.context.closePath();
             } else if (mode === constants.PIE || mode === undefined) {
-                this.curElement.context.lineTo(vals.x, vals.y);
-                this.curElement.context.closePath();
+                this._curElement.context.lineTo(vals.x, vals.y);
+                this._curElement.context.closePath();
             }
-            this.curElement.context.fill();
+            this._curElement.context.fill();
             if (mode !== constants.OPEN && mode !== undefined) {
-                this.curElement.context.stroke();
+                this._curElement.context.stroke();
             }
             return this;
         };
         p5.prototype.ellipse = function (x, y, width, height) {
-            var vals = canvas.modeAdjust(x, y, width, height, this.settings.ellipseMode);
+            var vals = canvas.modeAdjust(x, y, width, height, this._ellipseMode);
             var kappa = 0.5522848, ox = vals.w / 2 * kappa, oy = vals.h / 2 * kappa, xe = vals.x + vals.w, ye = vals.y + vals.h, xm = vals.x + vals.w / 2, ym = vals.y + vals.h / 2;
-            this.curElement.context.beginPath();
-            this.curElement.context.moveTo(vals.x, ym);
-            this.curElement.context.bezierCurveTo(vals.x, ym - oy, xm - ox, vals.y, xm, vals.y);
-            this.curElement.context.bezierCurveTo(xm + ox, vals.y, xe, ym - oy, xe, ym);
-            this.curElement.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-            this.curElement.context.bezierCurveTo(xm - ox, ye, vals.x, ym + oy, vals.x, ym);
-            this.curElement.context.closePath();
-            this.curElement.context.fill();
-            this.curElement.context.stroke();
+            this._curElement.context.beginPath();
+            this._curElement.context.moveTo(vals.x, ym);
+            this._curElement.context.bezierCurveTo(vals.x, ym - oy, xm - ox, vals.y, xm, vals.y);
+            this._curElement.context.bezierCurveTo(xm + ox, vals.y, xe, ym - oy, xe, ym);
+            this._curElement.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+            this._curElement.context.bezierCurveTo(xm - ox, ye, vals.x, ym + oy, vals.x, ym);
+            this._curElement.context.closePath();
+            this._curElement.context.fill();
+            this._curElement.context.stroke();
             return this;
         };
         p5.prototype.line = function (x1, y1, x2, y2) {
-            if (this.curElement.context.strokeStyle === 'rgba(0,0,0,0)') {
+            if (this._curElement.context.strokeStyle === 'rgba(0,0,0,0)') {
                 return;
             }
-            this.curElement.context.beginPath();
-            this.curElement.context.moveTo(x1, y1);
-            this.curElement.context.lineTo(x2, y2);
-            this.curElement.context.stroke();
+            this._curElement.context.beginPath();
+            this._curElement.context.moveTo(x1, y1);
+            this._curElement.context.lineTo(x2, y2);
+            this._curElement.context.stroke();
             return this;
         };
         p5.prototype.point = function (x, y) {
-            var s = this.curElement.context.strokeStyle;
-            var f = this.curElement.context.fillStyle;
+            var s = this._curElement.context.strokeStyle;
+            var f = this._curElement.context.fillStyle;
             if (s === 'rgba(0,0,0,0)') {
                 return;
             }
             x = Math.round(x);
             y = Math.round(y);
-            this.curElement.context.fillStyle = s;
-            if (this.curElement.context.lineWidth > 1) {
-                this.curElement.context.beginPath();
-                this.curElement.context.arc(x, y, this.curElement.context.lineWidth / 2, 0, constants.TWO_PI, false);
-                this.curElement.context.fill();
+            this._curElement.context.fillStyle = s;
+            if (this._curElement.context.lineWidth > 1) {
+                this._curElement.context.beginPath();
+                this._curElement.context.arc(x, y, this._curElement.context.lineWidth / 2, 0, constants.TWO_PI, false);
+                this._curElement.context.fill();
             } else {
-                this.curElement.context.fillRect(x, y, 1, 1);
+                this._curElement.context.fillRect(x, y, 1, 1);
             }
-            this.curElement.context.fillStyle = f;
+            this._curElement.context.fillStyle = f;
             return this;
         };
         p5.prototype.quad = function (x1, y1, x2, y2, x3, y3, x4, y4) {
-            this.curElement.context.beginPath();
-            this.curElement.context.moveTo(x1, y1);
-            this.curElement.context.lineTo(x2, y2);
-            this.curElement.context.lineTo(x3, y3);
-            this.curElement.context.lineTo(x4, y4);
-            this.curElement.context.closePath();
-            this.curElement.context.fill();
-            this.curElement.context.stroke();
+            this._curElement.context.beginPath();
+            this._curElement.context.moveTo(x1, y1);
+            this._curElement.context.lineTo(x2, y2);
+            this._curElement.context.lineTo(x3, y3);
+            this._curElement.context.lineTo(x4, y4);
+            this._curElement.context.closePath();
+            this._curElement.context.fill();
+            this._curElement.context.stroke();
             return this;
         };
         p5.prototype.rect = function (a, b, c, d) {
-            var vals = canvas.modeAdjust(a, b, c, d, this.settings.rectMode);
-            this.curElement.context.beginPath();
-            this.curElement.context.rect(vals.x, vals.y, vals.w, vals.h);
-            this.curElement.context.fill();
-            this.curElement.context.stroke();
+            var vals = canvas.modeAdjust(a, b, c, d, this._rectMode);
+            this._curElement.context.beginPath();
+            this._curElement.context.rect(vals.x, vals.y, vals.w, vals.h);
+            this._curElement.context.fill();
+            this._curElement.context.stroke();
             return this;
         };
         p5.prototype.triangle = function (x1, y1, x2, y2, x3, y3) {
-            this.curElement.context.beginPath();
-            this.curElement.context.moveTo(x1, y1);
-            this.curElement.context.lineTo(x2, y2);
-            this.curElement.context.lineTo(x3, y3);
-            this.curElement.context.closePath();
-            this.curElement.context.fill();
-            this.curElement.context.stroke();
+            this._curElement.context.beginPath();
+            this._curElement.context.moveTo(x1, y1);
+            this._curElement.context.lineTo(x2, y2);
+            this._curElement.context.lineTo(x3, y3);
+            this._curElement.context.closePath();
+            this._curElement.context.fill();
+            this._curElement.context.stroke();
             return this;
         };
         return p5;
@@ -2834,45 +2985,47 @@ var shapeattributes = function (require, core, constants) {
         'use strict';
         var p5 = core;
         var constants = constants;
+        p5.prototype._rectMode = constants.CORNER;
+        p5.prototype._ellipseMode = constants.CENTER;
         p5.prototype.ellipseMode = function (m) {
             if (m === constants.CORNER || m === constants.CORNERS || m === constants.RADIUS || m === constants.CENTER) {
-                this.settings.ellipseMode = m;
+                this._ellipseMode = m;
             }
             return this;
         };
         p5.prototype.noSmooth = function () {
-            this.curElement.context.mozImageSmoothingEnabled = false;
-            this.curElement.context.webkitImageSmoothingEnabled = false;
+            this._curElement.context.mozImageSmoothingEnabled = false;
+            this._curElement.context.webkitImageSmoothingEnabled = false;
             return this;
         };
         p5.prototype.rectMode = function (m) {
             if (m === constants.CORNER || m === constants.CORNERS || m === constants.RADIUS || m === constants.CENTER) {
-                this.settings.rectMode = m;
+                this._rectMode = m;
             }
             return this;
         };
         p5.prototype.smooth = function () {
-            this.curElement.context.mozImageSmoothingEnabled = true;
-            this.curElement.context.webkitImageSmoothingEnabled = true;
+            this._curElement.context.mozImageSmoothingEnabled = true;
+            this._curElement.context.webkitImageSmoothingEnabled = true;
             return this;
         };
         p5.prototype.strokeCap = function (cap) {
             if (cap === constants.ROUND || cap === constants.SQUARE || cap === constants.PROJECT) {
-                this.curElement.context.lineCap = cap;
+                this._curElement.context.lineCap = cap;
             }
             return this;
         };
         p5.prototype.strokeJoin = function (join) {
             if (join === constants.ROUND || join === constants.BEVEL || join === constants.MITER) {
-                this.curElement.context.lineJoin = join;
+                this._curElement.context.lineJoin = join;
             }
             return this;
         };
         p5.prototype.strokeWeight = function (w) {
             if (typeof w === 'undefined' || w === 0) {
-                this.curElement.context.lineWidth = 0.0001;
+                this._curElement.context.lineWidth = 0.0001;
             } else {
-                this.curElement.context.lineWidth = w;
+                this._curElement.context.lineWidth = w;
             }
             return this;
         };
@@ -2881,16 +3034,18 @@ var shapeattributes = function (require, core, constants) {
 var shapecurves = function (require, core) {
         'use strict';
         var p5 = core;
+        p5.prototype._bezierDetail = 20;
+        p5.prototype._curveDetail = 20;
         p5.prototype.bezier = function (x1, y1, x2, y2, x3, y3, x4, y4) {
-            this.curElement.context.beginPath();
-            this.curElement.context.moveTo(x1, y1);
+            this._curElement.context.beginPath();
+            this._curElement.context.moveTo(x1, y1);
             for (var i = 0; i <= this._bezierDetail; i++) {
                 var t = i / parseFloat(this._bezierDetail);
                 var x = p5.prototype.bezierPoint(x1, x2, x3, x4, t);
                 var y = p5.prototype.bezierPoint(y1, y2, y3, y4, t);
-                this.curElement.context.lineTo(x, y);
+                this._curElement.context.lineTo(x, y);
             }
-            this.curElement.context.stroke();
+            this._curElement.context.stroke();
             return this;
         };
         p5.prototype.bezierDetail = function (d) {
@@ -2906,16 +3061,16 @@ var shapecurves = function (require, core) {
             return 3 * d * Math.pow(t, 2) - 3 * c * Math.pow(t, 2) + 6 * c * adjustedT * t - 6 * b * adjustedT * t + 3 * b * Math.pow(adjustedT, 2) - 3 * a * Math.pow(adjustedT, 2);
         };
         p5.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
-            this.curElement.context.moveTo(x1, y1);
-            this.curElement.context.beginPath();
+            this._curElement.context.moveTo(x1, y1);
+            this._curElement.context.beginPath();
             for (var i = 0; i <= this._curveDetail; i++) {
                 var t = parseFloat(i / this._curveDetail);
                 var x = p5.prototype.curvePoint(x1, x2, x3, x4, t);
                 var y = p5.prototype.curvePoint(y1, y2, y3, y4, t);
-                this.curElement.context.lineTo(x, y);
+                this._curElement.context.lineTo(x, y);
             }
-            this.curElement.context.stroke();
-            this.curElement.context.closePath();
+            this._curElement.context.stroke();
+            this._curElement.context.closePath();
             return this;
         };
         p5.prototype.curveDetail = function (d) {
@@ -2939,6 +3094,11 @@ var shapevertex = function (require, core, constants) {
         'use strict';
         var p5 = core;
         var constants = constants;
+        p5.prototype._shapeKind = null;
+        p5.prototype._shapeInited = false;
+        p5.prototype._contourInited = false;
+        p5.prototype._contourVertices = [];
+        p5.prototype._curveVertices = [];
         p5.prototype.beginContour = function () {
             this._contourVertices = [];
             this._contourInited = true;
@@ -2946,12 +3106,12 @@ var shapevertex = function (require, core, constants) {
         };
         p5.prototype.beginShape = function (kind) {
             if (kind === constants.POINTS || kind === constants.LINES || kind === constants.TRIANGLES || kind === constants.TRIANGLE_FAN || kind === constants.TRIANGLE_STRIP || kind === constants.QUADS || kind === constants.QUAD_STRIP) {
-                this.shapeKind = kind;
+                this._shapeKind = kind;
             } else {
-                this.shapeKind = null;
+                this._shapeKind = null;
             }
-            this.shapeInited = true;
-            this.curElement.context.beginPath();
+            this._shapeInited = true;
+            this._curElement.context.beginPath();
             return this;
         };
         p5.prototype.bezierVertex = function (x2, y2, x3, y3, x4, y4) {
@@ -2967,16 +3127,24 @@ var shapevertex = function (require, core, constants) {
                 this._contourVertices.push(pt);
                 return this;
             }
-            this.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+            this._curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
             return this;
         };
-        p5.prototype.curveVertex = function () {
-            throw 'not yet implemented';
+        p5.prototype.curveVertex = function (x, y) {
+            var pt = {};
+            pt.x = x;
+            pt.y = y;
+            this._curveVertices.push(pt);
+            if (this._curveVertices.length >= 4) {
+                this.curve(this._curveVertices[0].x, this._curveVertices[0].y, this._curveVertices[1].x, this._curveVertices[1].y, this._curveVertices[2].x, this._curveVertices[2].y, this._curveVertices[3].x, this._curveVertices[3].y);
+                this._curveVertices.shift();
+            }
+            return this;
         };
         p5.prototype.endContour = function () {
             this._contourVertices.reverse();
-            this.curElement.context.moveTo(this._contourVertices[0].x, this._contourVertices[0].y);
-            var ctx = this.curElement.context;
+            this._curElement.context.moveTo(this._contourVertices[0].x, this._contourVertices[0].y);
+            var ctx = this._curElement.context;
             this._contourVertices.slice(1).forEach(function (pt, i) {
                 switch (pt.type) {
                 case constants.LINEAR:
@@ -2992,16 +3160,20 @@ var shapevertex = function (require, core, constants) {
                     break;
                 }
             });
-            this.curElement.context.closePath();
+            this._curElement.context.closePath();
             this._contourInited = false;
             return this;
         };
         p5.prototype.endShape = function (mode) {
             if (mode === constants.CLOSE) {
-                this.curElement.context.closePath();
-                this.curElement.context.fill();
+                this._curElement.context.closePath();
+                this._curElement.context.fill();
             }
-            this.curElement.context.stroke();
+            if (this._curveVertices.length <= 0) {
+                this._curElement.context.stroke();
+            } else {
+                this._curveVertices = [];
+            }
             return this;
         };
         p5.prototype.quadraticVertex = function (cx, cy, x3, y3) {
@@ -3015,7 +3187,7 @@ var shapevertex = function (require, core, constants) {
                 this._contourVertices.push(pt);
                 return this;
             }
-            this.curElement.context.quadraticCurveTo(cx, cy, x3, y3);
+            this._curElement.context.quadraticCurveTo(cx, cy, x3, y3);
             return this;
         };
         p5.prototype.vertex = function (x, y) {
@@ -3027,12 +3199,12 @@ var shapevertex = function (require, core, constants) {
                 this._contourVertices.push(pt);
                 return this;
             }
-            if (this.shapeInited) {
-                this.curElement.context.moveTo(x, y);
+            if (this._shapeInited) {
+                this._curElement.context.moveTo(x, y);
             } else {
-                this.curElement.context.lineTo(x, y);
+                this._curElement.context.lineTo(x, y);
             }
-            this.shapeInited = false;
+            this._shapeInited = false;
             return this;
         };
         return p5;
@@ -3044,47 +3216,47 @@ var structure = function (require, core) {
             throw 'Not implemented';
         };
         p5.prototype.noLoop = function () {
-            this.settings.loop = false;
+            this._loop = false;
         };
         p5.prototype.loop = function () {
-            this.settings.loop = true;
+            this._loop = true;
         };
         p5.prototype.pushStyle = function () {
             this.styles.push({
-                fillStyle: this.curElement.context.fillStyle,
-                strokeStyle: this.curElement.context.strokeStyle,
-                lineWidth: this.curElement.context.lineWidth,
-                lineCap: this.curElement.context.lineCap,
-                lineJoin: this.curElement.context.lineJoin,
-                tint: this.settings.tint,
-                imageMode: this.settings.imageMode,
-                rectMode: this.settings.rectMode,
-                ellipseMode: this.settings.ellipseMode,
-                colorMode: this.settings.colorMode,
-                textAlign: this.curElement.context.textAlign,
-                textFont: this.settings.textFont,
-                textLeading: this.settings.textLeading,
-                textSize: this.settings.textSize,
-                textStyle: this.settings.textStyle
+                fillStyle: this._curElement.context.fillStyle,
+                strokeStyle: this._curElement.context.strokeStyle,
+                lineWidth: this._curElement.context.lineWidth,
+                lineCap: this._curElement.context.lineCap,
+                lineJoin: this._curElement.context.lineJoin,
+                tint: this._tint,
+                imageMode: this._imageMode,
+                rectMode: this._rectMode,
+                ellipseMode: this._ellipseMode,
+                colorMode: this._colorMode,
+                textAlign: this._curElement.context.textAlign,
+                textFont: this.textFont,
+                textLeading: this.textLeading,
+                textSize: this.textSize,
+                textStyle: this.textStyle
             });
         };
         p5.prototype.popStyle = function () {
             var lastS = this.styles.pop();
-            this.curElement.context.fillStyle = lastS.fillStyle;
-            this.curElement.context.strokeStyle = lastS.strokeStyle;
-            this.curElement.context.lineWidth = lastS.lineWidth;
-            this.curElement.context.lineCap = lastS.lineCap;
-            this.curElement.context.lineJoin = lastS.lineJoin;
-            this.settings.tint = lastS.tint;
-            this.settings.imageMode = lastS.imageMode;
-            this.settings.rectMode = lastS.rectMode;
-            this.settings.ellipseMode = lastS.ellipseMode;
-            this.settings.colorMode = lastS.colorMode;
-            this.curElement.context.textAlign = lastS.textAlign;
-            this.settings.textFont = lastS.textFont;
-            this.settings.textLeading = lastS.textLeading;
-            this.settings.textSize = lastS.textSize;
-            this.settings.textStyle = lastS.textStyle;
+            this._curElement.context.fillStyle = lastS.fillStyle;
+            this._curElement.context.strokeStyle = lastS.strokeStyle;
+            this._curElement.context.lineWidth = lastS.lineWidth;
+            this._curElement.context.lineCap = lastS.lineCap;
+            this._curElement.context.lineJoin = lastS.lineJoin;
+            this._tint = lastS.tint;
+            this._imageMode = lastS.imageMode;
+            this._rectMode = lastS._rectMode;
+            this._ellipseMode = lastS.ellipseMode;
+            this._colorMode = lastS._colorMode;
+            this._curElement.context.textAlign = lastS.textAlign;
+            this.textFont = lastS.textFont;
+            this.textLeading = lastS.textLeading;
+            this.textSize = lastS.textSize;
+            this.textStyle = lastS.textStyle;
         };
         p5.prototype.redraw = function () {
             var context = this._isGlobal ? window : this;
@@ -3097,36 +3269,22 @@ var structure = function (require, core) {
         };
         return p5;
     }({}, core);
-var linearalgebra = function (require) {
-        return {
-            pMultiplyMatrix: function (m1, m2) {
-                var result = [];
-                var m1Length = m1.length;
-                var m2Length = m2.length;
-                var m10Length = m1[0].length;
-                for (var j = 0; j < m2Length; j++) {
-                    result[j] = [];
-                    for (var k = 0; k < m10Length; k++) {
-                        var sum = 0;
-                        for (var i = 0; i < m1Length; i++) {
-                            sum += m1[i][k] * m2[j][i];
-                        }
-                        result[j].push(sum);
-                    }
-                }
-                return result;
-            }
-        };
-    }({});
-var transform = function (require, core, constants, linearalgebra, outputtext_area) {
+var transform = function (require, core, constants, outputtext_area) {
         'use strict';
         var p5 = core;
         var constants = constants;
-        var linearAlgebra = linearalgebra;
+        p5.prototype._matrices = [[
+                1,
+                0,
+                0,
+                1,
+                0,
+                0
+            ]];
         p5.prototype.applyMatrix = function (n00, n01, n02, n10, n11, n12) {
-            this.curElement.context.transform(n00, n01, n02, n10, n11, n12);
-            var m = this.matrices[this.matrices.length - 1];
-            m = linearAlgebra.pMultiplyMatrix(m, [
+            this._curElement.context.transform(n00, n01, n02, n10, n11, n12);
+            var m = this._matrices[this._matrices.length - 1];
+            m = multiplyMatrix(m, [
                 n00,
                 n01,
                 n02,
@@ -3137,17 +3295,16 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             return this;
         };
         p5.prototype.popMatrix = function () {
-            this.curElement.context.restore();
-            this.matrices.pop();
+            this._curElement.context.restore();
+            this._matrices.pop();
             return this;
         };
         p5.prototype.printMatrix = function () {
-            console.log(this.matrices[this.matrices.length - 1]);
             return this;
         };
         p5.prototype.pushMatrix = function () {
-            this.curElement.context.save();
-            this.matrices.push([
+            this._curElement.context.save();
+            this._matrices.push([
                 1,
                 0,
                 0,
@@ -3158,8 +3315,8 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             return this;
         };
         p5.prototype.resetMatrix = function () {
-            this.curElement.context.setTransform();
-            this.matrices[this.matrices.length - 1] = [
+            this._curElement.context.setTransform();
+            this._matrices[this._matrices.length - 1] = [
                 1,
                 0,
                 0,
@@ -3170,11 +3327,11 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             return this;
         };
         p5.prototype.rotate = function (r) {
-            if (this.settings.angleMode === constants.DEGREES) {
+            if (this._angleMode === constants.DEGREES) {
                 r = this.radians(r);
             }
-            this.curElement.context.rotate(r);
-            var m = this.matrices[this.matrices.length - 1];
+            this._curElement.context.rotate(r);
+            var m = this._matrices[this._matrices.length - 1];
             var c = Math.cos(r);
             var s = Math.sin(r);
             var m11 = m[0] * c + m[2] * s;
@@ -3201,8 +3358,8 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
                 x = arguments[0];
                 y = arguments[1];
             }
-            this.curElement.context.scale(x, y);
-            var m = this.matrices[this.matrices.length - 1];
+            this._curElement.context.scale(x, y);
+            var m = this._matrices[this._matrices.length - 1];
             m[0] *= x;
             m[1] *= x;
             m[2] *= y;
@@ -3210,12 +3367,12 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             return this;
         };
         p5.prototype.shearX = function (angle) {
-            if (this.settings.angleMode === constants.DEGREES) {
+            if (this._angleMode === constants.DEGREES) {
                 angle = this.radians(angle);
             }
-            this.curElement.context.transform(1, 0, this.tan(angle), 1, 0, 0);
-            var m = this.matrices[this.matrices.length - 1];
-            m = linearAlgebra.pMultiplyMatrix(m, [
+            this._curElement.context.transform(1, 0, this.tan(angle), 1, 0, 0);
+            var m = this._matrices[this._matrices.length - 1];
+            m = multiplyMatrix(m, [
                 1,
                 0,
                 this.tan(angle),
@@ -3226,12 +3383,12 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             return this;
         };
         p5.prototype.shearY = function (angle) {
-            if (this.settings.angleMode === constants.DEGREES) {
+            if (this._angleMode === constants.DEGREES) {
                 angle = this.radians(angle);
             }
-            this.curElement.context.transform(1, this.tan(angle), 0, 1, 0, 0);
-            var m = this.matrices[this.matrices.length - 1];
-            m = linearAlgebra.pMultiplyMatrix(m, [
+            this._curElement.context.transform(1, this.tan(angle), 0, 1, 0, 0);
+            var m = this._matrices[this._matrices.length - 1];
+            m = multiplyMatrix(m, [
                 1,
                 this.tan(angle),
                 0,
@@ -3242,25 +3399,46 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             return this;
         };
         p5.prototype.translate = function (x, y) {
-            this.curElement.context.translate(x, y);
-            var m = this.matrices[this.matrices.length - 1];
+            this._curElement.context.translate(x, y);
+            var m = this._matrices[this._matrices.length - 1];
             m[4] += m[0] * x + m[2] * y;
             m[5] += m[1] * x + m[3] * y;
             return this;
         };
+        function multiplyMatrix(m1, m2) {
+            var result = [];
+            var m1Length = m1.length;
+            var m2Length = m2.length;
+            var m10Length = m1[0].length;
+            for (var j = 0; j < m2Length; j++) {
+                result[j] = [];
+                for (var k = 0; k < m10Length; k++) {
+                    var sum = 0;
+                    for (var i = 0; i < m1Length; i++) {
+                        sum += m1[i][k] * m2[j][i];
+                    }
+                    result[j].push(sum);
+                }
+            }
+            return result;
+        }
         return p5;
-    }({}, core, constants, linearalgebra, outputtext_area);
+    }({}, core, constants, outputtext_area);
 var typographyattributes = function (require, core, constants) {
         'use strict';
         var p5 = core;
         var constants = constants;
+        p5.prototype._textLeading = 15;
+        p5.prototype._textFont = 'sans-serif';
+        p5.prototype._textSize = 12;
+        p5.prototype._textStyle = constants.NORMAL;
         p5.prototype.textAlign = function (a) {
             if (a === constants.LEFT || a === constants.RIGHT || a === constants.CENTER) {
-                this.curElement.context.textAlign = a;
+                this._curElement.context.textAlign = a;
             }
         };
         p5.prototype.textHeight = function (s) {
-            return this.curElement.context.measureText(s).height;
+            return this._curElement.context.measureText(s).height;
         };
         p5.prototype.textLeading = function (l) {
             this._setProperty('_textLeading', l);
@@ -3274,7 +3452,7 @@ var typographyattributes = function (require, core, constants) {
             }
         };
         p5.prototype.textWidth = function (s) {
-            return this.curElement.context.measureText(s).width;
+            return this._curElement.context.measureText(s).width;
         };
         return p5;
     }({}, core, constants);
@@ -3283,24 +3461,24 @@ var typographyloading_displaying = function (require, core, canvas) {
         var p5 = core;
         var canvas = canvas;
         p5.prototype.text = function () {
-            this.curElement.context.font = this._textStyle + ' ' + this._textSize + 'px ' + this._textFont;
+            this._curElement.context.font = this._textStyle + ' ' + this._textSize + 'px ' + this._textFont;
             if (arguments.length === 3) {
-                this.curElement.context.fillText(arguments[0], arguments[1], arguments[2]);
-                this.curElement.context.strokeText(arguments[0], arguments[1], arguments[2]);
+                this._curElement.context.fillText(arguments[0], arguments[1], arguments[2]);
+                this._curElement.context.strokeText(arguments[0], arguments[1], arguments[2]);
             } else if (arguments.length === 5) {
                 var words = arguments[0].split(' ');
                 var line = '';
-                var vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this.settings.rectMode);
+                var vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this._rectMode);
                 vals.y += this._textLeading;
                 for (var n = 0; n < words.length; n++) {
                     var testLine = line + words[n] + ' ';
-                    var metrics = this.curElement.context.measureText(testLine);
+                    var metrics = this._curElement.context.measureText(testLine);
                     var testWidth = metrics.width;
                     if (vals.y > vals.h) {
                         break;
                     } else if (testWidth > vals.w && n > 0) {
-                        this.curElement.context.fillText(line, vals.x, vals.y);
-                        this.curElement.context.strokeText(line, vals.x, vals.y);
+                        this._curElement.context.fillText(line, vals.x, vals.y);
+                        this._curElement.context.strokeText(line, vals.x, vals.y);
                         line = words[n] + ' ';
                         vals.y += this._textLeading;
                     } else {
@@ -3308,8 +3486,8 @@ var typographyloading_displaying = function (require, core, canvas) {
                     }
                 }
                 if (vals.y <= vals.h) {
-                    this.curElement.context.fillText(line, vals.x, vals.y);
-                    this.curElement.context.strokeText(line, vals.x, vals.y);
+                    this._curElement.context.fillText(line, vals.x, vals.y);
+                    this._curElement.context.strokeText(line, vals.x, vals.y);
                 }
             }
         };
@@ -3318,10 +3496,9 @@ var typographyloading_displaying = function (require, core, canvas) {
         };
         return p5;
     }({}, core, canvas);
-var src_app = function (require, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying) {
+var src_app = function (require, core, p5Element, p5Image, p5Vector, colorcreating_reading, colorsetting, constants, dataarray_functions, datastring_functions, dommanipulate, environment, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying) {
         'use strict';
         var p5 = core;
-        var PVector = mathpvector;
         var _globalInit = function () {
             if (!window.PHANTOMJS) {
                 if (window.setup && typeof window.setup === 'function' || window.draw && typeof window.draw === 'function') {
@@ -3335,6 +3512,5 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
             window.addEventListener('load', _globalInit, false);
         }
         window.p5 = p5;
-        window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, p5Element, p5Image, p5Vector, colorcreating_reading, colorsetting, constants, dataarray_functions, datastring_functions, dommanipulate, environment, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());

@@ -73,7 +73,7 @@ canvas {
 #callout {
   position:absolute;
   bottom: 30%;
-  left: 15%;
+  right: 15%;
   cursor: pointer;
   display: none;
   z-index: 1000;
@@ -95,7 +95,6 @@ canvas {
 
 #sketchCanvas {
   position: absolute;
-  display: none;
 }
 
 #welcome {
@@ -171,6 +170,20 @@ canvas {
   display: none;
 }
 
+#cta {
+
+  width: 512px;
+  height: 192px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -256px;
+  margin-top: -96px;
+  background: #fefefe;
+  padding: 16px;
+  display: none;
+}
+
 #background {
   position: fixed;
   top: 0;
@@ -181,7 +194,7 @@ canvas {
 
   background: rgb(255,255,255);
 
-  /*
+
   background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(187,187,187,1) 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(187,187,187,1)));
   background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
@@ -190,7 +203,7 @@ canvas {
   background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#bbbbbb',GradientType=0 );
 
-  */
+ 
 
 }
 

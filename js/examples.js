@@ -32,29 +32,12 @@ var shapeSketch = function( sketch ) {
 
 }
 
-var rectangleSketch = function( sketch ) {
 
-  sketch.setup = function() {
-    sketch.createCanvas($(window).width(), $(window).height());    
-    sketch.rectangleColor = sketch.color(0, 0, 255);
-  };
 
-  sketch.draw = function() {
 
-    if (sketch.isMousePressed) {
-        sketch.fill(0,255,0);
-    } else {
-        sketch.fill(sketch.rectangleColor);
-    }
 
-    sketch.rect(2, 2 ,200,100);
-  }
 
-  sketch.title = "Rectangle"
-  sketch.exampleDiv ="#rectangleSketch";
 
-  return sketch;
-};
 
 var rectangleArraySketch = function( sketch ) {
 

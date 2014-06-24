@@ -17,11 +17,11 @@ var script = {
       target = seriously.target('#videoCanvas');
       chroma = seriously.effect('chroma');
 
-      // chroma.weight = 1.25;
-      // chroma.balance = .0;
-       chroma.screen = 'RGB(0, 255, 19)';
-      // chroma.clipWhite = 1.0;
-      // chroma.clipBlack = 0.0;
+      chroma.weight = 2.0;
+      chroma.balance = 0;
+      chroma.screen = 'rgb(50, 255, 50)';
+      chroma.clipWhite = 1.0;
+      chroma.clipBlack = 0.0
 
       chroma.source = "#"+script.popcorn.media.id;
       target.source = chroma;

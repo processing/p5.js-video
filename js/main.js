@@ -58,8 +58,6 @@ var main = {
         script.popcorn.play(time);
       }
 
-      // Mark
-
     });    
 
     // Buttons

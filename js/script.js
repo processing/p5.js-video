@@ -17,11 +17,11 @@ var script = {
       target = seriously.target('#videoCanvas');
       chroma = seriously.effect('chroma');
 
-      chroma.weight = 2.0;
-      chroma.balance = 0;
-      chroma.screen = 'rgb(50, 255, 50)';
-      chroma.clipWhite = 1.0;
-      chroma.clipBlack = 0.0
+    chroma.weight = 1.25;
+    chroma.balance = 0;
+    chroma.screen = 'rgb(75, 255, 40)';
+    chroma.clipWhite = 0.85;
+    chroma.clipBlack = 0.15;
 
       chroma.source = "#"+script.popcorn.media.id;
       target.source = chroma;
@@ -287,7 +287,7 @@ var script = {
     pop.code({
       start: 144.25,
       onStart: function( options ) {
-
+        $("#weather").fadeOut(1000);
         $("#sketchCanvas").fadeOut(1000);
       }
     });

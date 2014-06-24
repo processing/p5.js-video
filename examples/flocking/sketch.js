@@ -17,7 +17,6 @@ var flockingSketch = function( sketch ) {
     sketch.createCanvas(window.innerWidth,window.innerHeight);
     sketch.flock = new sketch.Flock();
 
-    //sketch.addBoids();
     //sketch.startFlocking();
     //sketch.getWeather();    
   }
@@ -43,14 +42,9 @@ var flockingSketch = function( sketch ) {
     } else {
       sketch.wind.lerp(sketch.basewind,0.1);
     }
-    sketch.drawVector(sketch.wind,600,120,1000);
+
+    //sketch.drawVector(sketch.wind,600,120,1000);
   }  
-
-  // sketch.addBoids = function() {
-  //   while (sketch.flock.boids.length < 50) {
-
-  //   }
-  // }
 
   sketch.startFlocking = function() {
     sketch.flocking = true;
@@ -64,9 +58,29 @@ var flockingSketch = function( sketch ) {
     console.log(weather);
     var dir = Number(weather.wind.deg);
     var windmag = Number(weather.wind.speed);
-    var gustmag = Number(weather.wind.gust);
-    sketch.println(windmag,gustmag);
+    var gustmag;
+    if (weather.wind.gust)
+      gustmag = Number(weather.wind.gust);
+    else
+      gustmag = windmag;
 
+    var weatherElement = sketch.getElement("weather");
+
+    var temparatureElement = sketch.getElement("temperature");
+    temparatureElement.elt.innerHTML = sketch.floor(weather.main.temp)+'&deg;';
+
+    var speedElement = sketch.getElement("speed");
+    speedElement.elt.innerHTML = "WIND " + windmag + " <small>MPH</small>";
+
+    var gustElement = sketch.getElement("gust");
+    gustElement.elt.innerHTML = "GUST " + gustmag + " <small>MPH</small>";  
+
+    var guageElement = sketch.getElement("guage");
+    guageElement.elt.style.transform = 'rotate('+dir+'deg)';
+
+    weatherElement.show();
+
+    /*
     var img = sketch.createImg('http://openweathermap.org/img/w/'+weather.weather[0].icon+'.png');
     img.position(550,100);
 
@@ -75,14 +89,16 @@ var flockingSketch = function( sketch ) {
 
     var windP = sketch.createP('The wind is blowing at ' + windmag + ' miles per hour with gusts up to ' + gustmag + '.');
     windP.position(100,120);
+    */
 
-    sketch.basewind = p5.Vector.fromAngle(sketch.radians(dir));
+    sketch.basewind = p5.Vector.fromAngle(sketch.radians(dir-90)); // Had to offset by 90 degrees. Bug?
     sketch.basewind.mult(windmag/100);
-    sketch.gust = p5.Vector.fromAngle(sketch.radians(dir));
+    sketch.gust = p5.Vector.fromAngle(sketch.radians(dir-90));
     sketch.gust.mult(gustmag/100);
+
   }
 
-
+  /*
   sketch.drawVector = function(v,x,y,scayl) {
     if (v.mag() > 0) {
       sketch.pushMatrix();
@@ -100,7 +116,8 @@ var flockingSketch = function( sketch ) {
       sketch.popMatrix();
     }
   }
-
+  */
+ 
   // Flock Class
 
   sketch.Flock = function () {

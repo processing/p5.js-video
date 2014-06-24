@@ -14,9 +14,10 @@ var circleSketch = function( sketch ) {
         sketch.hue = sketch.random(100);
     }
 
-    sketch.fill(sketch.hue, 100, 100, 128);
+    sketch.fill(sketch.hue, 50, 100);
     sketch.stroke(sketch.hue, 100, 100);
     sketch.ellipse(80, 80,148,148);
+
   }
 
   sketch.title = "Circle"

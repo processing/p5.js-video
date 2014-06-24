@@ -52,11 +52,11 @@ canvas {
 
 #p5 {
   position:absolute;
-  right: 20px;
+  left: 20px;
   bottom: 10px;
 }
 
-#p5 a {
+#p5 a{
   font-family: 'theSerif', sans-serif;
   font-size: 2.5em;
   font-weight: 400;
@@ -64,33 +64,84 @@ canvas {
   opacity: .15;
 }
 
-#p5 a:hover {
+#pause {
+  position:absolute;
+  right: 20px;
+  bottom: 10px;
+  cursor: pointer;
+  z-index: 1000;
+  display: none;
+}
+
+#pause span{
+  font-size: 2.5em;
+  font-weight: 400;
+  color: black;
+  opacity: .15;
+}
+
+#p5 a:hover, #pause span:hover {
   text-decoration: none;
   opacity: 1;
   color:#2B4A90;
 }
 
-#callout {
-  position:absolute;
-  bottom: 30%;
-  right: 15%;
-  cursor: pointer;
-  display: none;
-  z-index: 1000;
-}
+#label {
+  position: absolute;
+  z-index: 1000; 
 
-#callout .title {
   font-family: 'theSerif', sans-serif;
+  font-size: 2.25em;
   font-weight: 400;
-  font-size: 2.2em;
-  color:#2B4A90;
+  color:#2B4A90; 
+  display: none;
 }
 
-#callout .pause {
-  font-size: 1.2em;
-  color:#fff;
-  position: relative;
-  top: -6px;
+#label.pause {
+  right: 148px;
+  bottom: 130px;   
+}
+
+#label.lauren {
+  top: 100%;
+  left: 50%;
+  margin-top: -625px;
+  margin-left: -400px;
+}
+
+#label.shiffman {
+  top: 100%;
+  left: 50%;
+  margin-top: -685px;
+  margin-left: -400px;
+}
+
+#arrow {
+  position: absolute;
+  z-index: 1000;
+  width: 128px;
+  height: 128px;
+  background-image: url('../assets/arrow.png');
+  display: none;
+}
+
+#arrow.pause {
+  right: 60px;
+  bottom: 12px;  
+}
+
+#arrow.lauren {
+  top: 100%;
+  left: 50%;
+  margin-top: -580px;
+  margin-left: -280px;
+}
+
+#arrow.shiffman {
+  top: 100%;
+  left: 50%;
+  margin-top: -640px;
+  margin-left: -320px;
 }
 
 #sketchCanvas {
@@ -193,16 +244,8 @@ canvas {
   z-index: -1;
 
   background: #fefefe;
+  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(232,232,232,1) 100%);
 
-  /*
-  background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(187,187,187,1) 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(187,187,187,1)));
-  background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
-  background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
-  background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
-  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(187,187,187,1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#bbbbbb',GradientType=0 );
-  */
  
 
 }

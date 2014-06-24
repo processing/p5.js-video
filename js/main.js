@@ -64,7 +64,7 @@ var main = {
 
     // Buttons
 
-    $("#callout").click( function () {
+    $("#pause").click( function () {
       editor.getSession().setValue($.trim($(sketch.exampleDiv).text())); 
       $("#example").fadeIn("fast");
       $("#showExample").fadeOut("fast");

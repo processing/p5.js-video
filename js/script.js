@@ -2,7 +2,7 @@ var script = {
   popcorn: null,
   init: function() {
 
-    var pop = Popcorn.smart("#videoClip", "assets/video.mp4");
+    var pop = Popcorn.smart("#videoClip", ["assets/video.mp4","assets/video.webm"]);
     pop.autoplay(false);
 
     pop.on( "canplayall", function(e) {
@@ -17,11 +17,11 @@ var script = {
       target = seriously.target('#videoCanvas');
       chroma = seriously.effect('chroma');
 
-      chroma.weight = 1.25;
-      chroma.balance = .0;
-      chroma.screen = 'RGB(0, 255, 19)';
-      chroma.clipWhite = 1.0;
-      chroma.clipBlack = 0.0;
+      // chroma.weight = 1.25;
+      // chroma.balance = .0;
+       chroma.screen = 'RGB(0, 255, 19)';
+      // chroma.clipWhite = 1.0;
+      // chroma.clipBlack = 0.0;
 
       chroma.source = "#"+script.popcorn.media.id;
       target.source = chroma;
@@ -32,6 +32,42 @@ var script = {
       $("#begin").button('reset');
 
     });
+
+    // Lauren
+
+    pop.code({
+      start: 1,
+      onStart: function( options ) {
+        $("#arrow").attr("class","lauren").fadeIn();
+        $("#label").text("Lauren McCarthy").attr("class","lauren").fadeIn();
+      }
+    }); 
+
+    pop.code({
+      start: 5,
+      onStart: function( options ) {
+        $("#arrow").stop().fadeOut();
+        $("#label").stop().fadeOut();
+      }
+    }); 
+
+    // Shiffman
+
+    pop.code({
+      start: 21,
+      onStart: function( options ) {
+        $("#arrow").attr("class","shiffman").fadeIn();
+        $("#label").text("Dan Shiffman").attr("class","shiffman").fadeIn();
+      }
+    }); 
+
+    pop.code({
+      start: 25,
+      onStart: function( options ) {
+        $("#arrow").stop().fadeOut();
+        $("#label").stop().fadeOut();
+      }
+    });     
 
     // Drawing Sketch
 
@@ -93,14 +129,20 @@ var script = {
       start: 44,
       onStart: function( options ) {
 
-        //$("#sketchCanvas").fadeOut('slow', function() {
-          sketch.remove();
-          $("#sketchCanvas").show();
-        //});
+        $("#sketchCanvas").fadeOut(1000);
 
       }
     });
 
+    pop.code({
+      start: 46,
+      onStart: function( options ) {
+          sketch.remove();
+          $("#sketchCanvas").stop(); 
+          $("#sketchCanvas").css({opacity:1});
+          $("#sketchCanvas").show();        
+      }
+    });        
 
     // Elements Sketch
 
@@ -162,28 +204,37 @@ var script = {
     pop.code({
       start: 73.35,
       onStart: function( options ) {
-        sketch.hue = 65;
+        sketch.hue = 0;
       }
     });
 
-    // Turn Rectangle Green
+    // Turn Circle Blue
 
     pop.code({
       start: 73.95,
       onStart: function( options ) {
-        sketch.hue = 50;
+        sketch.hue = 64;
       }
     });
 
-    // Show Code Callout
+    // Show Pause
 
     pop.code({
       start: 80.5,
       onStart: function( options ) {
-        $("#sketchTitle").text(sketch.title);
-        $("#callout").show();
+        $("#pause").fadeIn();
+        $("#arrow").attr("class","pause").fadeIn();
+        $("#label").text("Pause").attr("class","pause").fadeIn();
       }
     });
+
+    pop.code({
+      start: 87.5,
+      onStart: function( options ) {
+        $("#arrow").stop().fadeOut();
+        $("#label").stop().fadeOut();
+      }
+    });    
 
     // Slider Sketch
 
@@ -195,7 +246,6 @@ var script = {
         sketch = new p5(circleSliderSketch, "sketchCanvas");
         script.positionSketch({left:-340, top:540} , true);
 
-        $("#sketchTitle").text(sketch.title);
       }
     });
 
@@ -211,7 +261,6 @@ var script = {
         sketch = new p5(flockingSketch, "sketchCanvas");
         script.positionSketch({left:0, top:0}, false);
 
-        $("#sketchTitle").text(sketch.title);
       }
     });
 
@@ -239,17 +288,36 @@ var script = {
       start: 144.25,
       onStart: function( options ) {
 
-        //$("#sketchCanvas").fadeOut('slow', function () {
-          sketch.remove();
-          $("#sketchCanvas").empty();
-          $("#sketchCanvas").show();
-        //});
-
-        $("#callout").fadeOut('slow');
+        $("#sketchCanvas").fadeOut(1000);
       }
     });
 
+    pop.code({
+      start: 146.25,
+      onStart: function( options ) {
+          sketch.remove();
+          $("#sketchCanvas").stop(); 
+          $("#sketchCanvas").css({opacity:1});          
+          $("#sketchCanvas").empty(); 
+          $("#sketchCanvas").hide();        
+      }
+    });     
+
     // Video
+
+    pop.code({
+      start: 158,
+      onStart: function( options ) {     
+      }
+    });  
+
+    pop.code({
+      start: 178,
+      onStart: function( options ) {     
+
+        $("#pause").fadeOut(1000);
+      }
+    }); 
 
     // CTA
     

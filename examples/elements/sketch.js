@@ -50,7 +50,7 @@ var elementsSketch = function( sketch ) {
       slider.elt.oninput = function() {
         for (var i = 0; i < sketch.txt.length; i++) {
           //txt[i].size(input.elt.value);
-          sketch.txt[i].style('font-size: '+input.elt.value+'pt');
+          sketch.txt[i].style('font-size: '+slider.elt.value+'pt');
         }
       }    
   }

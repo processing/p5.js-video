@@ -4,9 +4,9 @@ var circleSliderSketch = function( sketch ) {
     sketch.createCanvas(160, 160);    
     sketch.colorMode(sketch.HSB, 100);
     sketch.strokeWeight(6);
-    sketch.hue = 50;
+    sketch.hue = 65;
 
-    sketch.hueSlider = sketch.createSlider(0,100,50);
+    sketch.hueSlider = sketch.createSlider(0,100,sketch.hue);
     sketch.hueSlider.size(160,10);
     sketch.hueSlider.position(0,180);    
   };

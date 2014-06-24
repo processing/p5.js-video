@@ -202,13 +202,14 @@ var flockingSketch = function( sketch ) {
   sketch.Boid.prototype.display = function() {
     
     var mouseDistance = sketch.dist(this.position.x, this.position.y, sketch.mouseX, sketch.mouseY)
-    var mappedDistance = sketch.map(mouseDistance, 0, sketch.maxDistance,  30, 90);
-
+    var mappedColor = sketch.map(mouseDistance, 0, sketch.maxDistance,  80, 50);
+    var mappedSize = sketch.map(mouseDistance, 0, sketch.maxDistance,  32,8);
     // Draw a triangle rotated in the direction of velocity
     
-    sketch.fill(mappedDistance, 100, 100, 50);
-    sketch.stroke(mappedDistance, 100, 100);
-    sketch.ellipse(this.position.x,this.position.y,16,16);
+    this.r = mappedSize;
+    sketch.fill(mappedColor, 100, 100, 50);
+    sketch.stroke(mappedColor, 100, 100);
+    sketch.ellipse(this.position.x,this.position.y,this.r,this.r);
   };
 
   // Wraparound

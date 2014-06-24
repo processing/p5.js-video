@@ -33,6 +33,117 @@ var script = {
 
     });
 
+    // Drawing Sketch
+
+    pop.code({
+      start: 33.5,
+      onStart: function( options ) {
+
+        sketch = new p5(drawingSketch, "sketchCanvas");
+        script.positionSketch({left:0, top:0} , false);
+
+        sketch.addShapes(24,sketch.width/2,sketch.width,0,sketch.height/2,'circle'); 
+ 
+      }
+    });
+
+    pop.code({
+      start: 34,
+      onStart: function( options ) {
+        sketch.addShapes(24,0,sketch.width/2,0,sketch.height/2,'rect');         
+      }
+    });
+
+    pop.code({
+      start: 34.5,
+      onStart: function( options ) {
+        sketch.addShapes(24,sketch.width/2,sketch.width,sketch.height/2,sketch.height,'line');    
+      }
+    });
+
+    pop.code({
+      start: 35,
+      onStart: function( options ) {
+        sketch.addShapes(24,0,sketch.width/2,sketch.height/2,sketch.height,'curve');    
+      }
+    });
+
+    pop.code({
+      start: 35.5,
+      onStart: function( options ) {
+        sketch.addShapes(24,sketch.width/2-144,sketch.width/2+144,sketch.height/2-144,sketch.height/2+144,'square');
+      }
+    });
+
+    pop.code({
+      start: 36,
+      onStart: function( options ) {
+        sketch.addShapes(24,sketch.width/2-72,sketch.width/2+72,sketch.height/2-72,sketch.height/2+72,'triangle');
+      }
+    });
+
+    pop.code({
+      start: 40.05,
+      onStart: function( options ) {
+        sketch.colorize();
+      }
+    });
+
+    pop.code({
+      start: 44,
+      onStart: function( options ) {
+
+        //$("#sketchCanvas").fadeOut('slow', function() {
+          sketch.remove();
+          $("#sketchCanvas").show();
+        //});
+
+      }
+    });
+
+
+    // Elements Sketch
+
+    pop.code({
+      start: 52,
+      onStart: function( options ) {
+
+        sketch = new p5(elementsSketch, "sketchCanvas");
+        script.positionSketch({left:0, top:0} , false);
+
+      }
+    });
+
+    pop.code({
+      start: 54,
+      onStart: function( options ) {
+        sketch.addInput();
+      }
+    });
+
+    pop.code({
+      start: 54.5,
+      onStart: function( options ) {
+        sketch.addSlider();
+      }
+    });
+
+    pop.code({
+      start: 55,
+      onStart: function( options ) {
+        sketch.addButtons();
+      }
+    });            
+
+    pop.code({
+      start: 63.5,
+      onStart: function( options ) {
+
+        sketch.remove();
+        $("#sketchCanvas").empty();
+
+      }
+    });    
 
     // Circle Sketch
 
@@ -127,10 +238,18 @@ var script = {
     pop.code({
       start: 144.25,
       onStart: function( options ) {
-        sketch.remove();
-        $("#sketchCanvas").empty();
+
+        //$("#sketchCanvas").fadeOut('slow', function () {
+          sketch.remove();
+          $("#sketchCanvas").empty();
+          $("#sketchCanvas").show();
+        //});
+
+        $("#callout").fadeOut('slow');
       }
     });
+
+    // Video
 
     // CTA
     

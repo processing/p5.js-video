@@ -10,17 +10,25 @@ var flockingSketch = function( sketch ) {
   sketch.basewind = new p5.Vector();
   sketch.gust = new p5.Vector();  
 
+  sketch.maxDistance = Math.sqrt( Math.pow(window.innerWidth,2),  Math.pow(window.innerHeight,2));
+
+
   sketch.setup = function() {
     sketch.createCanvas(window.innerWidth,window.innerHeight);
     sketch.flock = new sketch.Flock();
 
-    sketch.addBoids();
+    //sketch.addBoids();
     //sketch.startFlocking();
     //sketch.getWeather();    
   }
 
   sketch.draw = function() {
     sketch.clear();
+
+    if (sketch.flock.boids.length < 50) {
+      var boid = new sketch.Boid(sketch.random(sketch.width),sketch.random(sketch.height));
+      sketch.flock.addBoid(boid);      
+    }
 
     sketch.flock.display();
     
@@ -38,12 +46,11 @@ var flockingSketch = function( sketch ) {
     sketch.drawVector(sketch.wind,600,120,1000);
   }  
 
-  sketch.addBoids = function() {
-    while (sketch.flock.boids.length < 50) {
-      var boid = new sketch.Boid(sketch.random(sketch.width),sketch.random(sketch.height));
-      sketch.flock.addBoid(boid);
-    }
-  }
+  // sketch.addBoids = function() {
+  //   while (sketch.flock.boids.length < 50) {
+
+  //   }
+  // }
 
   sketch.startFlocking = function() {
     sketch.flocking = true;
@@ -102,6 +109,8 @@ var flockingSketch = function( sketch ) {
 
   sketch.Flock.prototype.display = function() {
     for (var i = 0; i < this.boids.length; i++) {
+      sketch.colorMode(sketch.HSB, 100);
+      sketch.strokeWeight(2);
       this.boids[i].display();  // Passing the entire list of boids to each boid individually
     }
   };
@@ -191,10 +200,14 @@ var flockingSketch = function( sketch ) {
   };
 
   sketch.Boid.prototype.display = function() {
+    
+    var mouseDistance = sketch.dist(this.position.x, this.position.y, sketch.mouseX, sketch.mouseY)
+    var mappedDistance = sketch.map(mouseDistance, 0, sketch.maxDistance,  30, 90);
+
     // Draw a triangle rotated in the direction of velocity
-    sketch.fill(0,100);
-    sketch.stroke(0);
-    sketch.strokeWeight(1);
+    
+    sketch.fill(mappedDistance, 100, 100, 50);
+    sketch.stroke(mappedDistance, 100, 100);
     sketch.ellipse(this.position.x,this.position.y,16,16);
   };
 
@@ -291,5 +304,8 @@ var flockingSketch = function( sketch ) {
 
   // Return
   
+  sketch.title = "Flocking";
+  sketch.exampleDiv ="#circleSliderSketch";  
+
   return sketch;
 };

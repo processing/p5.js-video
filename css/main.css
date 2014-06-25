@@ -260,6 +260,8 @@ canvas {
   left: 50%;
   margin-left: -200px;
   text-align: center;
+    vertical-align: top;
+
 }
 
 #temperature {
@@ -272,7 +274,6 @@ canvas {
   text-align: left;
   margin-top: 14px;
   margin-left: 24px;
-  vertical-align: top;
 }
 
 #speed, #gust {

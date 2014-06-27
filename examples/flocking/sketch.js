@@ -12,13 +12,12 @@ var flockingSketch = function( sketch ) {
 
   sketch.maxDistance = Math.sqrt( Math.pow(window.innerWidth,2),  Math.pow(window.innerHeight,2));
 
-
   sketch.setup = function() {
     sketch.createCanvas(window.innerWidth,window.innerHeight);
     sketch.flock = new sketch.Flock();
 
-    //sketch.startFlocking();
-    //sketch.getWeather();    
+    sketch.startFlocking();
+    sketch.getWeather();    
   }
 
   sketch.draw = function() {
@@ -64,32 +63,15 @@ var flockingSketch = function( sketch ) {
     else
       gustmag = windmag;
 
-    var weatherElement = sketch.getElement("weather");
+    // Setup UI
 
-    var temparatureElement = sketch.getElement("temperature");
-    temparatureElement.elt.innerHTML = sketch.floor(weather.main.temp)+'&deg;';
+    sketch.getElement("temperature").html(sketch.floor(weather.main.temp)+'&deg;');
+    sketch.getElement("speed").html("WIND " + windmag + " <small>MPH</small>");
+    sketch.getElement("gust").html("GUST " + gustmag + " <small>MPH</small>");
+    sketch.getElement("guage").elt.style.transform = 'rotate('+dir+'deg)';
+    sketch.getElement("weather").show();
 
-    var speedElement = sketch.getElement("speed");
-    speedElement.elt.innerHTML = "WIND " + windmag + " <small>MPH</small>";
-
-    var gustElement = sketch.getElement("gust");
-    gustElement.elt.innerHTML = "GUST " + gustmag + " <small>MPH</small>";  
-
-    var guageElement = sketch.getElement("guage");
-    guageElement.elt.style.transform = 'rotate('+dir+'deg)';
-
-    weatherElement.show();
-
-    /*
-    var img = sketch.createImg('http://openweathermap.org/img/w/'+weather.weather[0].icon+'.png');
-    img.position(550,100);
-
-    var weatherP = sketch.createP('In NYC, the weather is ' + weather.weather[0].main.toLowerCase() + ' with a temperature of ' + sketch.floor(weather.main.temp) + ' degrees farenheit.');
-    weatherP.position(100,100);
-
-    var windP = sketch.createP('The wind is blowing at ' + windmag + ' miles per hour with gusts up to ' + gustmag + '.');
-    windP.position(100,120);
-    */
+    // Create vectors for animation
 
     sketch.basewind = p5.Vector.fromAngle(sketch.radians(dir-90)); // Had to offset by 90 degrees. Bug?
     sketch.basewind.mult(windmag/100);
@@ -164,7 +146,7 @@ var flockingSketch = function( sketch ) {
     this.acceleration = new p5.Vector(0,0);
     this.velocity = new p5.Vector(sketch.random(-1,1),sketch.random(-1,1));
     this.position = new p5.Vector(x,y);
-    this.r = 3.0;
+    this.r = 16.0;
     this.maxspeed = 3;    // Maximum speed
     this.maxforce = 0.05; // Maximum steering force
   }
@@ -220,21 +202,22 @@ var flockingSketch = function( sketch ) {
     
     var mouseDistance = sketch.dist(this.position.x, this.position.y, sketch.mouseX, sketch.mouseY)
     var mappedColor = sketch.map(mouseDistance, 0, sketch.maxDistance,  80, 50);
-    var mappedSize = sketch.map(mouseDistance, 0, sketch.maxDistance,  32,8);
+    //var mappedSize = sketch.map(mouseDistance, 0, sketch.maxDistance,  32,8);
     // Draw a triangle rotated in the direction of velocity
     
-    this.r = mappedSize;
     sketch.fill(mappedColor, 100, 100, 50);
     sketch.stroke(mappedColor, 100, 100);
     sketch.ellipse(this.position.x,this.position.y,this.r,this.r);
   };
 
+
   // Wraparound
   sketch.Boid.prototype.borders = function() {
-    if (this.position.x < -this.r)  this.position.x = sketch.width +this.r;
-    if (this.position.y < -this.r)  this.position.y = sketch.height+this.r;
-    if (this.position.x > sketch.width +this.r) this.position.x = -this.r;
-    if (this.position.y > sketch.height+this.r) this.position.y = -this.r;
+
+    if (this.position.x < -this.r)  this.position.x = sketch.width  + this.r;
+    if (this.position.y < -this.r)  this.position.y = sketch.height + this.r;
+    if (this.position.x > sketch.width + this.r) this.position.x = -this.r;
+    if (this.position.y > sketch.height + this.r) this.position.y = -this.r;
   };
 
   // Separation

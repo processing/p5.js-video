@@ -63,6 +63,32 @@ var flockingSketch = function( sketch ) {
     else
       gustmag = windmag;
 
+
+    // Create UI
+    
+    var weatherElement = sketch.createDiv("");
+    weatherElement.id("weather");
+
+    var temperatureElement = sketch.createDiv("")
+    temperatureElement.id("temperature");
+    temperatureElement.parent("weather");
+
+    var windElement = sketch.createDiv("");
+    windElement.id("wind");
+    windElement.parent("weather");
+
+    var speedElement = sketch.createDiv("");
+    speedElement.id("speed");
+    speedElement.parent("wind");
+
+    var gustElement = sketch.createDiv("");
+    gustElement.id("gust");
+    gustElement.parent("wind");        
+
+    var gaugeElement = sketch.createDiv("");
+    gaugeElement.id("gauge");
+    gaugeElement.parent("weather");    
+ 
     // Setup UI
 
     sketch.getElement("temperature").html(sketch.floor(weather.main.temp)+'&deg;');

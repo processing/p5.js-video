@@ -50,6 +50,18 @@ canvas {
   bottom: 0;
 }
 
+#welcome, #error {
+  position: absolute;
+  width: 500px;
+  height: 128px;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  margin-left: -250px;
+  margin-top: -62px;
+  display: none;
+}
+
 #p5 {
   position:absolute;
   left: 20px;
@@ -146,17 +158,6 @@ canvas {
 
 #sketchCanvas {
   position: absolute;
-}
-
-#welcome {
-  position: absolute;
-  width: 500px;
-  height: 128px;
-  text-align: center;
-  top: 50%;
-  left: 50%;
-  margin-left: -250px;
-  margin-top: -62px;
 }
 
 #videoClip {

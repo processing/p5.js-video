@@ -5,7 +5,11 @@ $(document).ready( function () {
 
   // Let's go
 
-  main.init();
+  if (Seriously.incompatible()){
+    $("#error").fadeIn();
+  } else {
+    main.init();
+  }
 
 });
 
@@ -27,6 +31,8 @@ var main = {
     
     editor = ace.edit("exampleEditor");
     editor.getSession().setMode("ace/mode/javascript");  
+
+    main.editor = editor;
 
     // Events
 
@@ -84,11 +90,9 @@ var main = {
     $("#begin").click( function() {
       main.start();
     });
-    $("#begin").button('loading'); 
+    $("#begin").button('loading');
 
-    // Set externals
-
-    main.editor = editor;
+    $("#welcome").fadeIn();
 
   },
 

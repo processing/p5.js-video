@@ -50,6 +50,19 @@ canvas {
   bottom: 0;
 }
 
+#background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+
+  background: #fefefe;
+  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%);
+
+}
+
 #welcome, #error {
   position: absolute;
   width: 500px;
@@ -76,6 +89,8 @@ canvas {
   opacity: .15;
 }
 
+
+
 #pause {
   position:absolute;
   right: 20px;
@@ -91,6 +106,7 @@ canvas {
   color: black;
   opacity: .15;
 }
+
 
 #p5 a:hover, #pause span:hover {
   text-decoration: none;
@@ -177,7 +193,6 @@ canvas {
   display:none;
 }
 
-
 #example {
   position: absolute;
   width: 980px;
@@ -235,75 +250,3 @@ canvas {
   padding: 16px;
   display: none;
 }
-
-#background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-
-  background: #fefefe;
-  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%);
-
-}
-
-#weather {
-  position: absolute;
-  border-radius: 4px;
-  background: rgba(64,128,256,.75);
-  color: white;
-  left: 0;
-  bottom: 640px;
-  display: none;
-  width: 400px;
-  left: 50%;
-  margin-left: -200px;
-  text-align: center;
-  vertical-align: top;
-
-}
-
-#temperature {
-    display: inline-block;
-    font-size: 60px;
-}
-
-#wind {
-  display: inline-block;
-  text-align: left;
-  margin-top: 14px;
-  margin-left: 24px;
-}
-
-#speed, #gust {
-  font-size: 14pt;
-}
-
-#gauge {
-  width: 48px;
-  height: 48px;
-  display: inline-block;
-  margin-left: 24px;
-  background-image: url('../assets/wind.png');
-  
-}
-
-.textExample {
-  z-index: 5000;
-  font-size: 2em;
-  font-weight: bold;
-  color: yellow;
-  cursor:pointer;
-
-   -moz-user-select: none;
-   -khtml-user-select: none;
-   -webkit-user-select: none;
-   -ms-user-select: none;
-   user-select: none;
-}
-
-.textExample:active {
-  color: #FF00FE;
-};

@@ -16,8 +16,8 @@ var flockingSketch = function( sketch ) {
     sketch.createCanvas(window.innerWidth,window.innerHeight);
     sketch.flock = new sketch.Flock();
 
-    sketch.startFlocking();
-    sketch.getWeather();    
+    //sketch.startFlocking(); // Called by Popcorn
+    //sketch.getWeather(); // Called by Popcorn
   }
 
   sketch.draw = function() {

@@ -32,7 +32,7 @@ var flockingSketch = function( sketch ) {
     
     if (sketch.flocking) {
       sketch.flock.applyForce(sketch.wind);
-      sketch.flock.seek(sketch.mouseX,sketch.mouseY);
+      sketch.flock.repel(sketch.mouseX,sketch.mouseY);
       sketch.flock.run();
     }
     
@@ -131,10 +131,15 @@ var flockingSketch = function( sketch ) {
     }
   };
 
-  sketch.Flock.prototype.seek = function(x,y) {
+  sketch.Flock.prototype.repel = function(x,y) {
     for (var i = 0; i < this.boids.length; i++) {
-      var v = this.boids[i].seek(new p5.Vector(x,y));  // Passing the entire list of boids to each boid individually
-      this.boids[i].applyForce(v);
+      var target = new p5.Vector(x,y);
+      var dis = p5.Vector.dist(target,this.boids[i].position);
+      if (dis < 100) { 
+        var v = this.boids[i].seek(new p5.Vector(x,y));  // Passing the entire list of boids to each boid individually
+        v.mult(-1000/dis);
+        this.boids[i].applyForce(v);
+      }
     }
   };
 

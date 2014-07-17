@@ -18,11 +18,11 @@ So how does p5.js work? What are some of the things you can do with it?
 
 One of the first things you might want to do is draw to the screen, so let's start with something simple: a circle. (cue)
 
-It doesn't have to be a circle, of course. It could be a square (cue) or a triangle (cue) or a flower (cue) or anything else, but we'll start with a circle (cue).
+It doesn't have to be a circle, of course. It could be a square (cue) or a triangle (cue) or a flower (cue) or anything else, but we'll start with a circle (cue).  The code for writing these elements (cue) is just like Processing but the language is JavaScript. 
 
 p5 is a great tool for drawing in the browser, but these drawings don't have to be static. We can interact with them. Now when we click our circle (cue) it will change colors. Go ahead, try it!
 
-And since we're in the browser, we can create HTML elements and interact with them as well. So lets create a slider (cue) and as you move that slider back and forth, you can adjust the color of the circle.
+And since we're in the browser, we can create HTML elements and interact with them as well. So lets create a slider (cue) and as you move that slider back and forth, you can adjust the color of the circle.  How was that slider created?  With code as well (cue).  Oh, how lovely and simple.
 
 # Flocking
 
@@ -36,7 +36,8 @@ Remember, all of this is happening in real time in your browser and after the vi
 
 # More Examples
 
-???
+You can do a lot of exciting things with p5.js.  Here is a generative drawing application, Golan Levin's "Yellowtail".  Try dragging your mouse around to draw a picture then release and see what happens.  p5.js also incorporates sounds, here's an interactive piano playing one of my favorites, click on the keys to add your own notes.  At the end of this video, you can see the code for all these examples and play with them online more.
+
 
 # Dan's Closing
 

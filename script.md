@@ -36,7 +36,7 @@ Remember, all of this is happening in real time in your browser and after the vi
 
 # More Examples
 
-You can do a lot of exciting things with p5.js.  Here is a generative drawing application, Golan Levin's "Yellowtail".  Try dragging your mouse around to draw a picture then release and see what happens.  p5.js also incorporates sounds, here's an interactive piano playing one of my favorites, click on the keys to add your own notes.  At the end of this video, you can see the code for all these examples and play with them online more.
+You can do a lot of exciting things with p5.js. It doesn't have to be visual, either, you can play with sounds. For example, you can generate tones in realtime and play a little song. (cue) You can also let the user choose what to draw by creating a generative drawing tool. . . and combine that with sound! Try dragging your mouse around to draw a picture then release and see what happens. (cue)
 
 
 # Dan's Closing

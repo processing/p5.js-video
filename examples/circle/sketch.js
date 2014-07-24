@@ -1,7 +1,7 @@
 var circleSketch = function( sketch ) {
 
   sketch.setup = function() {
-  sketch.createCanvas(160, 160);
+    sketch.createCanvas(160, 160);
     sketch.colorMode(sketch.HSB, 100);
     sketch.strokeWeight(6);
     sketch.hue = 12;

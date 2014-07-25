@@ -66,16 +66,63 @@ title: Home
 
     <div id="cta">
 
-      <h1>p5.js</h1>
+      <div id="ctaHeader">
+        <h2>Thanks for Watching!</h2>
+        <small>Use the links below to find out more about p5.js.</small>
 
-      <p>Thanks for watching! Use the links below to find out more about p5.js and to learn how you can help with its development.</p>
+      </div>
 
-      <p>
-        <a href="http://p5js.org"><span class="glyphicon glyphicon-home"></span> Visit the Homepage</a>&emsp;
-        <a href="https://github.com/lmccart/p5.js/"><span class="glyphicon glyphicon-cloud-download"></span> Grab the Code</a>&emsp;
-        <a href="https://github.com/lmccart/p5.js/issues"><span class="glyphicon glyphicon-info-sign"></span> File and Issue</a>
-      </p>
+      <div id="ctaBody">
 
+        <!-- Nav tabs -->
+        <ul class="nav nav-pills nav-justified" role="tablist">
+          <li class="active"><a href="#beginner" role="tab" data-toggle="tab">Beginner</a></li>
+          <li><a href="#processing" role="tab" data-toggle="tab">Processing User</a></li>
+          <li><a href="#javascript" role="tab" data-toggle="tab">Javascript Pro</a></li>
+        </ul>
+
+        <hr/>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div class="tab-pane active" id="beginner">
+            <p>
+            <ul>
+              <li>Get started with Javascript</li>
+              <li>Download and setup p5.js</li>
+              <li>Explore online examples</li>
+            </ul>          
+            </p>
+          </div>
+          <div class="tab-pane" id="processing">
+            <p>
+            <ul>
+              <li>Learn the differences</li>
+              <li>Create an example</li>
+              <li>File a bug</li>
+            </ul>          
+            </p>
+          </div>
+          <div class="tab-pane" id="javascript">
+            <p>
+            <ul>
+              <li>Fix a bug</li>
+              <li>Add a feature</li>
+              <li>Build an example</li>
+            </ul>
+            </p>
+          </div>
+        </div>
+
+        <hr/>
+
+        <p>
+          <a href="http://p5js.org"><span class="glyphicon glyphicon-home"></span> Visit the Homepage</a>&emsp;
+          <a href="https://github.com/lmccart/p5.js/"><span class="glyphicon glyphicon-cloud-download"></span> Grab the Code</a>&emsp;
+          <a href="https://github.com/lmccart/p5.js/issues"><span class="glyphicon glyphicon-info-sign"></span> File an Issue</a>
+        </p>      
+
+      </div>
     </div>   
 
   </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -85,6 +132,8 @@ title: Home
 
   <script src="js/vendor/p5.js"></script>
   <script src="js/vendor/addons/p5.dom.js"></script>
+  <script src="js/vendor/addons/p5.sound.js"></script>
+
   <script src="js/vendor/popcorn.js"></script>
   <script src="js/vendor/ace/ace.js"></script>
 
@@ -100,6 +149,8 @@ title: Home
   <script src="examples/elements/sketch.js"></script>
   <script src="examples/circle/sketch.js"></script>
   <script src="examples/circleSlider/sketch.js"></script>
+  <script src="examples/song/sketch.js"></script>
+  <script src="examples/painting/sketch.js"></script>
   
   <script src="examples/flocking/sketch.js"></script>
   <link rel="stylesheet" href="examples/flocking/main.css">

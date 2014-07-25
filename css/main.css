@@ -38,6 +38,14 @@ h1 {
   color:#2B4A90;
 }
 
+h2 {
+  font-family: 'theSerif', sans-serif;
+  font-weight: 400;
+  font-size: 1.4em;
+  color:white;
+}
+
+
 canvas {
 }
 
@@ -58,9 +66,10 @@ canvas {
   bottom: 0;
   z-index: -1;
 
-  background: #fefefe;
+  background: #f3f3f3;
+  /*
   background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%);
-
+  */
 }
 
 #welcome, #error {
@@ -240,13 +249,21 @@ canvas {
 #cta {
 
   width: 512px;
-  height: 192px;
   position: absolute;
   top: 50%;
   left: 50%;
   margin-left: -256px;
-  margin-top: -96px;
+  margin-top: -186px;
   background: #fefefe;
-  padding: 16px;
   display: none;
+}
+
+#ctaHeader {
+  background: #428BCA;
+  color: white;
+  padding: 16px;
+}
+
+#ctaBody {
+  padding: 16px;
 }

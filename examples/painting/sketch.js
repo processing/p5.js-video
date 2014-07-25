@@ -11,9 +11,11 @@ var paintingSketch = function( sketch ) {
   sketch.next = 0;
   sketch.lastPosition = null;
 
-  // Range of midi notes to randomly select on path creation.
+  // Range of midi notes to select on path creation.
 
   sketch.notes = [60,62,64,65,67,69,71,72,74,76];
+
+  //sketch.notes = [60,64,67,71,72,76,79,83];
 
   sketch.setup = function() {
 
@@ -50,20 +52,26 @@ var paintingSketch = function( sketch ) {
     sketch.lfo = new sketch.LFO(2);
     sketch.lfo.ampMod(sketch.osc);
 
+
+
   };
 
   sketch.draw = function() {
     sketch.clear();
-
     // Draw image buffer
-    //sketch.alphaBuffer.clear();
-    //sketch.alphaBuffer.image(sketch.buffer,0,0);
-    //sketch.image(sketch.alphaBuffer, 0, 0);
+    sketch.alphaBuffer.clear();
+    sketch.alphaBuffer.image(sketch.buffer,0,0);
+    sketch.image(sketch.alphaBuffer, 0, 0);
    
-    //sketch.buffer.clear();
-    //sketch.buffer.image(sketch.alphaBuffer, 0, 0);
+    sketch.buffer.clear();
+    sketch.buffer.image(sketch.alphaBuffer, 0, 0);
 
-    sketch.image(sketch.buffer, 0, 0);
+    // sketch.buffer.colorMode(sketch.RGB,100);
+    // sketch.buffer.fill(95,95,95,10);
+    // sketch.buffer.noStroke();
+    // sketch.buffer.rect(0,0,sketch.width,sketch.height);
+    // sketch.buffer.colorMode(sketch.HSB,100);
+    // sketch.image(sketch.buffer, 0, 0);
 
     // Add a circle to the current path
     if (sketch.millis() > sketch.next && sketch.painting) {
@@ -126,8 +134,8 @@ var paintingSketch = function( sketch ) {
     sketch.painting = false;
     sketch.osc.fade(0,.4);
     sketch.lfo.fade(0,.4);
-    //sketch.osc.stop(.4);
-    //sketch.lfo.stop(.4)
+    sketch.osc.stop(.4);
+    sketch.lfo.stop(.4)
     
   }
 
@@ -141,11 +149,17 @@ var paintingSketch = function( sketch ) {
   sketch.Paths.prototype.add = function(position, force) {
     position.x += sketch.random(-5,5);
     position.y += sketch.random(-5,5);
-    this.path.push(new sketch.Circle(position, force, this.hue++));
+    this.path.push(new sketch.Circle(position, force, this.hue));
   }
 
   // Draw circles or stamp them to the buffer based on age
   sketch.Paths.prototype.display = function() {
+
+    sketch.stroke( this.hue, 100, 100, 100);
+    sketch.fill( this.hue, 100, 100, 50);
+
+    sketch.buffer.stroke( this.hue, 100, 100, 100);
+    sketch.buffer.fill( this.hue, 100, 100, 50);
 
     var i = this.path.length;
 
@@ -183,8 +197,8 @@ var paintingSketch = function( sketch ) {
 
     var size = sketch.map( this.currentMagnitude, 0, this.startMagnitude, 12, 4);
     
-    sketch.stroke( this.hue, 100, 100, 100);
-    sketch.fill( this.hue, 100, 100, 50);
+    //sketch.stroke( this.hue, 100, 100, 100);
+    //sketch.fill( this.hue, 100, 100, 50);
     sketch.ellipse(this.position.x,this.position.y, size, size);    
     
     if (lastCircle)
@@ -199,8 +213,8 @@ var paintingSketch = function( sketch ) {
   // Stamp a circle to the buffer so we don't have to track them forever
   sketch.Circle.prototype.stamp = function(lastCircle) {
 
-    sketch.buffer.stroke( this.hue, 100, 100, 100);
-    sketch.buffer.fill( this.hue, 100, 100, 50);
+    //sketch.buffer.stroke( this.hue, 100, 100, 100);
+    //sketch.buffer.fill( this.hue, 100, 100, 50);
     sketch.buffer.ellipse(this.position.x,this.position.y, 12, 12);
 
     if (lastCircle) {

@@ -92,10 +92,10 @@ var songSketch = function( sketch ) {
   sketch.Circle.prototype.display = function() {
 
     var radius = sketch.map(this.age, 0, 100, 0, 256);
-    var alpha = sketch.map(this.age, 0, 100, 100, 0);
+    var alpha = sketch.map(this.age, 0, 100, 1.0, 0.01);
 
-    sketch.fill(this.hue,80,80,alpha);
-    sketch.stroke(this.hue,100,100,alpha);
+    sketch.fill(this.hue,100,100,alpha * 80);
+    sketch.stroke(this.hue,100,100,alpha * 100);
     sketch.ellipse(this.x,this.y, radius,radius);
 
     this.age++;

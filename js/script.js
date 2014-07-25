@@ -325,7 +325,7 @@ var script = {
       start: 202.25,
       onStart: function( options ) {
         $("#cta")
-          .css({top:'-96px'})
+          .css({top:'-186px'})
           .show()
           .animate({top:'50%'}, 
             {

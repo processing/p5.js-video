@@ -16,7 +16,6 @@ $(document).ready( function () {
 //
 
 var main = {
-  editor: null,
   sketch: null,
 
   // Initalize Demo
@@ -26,13 +25,6 @@ var main = {
     // Popcorn Setup
 
     script.init();  
-
-    // Ace setup
-    
-    editor = ace.edit("exampleEditor");
-    editor.getSession().setMode("ace/mode/javascript");  
-
-    main.editor = editor;
 
     // Events
 
@@ -104,8 +96,9 @@ var main = {
     console.log("Length " + script.popcorn.duration() + ".");
 
 
-    $("#welcome").hide();
+    $("#welcome").fadeOut();
     $("#videoCanvas").fadeIn(); 
+    $("#p5").fadeIn(); 
 
     var time = main.getStartTime();
     script.popcorn.play(time);  
@@ -121,6 +114,18 @@ var main = {
     }
 
     return time;
+
+  },
+
+  getRelativePosition: function(position) {
+
+      videoBaseX = $(window).width()/2;
+      videoBaseY = $(window).height();
+
+      position.left = videoBaseX + position.left;
+      position.top = videoBaseY - position.top;
+  
+      return position;
 
   }
 

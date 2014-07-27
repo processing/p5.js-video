@@ -1,4 +1,4 @@
-/*! p5.min.js v0.2.22 July 22, 2014 */
+/*! p5.min.js v0.2.22 July 26, 2014 */
 var shim = function (require) {
     window.requestDraw = function () {
       return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
@@ -331,16 +331,22 @@ var p5Element = function (require, core) {
       this.elt.className += ' ' + c;
     };
     p5.Element.prototype.mousePressed = function (fxn) {
+      attachListener('mousedown', fxn, this);
+    };
+    p5.Element.prototype.mouseReleased = function (fxn) {
+      attachListener('mouseup', fxn, this);
+    };
+    p5.Element.prototype.mouseClicked = function (fxn) {
       attachListener('click', fxn, this);
+    };
+    p5.Element.prototype.mouseMoved = function (fxn) {
+      attachListener('mousemove', fxn, this);
     };
     p5.Element.prototype.mouseOver = function (fxn) {
       attachListener('mouseover', fxn, this);
     };
     p5.Element.prototype.mouseOut = function (fxn) {
       attachListener('mouseout', fxn, this);
-    };
-    p5.Element.prototype.mouseMoved = function (fxn) {
-      attachListener('mousemove', fxn, this);
     };
     function attachListener(ev, fxn, ctx) {
       var _this = ctx;
@@ -1233,6 +1239,7 @@ var colorsetting = function (require, core, constants) {
     };
     p5.prototype.getNormalizedColor = function (args) {
       var isRGB = this._colorMode === constants.RGB;
+      var maxArr = isRGB ? this._maxRGB : this._maxHSB;
       if (args[0] instanceof Array) {
         args = args[0];
       }
@@ -1241,7 +1248,7 @@ var colorsetting = function (require, core, constants) {
         r = args[0];
         g = args[1];
         b = args[2];
-        a = typeof args[3] === 'number' ? args[3] : this._maxA;
+        a = typeof args[3] === 'number' ? args[3] : maxArr[3];
       } else {
         if (isRGB) {
           r = g = b = args[0];
@@ -1249,9 +1256,8 @@ var colorsetting = function (require, core, constants) {
           r = b = args[0];
           g = 0;
         }
-        a = typeof args[1] === 'number' ? args[1] : this._maxA;
+        a = typeof args[1] === 'number' ? args[1] : maxArr[3];
       }
-      var maxArr = isRGB ? this._maxRGB : this._maxHSB;
       r *= 255 / maxArr[0];
       g *= 255 / maxArr[1];
       b *= 255 / maxArr[2];
@@ -1731,7 +1737,7 @@ var imageloading_displaying = function (require, core, filters, canvas, constant
       }
       var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
       if (this._tint) {
-        this.canvas.getContext('2d').drawImage(this._getTintedImageCanvas(frame), vals.x, vals.y, vals.w, vals.h);
+        this.canvas.getContext('2d').drawImage(this._getTintedImageCanvas(img), vals.x, vals.y, vals.w, vals.h);
       } else {
         this.canvas.getContext('2d').drawImage(frame, vals.x, vals.y, vals.w, vals.h);
       }

@@ -428,6 +428,11 @@
 			} catch (error) {
 			}
 		}
+
+		console.log("AA:" + context.getContextAttributes().antialias);
+		console.log("Samples:" + context.getParameter(context.SAMPLES));
+		console.log(context.getShaderPrecisionFormat(context.VERTEX_SHADER, context.MEDIUM_FLOAT).precision);
+		console.log(context.getShaderPrecisionFormat(context.FRAGMENT_SHADER, context.MEDIUM_FLOAT).precision);
 		return context;
 	}
 
@@ -1095,7 +1100,8 @@
 					premultipliedAlpha: false,
 					preserveDrawingBuffer: true,
 					stencil: true,
-					debugContext: primaryTarget.debugContext
+					debugContext: primaryTarget.debugContext,
+					antialias: false
 				});
 
 				if (context) {
@@ -3647,7 +3653,8 @@
 						premultipliedAlpha: false,
 						preserveDrawingBuffer: true,
 						stencil: true,
-						debugContext: debugContext
+						debugContext: debugContext,
+						antialias: false
 					});
 				}
 

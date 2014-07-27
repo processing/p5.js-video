@@ -1,52 +1,30 @@
-@font-face {
-  font-family: 'theSerifItalic';
-  src: url(../fonts/TheSerif_B4_Italic.eot),
-     url(../fonts/TheSerif_B4_Italic.woff) format("woff");
-  font-weight: 400;
-  font-style: normal;
-}
+/*
 
-@font-face {
-  font-family: 'theSerif';
-  src: url(../fonts/TheSerif_B4_Plain_.eot),
-     url(../fonts/TheSerif_B4_Plain_.woff) format("woff");
-  font-weight: 400;
-  font-style: normal;
-}
+Pink #ED225D
+Blue highlight/link #2D7BB6
 
-@font-face {
-  font-family: 'theSerif';
-  src: url(../fonts/TheSerif_B4_Bold_.eot),
-     url(../fonts/TheSerif_B4_Bold_.woff) format("woff");
-  font-weight: 800;
-  font-style: normal;
+ */
+
+* {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    user-select: none;
 }
 
 body {
   height: 100%;
   width: 100%;
   overflow: none;
-
-  font-size: 16px;
-  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  font-weight: 300;
 }
-
-h1 {
-  font-family: 'theSerif', sans-serif;
-  font-weight: 400;
-  color:#2B4A90;
-}
-
-h2 {
-  font-family: 'theSerif', sans-serif;
-  font-weight: 400;
-  font-size: 1.4em;
-  color:white;
-}
-
 
 canvas {
+}
+
+h1, h2 {
+  font-family: "AvenirNextLTW01-MediumS";
+  margin:  0 0 5px 0;
 }
 
 #main {
@@ -66,7 +44,7 @@ canvas {
   bottom: 0;
   z-index: -1;
 
-  background: #f3f3f3;
+  background: #fff;
   /*
   background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%);
   */
@@ -74,53 +52,21 @@ canvas {
 
 #welcome, #error {
   position: absolute;
-  width: 500px;
-  height: 128px;
+  width: 128px;
   text-align: center;
   top: 50%;
   left: 50%;
-  margin-left: -250px;
-  margin-top: -62px;
+  margin-left: -64px;
+  margin-top: -64px;
   display: none;
 }
 
 #p5 {
   position:absolute;
-  left: 20px;
-  bottom: 10px;
-}
-
-#p5 a{
-  font-family: 'theSerif', sans-serif;
-  font-size: 2.5em;
-  font-weight: 400;
-  color: black;
-  opacity: .15;
-}
-
-
-
-#pause {
-  position:absolute;
-  right: 20px;
-  bottom: 10px;
-  cursor: pointer;
-  z-index: 1000;
+  left: 12px;
+  bottom: 12px;
   display: none;
-}
-
-#pause span{
-  font-size: 2.5em;
-  font-weight: 400;
-  color: black;
-  opacity: .15;
-}
-
-
-#p5 a:hover, #pause span:hover {
-  text-decoration: none;
-  opacity: 1;
-  color:#2B4A90;
+  z-index: 1000;
 }
 
 #label {
@@ -130,7 +76,7 @@ canvas {
   font-family: 'theSerif', sans-serif;
   font-size: 2.25em;
   font-weight: 400;
-  color:#2B4A90; 
+  color:#2D7BB6; 
   display: none;
 }
 
@@ -183,6 +129,12 @@ canvas {
 
 #sketchCanvas {
   position: absolute;
+  width: 100%;
+  z-index:100;
+}
+
+#sketchCanvas.foreground {
+  z-index: 600;
 }
 
 #videoClip {
@@ -200,70 +152,37 @@ canvas {
   height: 720px;
   pointer-events: none;
   display:none;
+  z-index: 200;
 }
 
-#example {
-  position: absolute;
-  width: 980px;
-  height: 500px;
-  top: 50%;
-  left: 50%;
-  margin-top: -250px;
-  margin-left: -490px;
-  background: #ccc;
-  display:none;
-  background: #369;
-  z-index: 5000;
-}
-
-#exampleEditor {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 480px;
-  height: 480px;
-  background: #fff;
-}
-
-#exampleFrame {
-  position: absolute;
-  top: 10px;
-  left: 490px;
-  width: 480px;
-  height: 480px;
-  border: 0;
-  overflow: hidden;
-  background: #fff;
-}
-
-#exampleControls {
-  position: absolute;
-  right: 500px;
-  bottom: 20px;
-}
-
-#exampleCode {
-  display: none;
-}
 
 #cta {
 
-  width: 512px;
+  width: 524px;
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-left: -256px;
-  margin-top: -186px;
+  margin-left: -262px;
+  margin-top: -128px;
   background: #fefefe;
   display: none;
 }
 
 #ctaHeader {
-  background: #428BCA;
+  background: #ED225D;
   color: white;
   padding: 16px;
 }
 
 #ctaBody {
   padding: 16px;
+  border: 1px solid #ccc;
+  border-top: none;
+  text-transform: lowercase;
+}
+
+#ctaBody .btn {
+  width: 160px;
+  margin-bottom: 4px;
+  font-family: "AvenirNextLTW01-MediumS";
 }

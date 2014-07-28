@@ -110,12 +110,19 @@ var circleSketch = function( sketch ) {
     sketch.hueSlider.value(sketch.hue);
     sketch.hueSlider.position(x,y+180);  
 
+    return sketch.hueSlider;
   }    
+
+  sketch.hideSlider = function() {
+    sketch.hueSlider.hide();
+  }
 
   sketch.showCode = function (text,x,y) {
     sketch.codePanel.html(text);
     sketch.codePanel.position(x,y);
     sketch.codePanel.show();
+
+    return sketch.codePanel;
   }
 
   sketch.hideCode = function() {
@@ -125,7 +132,6 @@ var circleSketch = function( sketch ) {
   sketch.shrink = function() {
     sketch.shrinking = true;
     sketch.shinkTime = sketch.millis();
-    sketch.hueSlider.hide();
     sketch.hueSlider.value(sketch.circleEndHue);
 
     sketch.circleStartHue = sketch.hue;

@@ -12,163 +12,53 @@ var script = {
     // Lauren
 
     pop.code({
-      start: 1,
+      start: 1 ,
       onStart: function( options ) {
-        $("#arrow").attr("class","lauren").fadeIn();
-        $("#label").text("Lauren McCarthy").attr("class","lauren").fadeIn();
+
+        var position = main.getRelativePosition({left:-163, top:472});
+        main.sketch = new p5(labelSketch, "sketchCanvas");
+        main.sketch.showLabel("Lauren McCarthy", position.left, position.top);
       }
-    }); 
+    });
 
     pop.code({
       start: 5,
       onStart: function( options ) {
-        $("#arrow").stop().fadeOut();
-        $("#label").stop().fadeOut();
+        main.sketch.hideLabel();
       }
     }); 
 
     // Shiffman
 
-    // pop.code({
-    //   start: 21,
-    //   onStart: function( options ) {
-    //     $("#arrow").attr("class","shiffman").fadeIn();
-    //     $("#label").text("Dan Shiffman").attr("class","shiffman").fadeIn();
-    //   }
-    // }); 
+    pop.code({
+      start: 26  ,
+      onStart: function( options ) {
 
-    // pop.code({
-    //   start: 25,
-    //   onStart: function( options ) {
-    //     $("#arrow").stop().fadeOut();
-    //     $("#label").stop().fadeOut();
-    //   }
-    // });     
+        var position = main.getRelativePosition({left:-190, top:553} );
+        main.sketch.showLabel("Dan Shiffman", position.left, position.top);
+      }
+    });
 
-    // // Drawing Sketch
+    pop.code({
+      start: 30 ,
+      onStart: function( options ) {
+        main.sketch.hideLabel();
+      }
+    }); 
 
-    // pop.code({
-    //   start: 33.5,
-    //   onStart: function( options ) {
+    pop.code({
+      start: 32 ,
+      onStart: function( options ) {
+        main.sketch.remove();
+      }
+    }); 
 
-    //     sketch = new p5(drawingSketch, "sketchCanvas");
-    //     script.positionSketch({left:0, top:0} , false);
-
-    //     sketch.addShapes(24,sketch.width/2,sketch.width,0,sketch.height/2,'circle'); 
- 
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 34,
-    //   onStart: function( options ) {
-    //     sketch.addShapes(24,0,sketch.width/2,0,sketch.height/2,'rect');         
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 34.5,
-    //   onStart: function( options ) {
-    //     sketch.addShapes(24,sketch.width/2,sketch.width,sketch.height/2,sketch.height,'line');    
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 35,
-    //   onStart: function( options ) {
-    //     sketch.addShapes(24,0,sketch.width/2,sketch.height/2,sketch.height,'curve');    
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 35.5,
-    //   onStart: function( options ) {
-    //     sketch.addShapes(24,sketch.width/2-144,sketch.width/2+144,sketch.height/2-144,sketch.height/2+144,'square');
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 36,
-    //   onStart: function( options ) {
-    //     sketch.addShapes(24,sketch.width/2-72,sketch.width/2+72,sketch.height/2-72,sketch.height/2+72,'triangle');
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 40.05,
-    //   onStart: function( options ) {
-    //     sketch.colorize();
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 44,
-    //   onStart: function( options ) {
-
-    //     $("#sketchCanvas").fadeOut(1000);
-
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 46,
-    //   onStart: function( options ) {
-    //       sketch.remove();
-    //       $("#sketchCanvas").stop(); 
-    //       $("#sketchCanvas").css({opacity:1});
-    //       $("#sketchCanvas").show();        
-    //   }
-    // });        
-
-    // Elements Sketch
-
-    // pop.code({
-    //   start: 52,
-    //   onStart: function( options ) {
-
-    //     sketch = new p5(elementsSketch, "sketchCanvas");
-    //     script.positionSketch({left:0, top:0} , false);
-
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 54,
-    //   onStart: function( options ) {
-    //     sketch.addInput();
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 54.5,
-    //   onStart: function( options ) {
-    //     sketch.addSlider();
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 55,
-    //   onStart: function( options ) {
-    //     sketch.addButtons();
-    //   }
-    // });            
-
-    // pop.code({
-    //   start: 63.5,
-    //   onStart: function( options ) {
-
-    //     sketch.remove();
-    //     $("#sketchCanvas").empty();
-
-    //   }
-    // });    
 
     // Circle Sketch
 
     pop.code({
       start: 44 ,
       onStart: function( options ) {
-
 
         var position = main.getRelativePosition({left:-340, top:540});
         //$("#sketchCanvas").css({left: position.left,top: position.top,width:"auto"});
@@ -212,7 +102,8 @@ var script = {
       start: 57 ,
       onStart: function( options ) {        
         var position = main.getRelativePosition({left:180, top:360});
-        main.sketch.showCode("ellipse(x,y,width,height);", position.left, position.top );
+        var panel = main.sketch.showCode("ellipse(x,y,width,height);", position.left, position.top );
+        panel.parent('sketchOverlay');
       }
     });  
 
@@ -223,13 +114,23 @@ var script = {
       }
     });  
 
+    // Turn Circle Red
+
+    pop.code({
+      start: 73.35,
+      onStart: function( options ) {
+        main.sketch.hue = 0;
+      }
+    });    
+
     // Show Code
 
     pop.code({
       start: 77.75 ,
       onStart: function( options ) {        
         var position = main.getRelativePosition({left:180, top:360});
-        main.sketch.showCode("fill(red,green,blue);", position.left, position.top );
+        var panel = main.sketch.showCode("fill(red,green,blue);", position.left, position.top );
+        panel.parent('sketchOverlay');
       }
     });  
 
@@ -240,13 +141,24 @@ var script = {
       }
     });       
 
+    // Add Slider
+
+    pop.code({
+      start: 103,
+      onStart: function( options ) {
+        var slider = main.sketch.addSlider();
+        //slider.parent('sketchOverlay');
+      }
+    });       
+
     // Show Code
 
     pop.code({
       start: 110.5 ,
       onStart: function( options ) {        
         var position = main.getRelativePosition({left:180, top:360});
-        main.sketch.showCode("createSlider();", position.left, position.top );
+        var panel = main.sketch.showCode("createSlider();", position.left, position.top );
+        panel.parent('sketchOverlay');
       }
     });  
 
@@ -254,26 +166,11 @@ var script = {
       start: 120 ,
       onStart: function( options ) {        
         main.sketch.hideCode();
+        main.sketch.hideSlider();
       }
     });         
 
-    // Turn Circle Red
-
-    pop.code({
-      start: 73.35,
-      onStart: function( options ) {
-        main.sketch.hue = 0;
-      }
-    });
-
-    // Add Slider
-
-    pop.code({
-      start: 103,
-      onStart: function( options ) {
-        main.sketch.addSlider();
-      }
-    });    
+    // Shrink 
 
     pop.code({
       start: 126,

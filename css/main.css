@@ -82,71 +82,13 @@ h1, h2 {
   border-radius: 4px;
 }
 
-#label {
-  position: absolute;
-  z-index: 1000; 
-
-  font-family: 'theSerif', sans-serif;
-  font-size: 2.25em;
-  font-weight: 400;
-  color:#2D7BB6; 
-  display: none;
-}
-
-#label.pause {
-  right: 148px;
-  bottom: 130px;   
-}
-
-#label.lauren {
-  top: 100%;
-  left: 50%;
-  margin-top: -625px;
-  margin-left: -400px;
-}
-
-#label.shiffman {
-  top: 100%;
-  left: 50%;
-  margin-top: -685px;
-  margin-left: -400px;
-}
-
-#arrow {
-  position: absolute;
-  z-index: 1000;
-  width: 128px;
-  height: 128px;
-  background-image: url('../assets/arrow.png');
-  display: none;
-}
-
-#arrow.pause {
-  right: 60px;
-  bottom: 12px;  
-}
-
-#arrow.lauren {
-  top: 100%;
-  left: 50%;
-  margin-top: -580px;
-  margin-left: -280px;
-}
-
-#arrow.shiffman {
-  top: 100%;
-  left: 50%;
-  margin-top: -640px;
-  margin-left: -320px;
-}
-
-#sketchCanvas {
+#sketchCanvas, #sketchOverlay {
   position: absolute;
   width: 100%;
   z-index:100;
 }
 
-#sketchCanvas.foreground {
+#sketchCanvas.foreground, #sketchOverlay {
   z-index: 600;
 }
 

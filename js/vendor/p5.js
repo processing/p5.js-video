@@ -877,7 +877,11 @@ var p5Vector = function (require, core, polargeometry, constants) {
     };
     p5.Vector.prototype.add = function (x, y, z) {
       if (x instanceof p5.Vector) {
-        return this.add(x.x, x.y, x.z);
+        //return this.add(x.x, x.y, x.z);
+        this.x += x.x;
+        this.y += x.y;
+        this.z += x.z;
+        return this;
       }
       if (x instanceof Array) {
         return this.add(x[0], x[1], x[2]);
@@ -889,7 +893,11 @@ var p5Vector = function (require, core, polargeometry, constants) {
     };
     p5.Vector.prototype.sub = function (x, y, z) {
       if (x instanceof p5.Vector) {
-        return this.sub(x.x, x.y, x.z);
+        //return this.sub(x.x, x.y, x.z);
+        this.x -= x.x;
+        this.y -= x.y;
+        this.z -= x.z;
+        return this;
       }
       if (x instanceof Array) {
         return this.sub(x[0], x[1], x[2]);

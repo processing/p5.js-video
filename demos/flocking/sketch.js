@@ -36,7 +36,7 @@ var flockingSketch = function( sketch ) {
   sketch.draw = function() {
     sketch.clear();
 
-    if (sketch.boids && sketch.flock.boids.length < 75) {
+    if (sketch.boids && sketch.flock.boids.length < 100) {
       var boid = new sketch.Boid(sketch.random(sketch.width),sketch.random(sketch.height));
       sketch.flock.addBoid(boid);      
     }

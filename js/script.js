@@ -587,7 +587,7 @@ var script = {
 
       //chroma.weight = 1.0;
       //chroma.balance = 0;
-      chroma.screen = 'rgb(21, 255, 10)';
+      chroma.screen = 'rgb(100, 255, 100)';
       //chroma.clipWhite = 1.0;
       //chroma.clipBlack = 0.0;
 

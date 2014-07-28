@@ -30,7 +30,7 @@ var flockingSketch = function( sketch ) {
 
     sketch.flock = new sketch.Flock();
 
-    //sketch.addBoids(); // Called by Popcorn
+    sketch.addBoids(); // Called by Popcorn
     //sketch.getWeather(); // Called by Popcorn 
 
   }
@@ -219,7 +219,7 @@ var flockingSketch = function( sketch ) {
 
       //Arbitrarily weight these forces
       
-      this.boids[i].steerSeparation.mult(1.5);
+      this.boids[i].steerSeparation.mult(2.5);
       this.boids[i].steerAlign.mult(1.0);
       this.boids[i].steerCohesion.mult(1.0);
 
@@ -300,7 +300,7 @@ var flockingSketch = function( sketch ) {
     //this.sumSeparation.x = this.sumSeparation.y = 0;
     //this.countSeparation = 0;
     //var differenceSumSeparation = new p5.Vector(0,0);
-    var desiredSeparation = 25.0;
+    var desiredSeparationSq = 625;
     //var countSeparation = 0;
 
     // Align
@@ -308,7 +308,7 @@ var flockingSketch = function( sketch ) {
     //this.sumAlign.x = this.sumAlign.y = 0;
     //this.countAlign = 0;
     //var velocitySumAlign = new p5.Vector(0,0);
-    var neighborDistanceAlign = 50;
+    var neighborDistanceAlignSq = 2500;
     //var countAlign = 0;    
 
    // Cohesion    
@@ -316,7 +316,7 @@ var flockingSketch = function( sketch ) {
     //this.sumCohesion.x = this.sumCohesion.y = 0;
     //this.countCohesion = 0;
     //var positionSumCohesion = new p5.Vector(0,0);
-    var neighborDistanceCohesion = 50;
+    var neighborDistanceCohesionSq = 2500;
     //var countCohesion = 0;
 
     //
@@ -327,19 +327,19 @@ var flockingSketch = function( sketch ) {
 
       var that = boids[i];
 
-      var distance = p5.Vector.dist(this.position, that.position);
-     
+      //var distance = p5.Vector.dist(this.position, that.position);
+      difference.x = this.position.x - that.position.x;
+      difference.y = this.position.y - that.position.y;
+      var distSquared = (difference.x)*(difference.x) + (difference.y*difference.y);      
       // Separate
 
-      if ((distance > 0) && (distance < desiredSeparation)) {
+      if ((distSquared > 0) && (distSquared < desiredSeparationSq)) {
 
         //var difference = p5.Vector.sub(this.position,boids[i].position);
 
-        difference.x = this.position.x - that.position.x;
-        difference.y = this.position.y - that.position.y;
 
         difference.normalize();
-        difference.div(distance);        // Weight by distance
+        difference.div(distSquared);        // Weight by distance
         
         this.sumSeparation.add(difference);
         this.countSeparation++;       
@@ -352,7 +352,7 @@ var flockingSketch = function( sketch ) {
 
       // Align
 
-      if ((distance > 0) && (distance < neighborDistanceAlign)) {
+      if ((distSquared > 0) && (distSquared < neighborDistanceAlignSq)) {
         this.sumAlign.add(that.velocity);
         this.countAlign++;
 
@@ -362,7 +362,7 @@ var flockingSketch = function( sketch ) {
 
       // Cohesion
 
-      if ((distance > 0) && (distance < neighborDistanceCohesion)) {
+      if ((distSquared > 0) && (distSquared < neighborDistanceCohesionSq)) {
         this.sumCohesion.add(that.position); // Add location
         this.countCohesion++;
 

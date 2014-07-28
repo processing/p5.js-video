@@ -142,6 +142,9 @@ var paintingSketch = function( sketch ) {
 
     sketch.paths[sketch.paths.length - 1].add(position, force);    
 
+    sketch.mousePosition.x = position.x;
+    sketch.mousePosition.y = position.y;
+
   }
 
   // Create a new path and ramp up oscillators

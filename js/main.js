@@ -39,18 +39,32 @@ var main = {
 
     $('body').keypress(function(e){
       
+      var keypress = String.fromCharCode(e.which);
+
       // Pause
 
-      if(e.which == 32){
+      if(keypress == "p"){
         if (script.popcorn.paused())
           script.popcorn.play();
         else
           script.popcorn.pause();
       }
 
+      if(keypress == "."){
+        if (!script.popcorn.paused()) script.popcorn.pause();
+        script.popcorn.currentTime( script.popcorn.currentTime() + .25);
+        console.log( script.popcorn.currentTime());
+      }   
+
+      if(keypress == ","){
+        if (!script.popcorn.paused()) script.popcorn.pause();
+        script.popcorn.currentTime( script.popcorn.currentTime() - .25);
+        console.log( script.popcorn.currentTime());
+      }          
+
       // Rewind
 
-      if(e.which == 114) {
+      if(keypress == "4") {
         console.log("Rewind.")
         var time = main.getStartTime();
         script.popcorn.play(time);

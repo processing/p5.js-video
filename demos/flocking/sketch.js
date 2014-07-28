@@ -4,7 +4,6 @@
 var flockingSketch = function( sketch ) {
 
   sketch.flock;
-  sketch.flocking = false;
   sketch.boids = false;
   sketch.hue = 12;
 
@@ -29,7 +28,7 @@ var flockingSketch = function( sketch ) {
 
     sketch.flock = new sketch.Flock();
 
-    sketch.startFlocking(); // Called by Popcorn
+    //sketch.addBoids(); // Called by Popcorn
     //sketch.getWeather(); // Called by Popcorn 
 
   }
@@ -43,12 +42,9 @@ var flockingSketch = function( sketch ) {
     }
 
     sketch.flock.display();
-    
-    if (sketch.flocking) {
-      sketch.flock.applyForce(sketch.wind);
-      sketch.flock.repel(sketch.mouseX,sketch.mouseY);
-      sketch.flock.run();
-    }
+    sketch.flock.applyForce(sketch.wind);
+    sketch.flock.repel(sketch.mouseX,sketch.mouseY);
+    sketch.flock.run();
     
     if (sketch.random(1) < 0.2) {
       sketch.wind.lerp(sketch.gust,0.1);
@@ -70,10 +66,6 @@ var flockingSketch = function( sketch ) {
 
   sketch.addBoids = function(position) {
     sketch.boids = true;
-  }
-
-  sketch.startFlocking = function() {
-    sketch.flocking = true;
   }
 
   sketch.hideWeather = function() {
@@ -144,32 +136,16 @@ var flockingSketch = function( sketch ) {
     if (sketch.hideWeather == true) weatherElement.hide();    
 
   }
-
-  /*
-  sketch.drawVector = function(v,x,y,scayl) {
-    if (v.mag() > 0) {
-      sketch.pushMatrix();
-      var arrowsize = 4;
-      // Translate to location to render vector
-      sketch.translate(x,y);
-      // Call vector heading function to get direction (note that pointing up is a heading of 0) and rotate
-      sketch.rotate(v.heading());
-      // Calculate length of vector & scale it to be bigger or smaller if necessary
-      var len = v.mag()*scayl;
-      // Draw three lines to make an arrow (draw pointing up since we've rotate to the proper direction)
-      sketch.line(-len/2,0,len/2,0);
-      sketch.line(len/2,0,len/2-arrowsize,+arrowsize/2);
-      sketch.line(len/2,0,len/2-arrowsize,-arrowsize/2);
-      sketch.popMatrix();
-    }
-  }
-  */
  
   // Flock Class
 
   sketch.Flock = function () {
     this.boids = [];
   }
+
+  sketch.Flock.prototype.addBoid = function(b) {
+    this.boids.push(b);
+  };  
 
   sketch.Flock.prototype.display = function() {
     for (var i = 0; i < this.boids.length; i++) {
@@ -181,10 +157,6 @@ var flockingSketch = function( sketch ) {
     for (var i = 0; i < this.boids.length; i++) {
       this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
     }
-  };
-
-  sketch.Flock.prototype.addBoid = function(b) {
-    this.boids.push(b);
   };
 
   sketch.Flock.prototype.applyForce = function(f) {

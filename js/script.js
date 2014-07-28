@@ -391,18 +391,29 @@ var script = {
     // Drawing
     
     /*
-203.912818 main.js:40
-{left:-161.5, top:493} main.js:43
-204.466654 main.js:40
-{left:-34.5, top:493} main.js:43
-204.655719 main.js:40
-{left:121.5, top:476} main.js:43
-204.997771 main.js:40
-{left:211.5, top:532} main.js:43
-205.295086 main.js:40
-{left:0.5, top:535} main.js:43
-205.710522 main.js:40
-{left:-178.5, top:535} main.js:43
+203.656728 main.js:32
+{left:-239, top:449} main.js:35
+
+203.906728 main.js:32
+{left:-56, top:585} main.js:35
+
+204.156728 main.js:32
+{left:29, top:495} main.js:35
+
+204.406728 main.js:32
+{left:171, top:400} main.js:35
+
+204.656728 main.js:32
+{left:111, top:548} main.js:35
+
+204.906728 main.js:32
+{left:-33, top:500} main.js:35
+
+205.156728 main.js:32
+{left:-167, top:423} main.js:35
+
+205.406728 main.js:32
+{left:-214, top:504} main.js:35
 
      */
 
@@ -416,11 +427,11 @@ var script = {
     });   
 
     pop.code({
-      start: 203.912818,
+      start: 203.656728, //
       onStart: function( options ) {  
         main.sketch.startDrawing();
 
-        var position = main.getRelativePosition({left:-161.5, top:493});   
+        var position = main.getRelativePosition({left:-239, top:449});   
         main.sketch.addPoint(
           {x: position.left, y: position.top},
           {x: -3, y: -8}
@@ -429,9 +440,9 @@ var script = {
     }); 
 
     pop.code({
-      start: 204.466654,
+      start: 203.906728, //
       onStart: function( options ) {  
-        var position = main.getRelativePosition({left:-34.5, top:493});   
+        var position = main.getRelativePosition({left:-56, top:585});   
         main.sketch.addPoint(
           {x: position.left, y: position.top},
           {x: -1, y: -8}
@@ -440,52 +451,81 @@ var script = {
     }); 
               
     pop.code({
-      start: 204.655719,
+      start: 204.156728, //
       onStart: function( options ) {  
-        var position = main.getRelativePosition({left:121.5, top:476});   
+        var position = main.getRelativePosition({left:29, top:495});   
         main.sketch.addPoint(
           {x: position.left, y: position.top},
-          {x: -3, y: -8}
+          {x: 3, y: -8}
         );
       }
     });
               
     pop.code({
-      start: 204.997771,
+      start: 204.406728, //
       onStart: function( options ) {  
-        var position = main.getRelativePosition({left:211.5, top:532});   
+        var position = main.getRelativePosition({left:171, top:400});   
         main.sketch.addPoint(
           {x: position.left, y: position.top},
-          {x: -2, y: -8}
+          {x: 5, y: -8}
         );
       }
     });
 
     pop.code({
-      start: 205.295086,
+      start: 204.656728, //
       onStart: function( options ) {  
-        var position = main.getRelativePosition({left:0.5, top:535});   
+        var position = main.getRelativePosition({left:111, top:548});   
         main.sketch.addPoint(
           {x: position.left, y: position.top},
-          {x: -3, y: -8}
+          {x: 4, y: -8}
         );
       }
     });
 
     pop.code({
-      start: 205.710522,
+      start: 204.906728, //
       onStart: function( options ) {  
-        var position = main.getRelativePosition({left:-178.5, top:535});   
+        var position = main.getRelativePosition({left:-33, top:500});   
         main.sketch.addPoint(
           {x: position.left, y: position.top},
           {x: -6, y: -8}
+        );
+      }
+    });    
+    
+    pop.code({
+      start: 205.156728, //
+      onStart: function( options ) {  
+        var position = main.getRelativePosition({left:-167, top:423});   
+        main.sketch.addPoint(
+          {x: position.left, y: position.top},
+          {x: -6, y: -8}
+        );
+      }
+    });  
+
+    pop.code({
+      start: 205.406728, //
+      onStart: function( options ) {  
+        var position = main.getRelativePosition({left:-214, top:504});   
+        main.sketch.addPoint(
+          {x: position.left, y: position.top},
+          {x: -8, y: -8}
         );
 
         main.sketch.stopDrawing();
         main.sketch.enableMouse();
       }
-    });    
-    
+    });       
+
+    pop.code({
+      start: 207,
+      onStart: function( options ) {   
+        $("#sketchCanvas").removeClass("foreground");
+        main.sketch.enableMouse();
+      }
+    });         
 
     pop.code({
       start: 243.0,

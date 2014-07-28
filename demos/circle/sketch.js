@@ -5,7 +5,6 @@ var circleSketch = function( sketch ) {
     sketch.mainCanvas.position(0,0);
 
     sketch.colorMode(sketch.HSB, 100);
-    sketch.strokeWeight(6);
     sketch.hue = 12;
     sketch.mode = "circle";
     
@@ -14,7 +13,7 @@ var circleSketch = function( sketch ) {
     sketch.shrinkDuration = 400;
 
     sketch.circleRadius = 148;
-    sketch.circleStrokeWeight = 6;
+    sketch.circleStrokeWeight = 2;
     sketch.circleY = sketch.width/2;
     sketch.circleStartHue = 0;
     sketch.circleEndHue = sketch.hue;
@@ -49,19 +48,18 @@ var circleSketch = function( sketch ) {
         }
 
         sketch.circleRadius = sketch.map(sketchTime, sketch.shinkTime, sketch.shinkTime + sketch.shrinkDuration,  140,24);
-        sketch.circleStrokeWeight = sketch.map(sketchTime, sketch.shinkTime, sketch.shinkTime + sketch.shrinkDuration,  6,2);
+        sketch.circleStrokeWeight = sketch.map(sketchTime, sketch.shinkTime, sketch.shinkTime + sketch.shrinkDuration,  2,1);
         sketch.hue = sketch.map(sketchTime, sketch.shinkTime, sketch.shinkTime + sketch.shrinkDuration,  sketch.circleStartHue, sketch.circleEndHue);
         sketch.circleY = sketch.map(sketchTime, sketch.shinkTime, sketch.shinkTime + sketch.shrinkDuration,  sketch.width/2, 240);
 
     }    
 
+    sketch.strokeWeight(sketch.circleStrokeWeight);
     sketch.stroke(sketch.hue, 100, 100);
     sketch.fill(sketch.hue, 100, 100, 80);
 
     switch(sketch.mode) {
-      case "circle":
-
-        sketch.strokeWeight(sketch.circleStrokeWeight);
+      case "circle":        
         sketch.ellipse(80, sketch.circleY,sketch.circleRadius,sketch.circleRadius);
         break;
       case "square":

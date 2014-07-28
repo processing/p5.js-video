@@ -23,19 +23,17 @@ var paintingSketch = function( sketch ) {
     // Full-window canvas
     // 
     sketch.createCanvas(window.innerWidth,window.innerHeight);
-    sketch.strokeWeight(2);
+    //sketch.strokeWeight(2);
     sketch.colorMode(sketch.HSB, 100);
 
     // Off-screen buffer for fading old elements
     // 
     sketch.buffer = sketch.createGraphics(sketch.width, sketch.height);
     sketch.buffer.colorMode(sketch.HSB, 100);
-    sketch.buffer.strokeWeight(2);
+    //sketch.buffer.strokeWeight(2);
 
     sketch.alphaBuffer = sketch.createGraphics(sketch.width, sketch.height);
     sketch.alphaBuffer.noStroke();
-
-    sketch.alphaBuffer.canvas.getContext('2d').globalAlpha =.95;
 
 
     // Current and previous mouse position for force calculations
@@ -60,7 +58,9 @@ var paintingSketch = function( sketch ) {
   sketch.draw = function() {
     sketch.clear();
     // Draw image buffer
+    // 
     sketch.alphaBuffer.clear();
+    sketch.alphaBuffer.canvas.getContext('2d').globalAlpha =.95;
     sketch.alphaBuffer.image(sketch.buffer,0,0);
     sketch.image(sketch.alphaBuffer, 0, 0);
    

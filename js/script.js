@@ -203,6 +203,18 @@ var script = {
       }
     });  
 
+    // Avoid Head
+  
+    pop.code({
+      start: 147.322117,
+      onStart: function( options ) {
+        var position = main.getRelativePosition({left:0, top:575}); 
+        main.sketch.setRepelTarget(position.left, position.top);
+        main.sketch.enableStaticRepel();
+        main.sketch.enableMouseRepel();
+      }
+    }); 
+
    pop.code({
       start: 164,
       onStart: function( options ) {
@@ -531,16 +543,21 @@ var script = {
       target;
 
       seriously = new Seriously();
+
       target = seriously.target('#videoCanvas');
       chroma = seriously.effect('chroma');
+      throttle = seriously.effect('throttle');
 
       //chroma.weight = 1.0;
       //chroma.balance = 0;
       chroma.screen = 'rgb(100, 255, 100)';
       //chroma.clipWhite = 1.0;
       //chroma.clipBlack = 0.0;
+      
+      throttle.frameRate = 30;
 
-      chroma.source = "#"+script.popcorn.media.id;
+      throttle.source = "#"+script.popcorn.media.id;
+      chroma.source = throttle;
       target.source = chroma;
       seriously.go();
 

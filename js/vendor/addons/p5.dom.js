@@ -14,8 +14,6 @@ var p5DOM = (function(){
 //                         p5 additions
 // =============================================================================
 
-  p5.prototype._elements = [];
-
   /**
    * Searches the page for an element with given ID and returns it as
    * a p5.Element. The DOM node itself can be accessed with .elt.
@@ -56,14 +54,17 @@ var p5DOM = (function(){
   };
 
   /**
-   * Removes all elements created by p5, except the original canvas.
+   * Removes all elements created by p5, except any canvas / graphics
+   * elements created by createCanvas or createGraphics.
    * Event handlers are removed, and element is removed from the DOM.
    *
    * @method removeElements
    */
   p5.prototype.removeElements = function (e) {
     for (var i=0; i<this._elements.length; i++) {
-      this._elements[i].remove();
+      if (!(this._elements[i].elt instanceof HTMLCanvasElement)) {
+        this._elements[i].remove();
+      }
     }
   };
 
@@ -74,7 +75,7 @@ var p5DOM = (function(){
     var node = pInst._userNode ? pInst._userNode : document.body;
     node.appendChild(elt);
     var c = media ? new p5.MediaElement(elt) : new p5.Element(elt);
-    pInst._elements.push(elt);
+    pInst._elements.push(c);
     return c;
   }
 
@@ -572,7 +573,9 @@ var p5DOM = (function(){
     for (var ev in this._events) {
       this.elt.removeEventListener(ev, this._events[ev]);
     }
-    this.elt.parentNode.removeChild(this.elt);
+    if (this.elt.parentNode) {
+      this.elt.parentNode.removeChild(this.elt);
+    }
     delete(this);
   };
 

@@ -9,7 +9,10 @@ var flockingSketch = function( sketch ) {
   sketch.basewind = new p5.Vector();
   sketch.gust = new p5.Vector();  
 
-  sketch.repelTarget = new p5.Vector(); 
+  sketch.staticRepelTarget = new p5.Vector();
+  sketch.staticRepel = false
+  sketch.mouseRepelTarget = new p5.Vector();
+  sketch.mouseRepel = false; 
 
   sketch.hideWeather = false;
   sketch.weatherElement = null;
@@ -22,7 +25,7 @@ var flockingSketch = function( sketch ) {
     // Performance stamping an image is faster than ellipse
 
     sketch.circleCanvas = sketch.createGraphics(26,26);
-    sketch.circleCanvas.strokeWeight(2);
+    //sketch.circleCanvas.strokeWeight(2);
     sketch.circleCanvas.colorMode(sketch.HSB, 100);
     sketch.circleCanvas.stroke(sketch.hue, 100,100);
     sketch.circleCanvas.fill(sketch.hue, 100,100, 80);
@@ -56,6 +59,19 @@ var flockingSketch = function( sketch ) {
 
     //sketch.drawVector(sketch.wind,600,120,1000);
   }  
+
+  sketch.enableStaticRepel = function() {
+    sketch.staticRepel = true;
+  }
+
+  sketch.enableMouseRepel = function() {
+    sketch.mouseRepel = true;
+  }
+
+  sketch.setRepelTarget = function(x,y) {
+    sketch.staticRepelTarget.x = x;
+    sketch.staticRepelTarget.y = y;
+  }
 
   sketch.addCircle = function(position) {
 
@@ -171,18 +187,20 @@ var flockingSketch = function( sketch ) {
 
       this.boids[i].applyForce(sketch.wind);
 
-      // Repel
+      // Static Repel
       
-      sketch.repelTarget.x = sketch.mouseX;
-      sketch.repelTarget.y = sketch.mouseY;
-
-      var distance = p5.Vector.dist(sketch.repelTarget,this.boids[i].position);
-
-      if (distance < 100) { 
-        var v = this.boids[i].seek(sketch.repelTarget);
-        v.mult(-1000/distance);
-        this.boids[i].applyForce(v);
+      if (sketch.mouseRepel) {
+        sketch.mouseRepelTarget.x = sketch.mouseX;
+        sketch.mouseRepelTarget.y = sketch.mouseY;
+        this.boids[i].repel(sketch.mouseRepelTarget);
       }
+
+      if (sketch.staticRepel) {
+        this.boids[i].repel(sketch.staticRepelTarget);
+      }
+
+      //
+
 
       //Run
       
@@ -231,30 +249,6 @@ var flockingSketch = function( sketch ) {
 
     } 
   };  
-
-  // sketch.Flock.prototype.run = function() {
-  //   for (var i = 0; i < this.boids.length; i++) {
-  //     this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
-  //   }
-  // };
-
-  // sketch.Flock.prototype.applyForce = function(f) {
-  //   for (var i = 0; i < this.boids.length; i++) {
-  //     this.boids[i].applyForce(f);  // Passing the entire list of boids to each boid individually
-  //   }
-  // };
-
-  // sketch.Flock.prototype.repel = function(x,y) {
-  //   for (var i = 0; i < this.boids.length; i++) {
-  //     var target = new p5.Vector(x,y);
-  //     var dis = p5.Vector.dist(target,this.boids[i].position);
-  //     if (dis < 100) { 
-  //       var v = this.boids[i].seek(new p5.Vector(x,y));  // Passing the entire list of boids to each boid individually
-  //       v.mult(-1000/dis);
-  //       this.boids[i].applyForce(v);
-  //     }
-  //   }
-  // };
 
   // Boid Class
 
@@ -448,7 +442,6 @@ var flockingSketch = function( sketch ) {
     sketch.image(sketch.circleCanvas,this.position.x - (sketch.radius/2),this.position.y - (sketch.radius/2));
   };
 
-
   // Wraparound
   sketch.Boid.prototype.borders = function() {
 
@@ -458,134 +451,15 @@ var flockingSketch = function( sketch ) {
     if (this.position.y > sketch.height + sketch.radius) this.position.y = -sketch.radius;
   };
 
-  // // Separation
-  // // Method checks for nearby boids and steers away
-  // sketch.Boid.prototype.separate = function(boids) {
-    
-  //   // Separate
+  sketch.Boid.prototype.repel = function(target) {
 
-  //   var differenceSumSeparation = new p5.Vector(0,0);
-  //   var desiredSeparation = 25.0;
-  //   var countSeparation = 0;
+     var distance = p5.Vector.dist(target,this.position);
 
-  //   //
-
-  //   for (var i = 0; i < boids.length; i++) {
-
-  //     var distance = p5.Vector.dist(this.position,boids[i].position);
-     
-  //     // Separate
-
-  //     if ((distance > 0) && (distance < desiredSeparation)) {
-  //       var difference = p5.Vector.sub(this.position,boids[i].position);
-  //       difference.normalize();
-  //       difference.div(distance);        // Weight by distance
-  //       differenceSumSeparation.add(difference);
-  //       countSeparation++;            // Keep track of how many
-  //     }
-
-  //   }
-
-  //   // Separate
-
-  //   var steerSeparation = this.zero;
-
-  //   if (countSeparation > 0) {
-  //     differenceSumSeparation.div(countSeparation);
-  //   }
-
-  //   if (differenceSumSeparation.mag() > 0) {
-  //     differenceSumSeparation.normalize();
-  //     differenceSumSeparation.mult(this.maxspeed);
-  //     differenceSumSeparation.sub(this.velocity);
-  //     differenceSumSeparation.limit(this.maxforce);
-
-  //     steerSeparation = differenceSumSeparation;
-  //   }
-
-  //   return steerSeparation;
-
-
-  // };
-
-  // // Alignment
-  // // For every nearby boid in the system, calculate the average velocity
-  // sketch.Boid.prototype.align = function(boids) {
-    
-  //   // Align
-
-  //   var neighborDistanceAlign = 50;
-  //   var velocitySumAlign = new p5.Vector(0,0);
-  //   var countAlign = 0;
-    
-  //   //
-
-  //   for (var i = 0; i < boids.length; i++) {
-      
-  //     var distance = p5.Vector.dist(this.position,boids[i].position);
-      
-  //     // Align
-
-  //     if ((distance > 0) && (distance < neighborDistanceAlign)) {
-  //       velocitySumAlign.add(boids[i].velocity);
-  //       countAlign++;
-  //     }
-
-  //   }
-
-  //   // Align
-    
-  //   var steerAlign = this.zero;
-
-  //   if (countAlign > 0) {
-  //     velocitySumAlign.div(countAlign);
-  //     velocitySumAlign.normalize();
-  //     velocitySumAlign.mult(this.maxspeed);
-      
-  //     steerAlign = p5.Vector.sub(velocitySumAlign,this.velocity);
-  //     steerAlign.limit(this.maxforce);
-      
-  //   }
-
-  //   return steerAlign;
-
-  // };
-
-  // // Cohesion
-  // // For the average location (i.e. center) of all nearby boids, calculate steering vector towards that location
-  // sketch.Boid.prototype.cohesion = function(boids) {
-
-  //   // Cohesion    
-
-  //   var neighborDistanceCohesion = 50;
-  //   var positionSumCohesion = new p5.Vector(0,0);
-  //   var countCohesion = 0;
-
-  //   //
-    
-  //   for (var i = 0; i < boids.length; i++) {
-  //     var distance = p5.Vector.dist(this.position,boids[i].position);
-
-  //     // Cohesion      
-
-  //     if ((distance > 0) && (distance < neighborDistanceCohesion)) {
-  //       positionSumCohesion.add(boids[i].position); // Add location
-  //       countCohesion++;
-  //     }
-
-  //   }
-
-  //   // Cohesion
-    
-  //   var steerCohesion = this.zero;
-
-  //   if (countCohesion > 0) {
-  //     positionSumCohesion.div(countCohesion);
-  //     steerCohesion = this.seek(positionSumCohesion);  // Steer towards the location
-  //   }
-
-  //   return steerCohesion;
-
-  // };
+      if (distance < 150) { 
+        var v = this.seek(target);
+        v.mult(-1000/distance);
+        this.applyForce(v);
+      }
+  }
 
 };

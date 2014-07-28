@@ -30,7 +30,7 @@ var flockingSketch = function( sketch ) {
 
     sketch.flock = new sketch.Flock();
 
-    sketch.addBoids(); // Called by Popcorn
+    //sketch.addBoids(); // Called by Popcorn
     //sketch.getWeather(); // Called by Popcorn 
 
   }

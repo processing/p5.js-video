@@ -169,11 +169,12 @@ var script = {
       start: 44 ,
       onStart: function( options ) {
 
-        main.sketch = new p5(circleSketch, "sketchCanvas");
 
         var position = main.getRelativePosition({left:-340, top:540});
-        $("#sketchCanvas").css({left: position.left,top: position.top,width:"auto"});
+        //$("#sketchCanvas").css({left: position.left,top: position.top,width:"auto"});
 
+        main.sketch = new p5(circleSketch, "sketchCanvas");
+        main.sketch.mainCanvas.position(position.left,position.top);
       }
     });
 
@@ -205,6 +206,57 @@ var script = {
       }
     });  
 
+    // Show Code
+
+    pop.code({
+      start: 57 ,
+      onStart: function( options ) {        
+        var position = main.getRelativePosition({left:180, top:360});
+        main.sketch.showCode("ellipse(x,y,width,height);", position.left, position.top );
+      }
+    });  
+
+    pop.code({
+      start: 67 ,
+      onStart: function( options ) {        
+        main.sketch.hideCode();
+      }
+    });  
+
+    // Show Code
+
+    pop.code({
+      start: 77.75 ,
+      onStart: function( options ) {        
+        var position = main.getRelativePosition({left:180, top:360});
+        main.sketch.showCode("fill(red,green,blue);", position.left, position.top );
+      }
+    });  
+
+    pop.code({
+      start: 85 ,
+      onStart: function( options ) {        
+        main.sketch.hideCode();
+      }
+    });       
+
+    // Show Code
+
+    pop.code({
+      start: 110.5 ,
+      onStart: function( options ) {        
+        var position = main.getRelativePosition({left:180, top:360});
+        main.sketch.showCode("createSlider();", position.left, position.top );
+      }
+    });  
+
+    pop.code({
+      start: 120 ,
+      onStart: function( options ) {        
+        main.sketch.hideCode();
+      }
+    });         
+
     // Turn Circle Red
 
     pop.code({
@@ -235,14 +287,14 @@ var script = {
       onStart: function( options ) {
 
         var position = {
-          x: parseFloat($("#sketchCanvas").css('left')) + 80,
-          y: parseFloat($("#sketchCanvas").css('top')) + 240
+          x: parseFloat(main.sketch.mainCanvas.style('left')) + 80,
+          y: parseFloat(main.sketch.mainCanvas.style('top')) + 240
         }
         main.sketch.remove();
 
         main.sketch = new p5(flockingSketch, "sketchCanvas");
         main.sketch.addCircle(position);
-        $("#sketchCanvas").css({left: 0, top: 0, width: "100%"});   
+        //$("#sketchCanvas").css({left: 0, top: 0, width: "100%"});   
 
       }
     });      

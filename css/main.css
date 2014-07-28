@@ -22,6 +22,10 @@ body {
 canvas {
 }
 
+input[type="range"] {
+  width: 160px;
+}
+
 h1, h2 {
   font-family: "AvenirNextLTW01-MediumS";
   margin:  0 0 5px 0;
@@ -67,6 +71,15 @@ h1, h2 {
   bottom: 12px;
   display: none;
   z-index: 1000;
+}
+
+.codePanel {
+  padding: 16px;
+  font-size: 2em;
+  background: rgba(45,123,182,.80);
+  position: absolute;
+  color: white;
+  border-radius: 4px;
 }
 
 #label {

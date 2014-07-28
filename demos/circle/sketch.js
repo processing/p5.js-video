@@ -1,21 +1,9 @@
-var sliderSketch = function (sketch) {
-
-  sketch.setup = function() {
-    sketch.slider = sketch.createSlider();
-    button = sketch.createButton("Kill Switch");
-    button.mousePressed( function() {
-      sketch.slider.remove();
-      sketch.remove();
-    })
-  }
-
-  return sketch;
-}
-
 var circleSketch = function( sketch ) {
 
   sketch.setup = function() {
     sketch.mainCanvas = sketch.createCanvas(160, 360);
+    sketch.mainCanvas.position(0,0);
+
     sketch.colorMode(sketch.HSB, 100);
     sketch.strokeWeight(6);
     sketch.hue = 12;
@@ -31,10 +19,18 @@ var circleSketch = function( sketch ) {
     sketch.circleStartHue = 0;
     sketch.circleEndHue = sketch.hue;
 
+    sketch.codePanel = sketch.createDiv("");
+    sketch.codePanel.addClass("codePanel");
+    sketch.codePanel.hide();
+
     sketch.mainCanvas.mousePressed(
       function () {
         sketch.hue = sketch.random(100);
       });     
+
+    //sketch.addSlider();
+    //sketch.showCode("if (mousePressed()) {<br/>  &emsp;fill(r,g,b); <br/> }",100,100);
+
   };
 
   sketch.draw = function() {
@@ -104,15 +100,27 @@ var circleSketch = function( sketch ) {
   }
 
   sketch.addSlider = function() {
-    console.log("Adding slider");  
+    //console.log("Adding slider");  
     console.log(sketch.hue);
+
+    var x = parseFloat(sketch.mainCanvas.style('left'));
+    var y = parseFloat(sketch.mainCanvas.style('top'));
 
     sketch.hueSlider = sketch.createSlider(0,100);
     sketch.hueSlider.value(sketch.hue);
-    sketch.hueSlider.size(160,10);
-    sketch.hueSlider.position(0,180);  
+    sketch.hueSlider.position(x,y+180);  
 
   }    
+
+  sketch.showCode = function (text,x,y) {
+    sketch.codePanel.html(text);
+    sketch.codePanel.position(x,y);
+    sketch.codePanel.show();
+  }
+
+  sketch.hideCode = function() {
+    sketch.codePanel.hide();
+  }
 
   sketch.shrink = function() {
     sketch.shrinking = true;

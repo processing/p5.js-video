@@ -518,6 +518,9 @@ var script = {
     pop.code({
       start: 272,
       onStart: function( options ) {
+        
+        $("#pause").hide();
+
         $("#cta")
           .css({top:'-128px'})
           .show()

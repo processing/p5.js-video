@@ -336,7 +336,7 @@ var script = {
     // Song
 
     pop.code({
-      start: 193.20,
+      start: 193.40,
       onStart: function( options ) {   
         main.sketch = new p5(songSketch, "sketchCanvas");
       }

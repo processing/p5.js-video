@@ -76,22 +76,20 @@ var main = {
     // Buttons
 
     $("#pause").click( function () {
-      editor.getSession().setValue($.trim($(sketch.exampleDiv).text())); 
-      $("#example").fadeIn("fast");
-      $("#showExample").fadeOut("fast");
-      script.popcorn.pause();
-    });
+      //editor.getSession().setValue($.trim($(sketch.exampleDiv).text())); 
+      //$("#example").fadeIn("fast");
+      //$("#showExample").fadeOut("fast");
+        
+      if (script.popcorn.paused()) {
+        $("#pauseButton").addClass("fa-pause");
+        $("#pauseButton").removeClass("fa-play"); 
+        script.popcorn.play();
+      } else {
+        $("#pauseButton").removeClass("fa-pause");
+        $("#pauseButton").addClass("fa-play");               
+        script.popcorn.pause();
+      }
 
-    $("#hideExample").click( function () {
-      $("#example").fadeOut("fast");
-      $("#showExample").fadeIn("fast");
-      script.popcorn.play();
-    });  
-
-    $("#runExample").click( function () {
-      var exampleCode = editor.getSession().getValue(); 
-      $("#exampleFrame")[0].contentWindow.clear();
-      $("#exampleFrame")[0].contentWindow.eval(exampleCode);
     });
 
     $("#begin").click( function() {
@@ -114,6 +112,7 @@ var main = {
     $("#welcome").fadeOut();
     $("#videoCanvas").fadeIn(); 
     $("#p5").fadeIn(); 
+    $("#pause").fadeIn();
 
     var time = main.getStartTime();
     script.popcorn.play(time);  

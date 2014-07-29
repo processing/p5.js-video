@@ -73,6 +73,22 @@ h1, h2 {
   z-index: 1000;
 }
 
+#pause {
+  position:absolute;
+  display: none;
+  right: 12px;
+  bottom: 4px;
+  z-index: 1000;
+  font-size: 32px;
+  cursor: pointer;
+  vertical-align:bottom;
+  color: rgba(128,128,128,.75);
+}
+
+#pause:hover {
+  color: rgba(128,128,128,1);
+}
+
 .codePanel {
   padding: 16px;
   font-size: 2em;

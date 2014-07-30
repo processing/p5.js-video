@@ -17,6 +17,7 @@ body {
   height: 100%;
   width: 100%;
   overflow: none;
+  color: white;
 }
 
 canvas {
@@ -38,16 +39,6 @@ h1, h2 {
   left: 0;
   right: 0;
   bottom: 0;
-}
-
-#background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-  background: #fff;
 }
 
 /**
@@ -169,6 +160,26 @@ h1, h2 {
   display: none;
 }
 
+/**
+ * About
+ */
+
+#about {
+  position: absolute;
+  width: 540px;
+  text-align: left;
+  top: 50%;
+  left: 50%;
+  margin-left: -270px;
+  margin-top: -196px;
+  background: white;
+  display:none;
+}
+
+/**
+ * Panel Classes
+ */
+
 .panelHeader {
   background: #ED225D;
   color: white;
@@ -179,6 +190,7 @@ h1, h2 {
   padding: 16px;
   border: 1px solid #ccc;
   border-top: none;
+  color: #444;
 }
 
 .panelBody .btn {

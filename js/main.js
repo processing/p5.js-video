@@ -83,6 +83,15 @@ var main = {
     });
     $("#begin").button('loading');
 
+    // About
+    
+    $("#aboutClose").click( function() {
+      $("#about").fadeOut();
+    });
+
+    $("#aboutShow").click( function() {
+      $("#about").fadeIn();
+    });
 
     // Pause on click
 

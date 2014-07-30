@@ -3,138 +3,122 @@ layout: default
 title: Home
 ---
 
-<!DOCTYPE html>
-<html class="no-js">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Welcome to p5.js</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<div id="main">
+  <div id="p5"><a href="http://p5js.org/" target="_blank"><img src="assets/p5-sq-reverse.svg" width="48" height="48"/></a></div>
 
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/main.css">
+  <div id="pause"><i id="pauseButton" class="fa fa-pause"></i></div>
 
-  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <div id="welcome"> 
+    <img src="assets/p5-sq-reverse.svg" width="128" height="128" /><br/><br/>
 
-  <script type="text/javascript" src="http://fast.fonts.net/jsapi/5ace315e-3b19-4568-9e85-5bfcb29004c0.js"></script>  
+    <button id="begin" class="btn btn-default" data-loading-text='<i class="fa fa-spinner fa-spin"></i> Loading'> Click to Begin</button>
+  </div>
 
-</head>
-<body>
-  <div id="main">
-    <div id="p5"><a href="http://p5js.org/" target="_blank"><img src="assets/p5-sq-reverse.svg" width="48" height="48"/></a></div>
 
-    <div id="pause"><i id="pauseButton" class="fa fa-pause"></i></div>
+  <div id="error">
+    <div class="panelHeader"><h2>Sorry!</h2></div>
 
-    <div id="welcome"> 
-      <img src="assets/p5-sq-reverse.svg" width="128" height="128" /><br/><br/>
-
-      <button id="begin" class="btn btn-default" data-loading-text='<i class="fa fa-spinner fa-spin"></i> Loading'> Click to Begin</button>
+    <div class="panelBody">
+    <p>Your browser doesn't appear to support WebGL or it isn't enabled. Visit <a href="http://get.webgl.org/">get.webgl.org</a> to learn more or try the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>
     </div>
 
+  </div>    
 
-    <div id="error">
-      <div class="panelHeader"><h2>Sorry!</h2></div>
+  <div id="videoClip"></div>
+  <div id="sketchCanvas"></div>
+  <div id="sketchOverlay"></div>
+  <canvas id="videoCanvas" width="960" height="720"></canvas>
 
-      <div class="panelBody">
-      <p>Your browser doesn't appear to support WebGL or it isn't enabled. Visit <a href="http://get.webgl.org/">get.webgl.org</a> to learn more or try the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>
+  <div id="cta">
+
+    <div class="panelHeader">
+      <h2>Thanks for Watching</h2>
+      <span>Use the links below to find out more about p5.js.</span>
+    </div>
+
+    <div class="panelBody">
+
+      <div >
+
+        <a class="btn btn-primary" target="_blank" href="http://p5js.org/">
+         <i class="fa fa-download fa-2x"></i><br/>
+          Download p5.js
+        </a>
+
+        <a class="btn btn-primary" target="_blank" href="https://github.com/lmccart/p5.js/wiki/Getting-Started">
+         <i class="fa fa-mortar-board fa-2x"></i><br/>
+         Get Started
+        </a>  
+
+        <a class="btn btn-primary" target="_blank" href="https://github.com/lmccart/p5.js/wiki/Processing-syntax-conversion">
+         <i class="fa fa-laptop fa-2x"></i><br/>
+         Transition Guide
+        </a>  
+
+        <a class="btn btn-primary" target="_blank" href="https://github.com/lmccart/p5.js/wiki/Development">
+          <i class="fa fa-comment fa-2x"></i><br/>
+          Contribute
+        </a>  
+
+        <a class="btn btn-primary" target="_blank" href="/examples/">
+          <i class="fa fa-magic fa-2x"></i><br/>
+          View Examples
+        </a>    
+
+        <button id="aboutShow" class="btn btn-primary" target="_blank">
+          <i class="fa fa-video-camera fa-2x"></i><br/>
+          About this Video
+        </b>           
       </div>
 
-    </div>    
+      <div id="about">
 
-    <div id="videoClip"></div>
-    <div id="background"></div>
-    <div id="sketchCanvas"></div>
-    <div id="sketchOverlay"></div>
-    <canvas id="videoCanvas" width="960" height="720"></canvas>
+        <div class="panelHeader"><h2>About</h2></div>
 
-    <div id="cta">
+        <div class="panelBody">
+        <p>Design and development of this demo was lead by <a href="http://scott.j38.net/">Scott Garner</a> with input and contributions from <a href="http://shiffman.net/">Dan Shiffman</a> and support from <a href="http://itp.nyu.edu/">NYU ITP</a>.</p>
 
-      <div class="panelHeader">
-        <h2>Thanks for Watching</h2>
-        <span>Use the links below to find out more about p5.js.</span>
-      </div>
+        <p>Development of <a href="http://p5js.org/">p5.js</a> is lead by Lauren McCarthy with the support of the <a href="http://processing.org/">Processing Foundation</a>, <a href="http://itp.nyu.edu/">NYU ITP</a>, Bocoup, and RISD 2050. </p>
 
-      <div class="panelBody">
+        <p><a href="http://popcornjs.org/">Popcorn.js</a>, part of Mozilla's <a href="https://popcorn.webmaker.org/">Popcorn project</a>, was used to trigger javascript events in sync with the video. Realtime compositing of the presenters was done with <a href="http://seriouslyjs.org/">Seriously.js</a>, created by Brian Chirls with support from Mozilla.</p>
 
-        <div >
+        <p>Other libraries and frameworks used in this project include the Ace Editor, Twitter Bootstrap and jQuery.</p>
 
-          <a class="btn btn-primary" target="_blank" href="http://p5js.org/">
-           <i class="fa fa-download fa-2x"></i><br/>
-            Download p5.js
-          </a>
+        <hr/>
+          <button id="aboutClose" class="btn btn-primary">Close</button>
 
-          <a class="btn btn-primary" target="_blank" href="https://github.com/lmccart/p5.js/wiki/Getting-Started">
-           <i class="fa fa-mortar-board fa-2x"></i><br/>
-           Get Started
-          </a>  
-
-          <a class="btn btn-primary" target="_blank" href="https://github.com/lmccart/p5.js/wiki/Processing-syntax-conversion">
-           <i class="fa fa-laptop fa-2x"></i><br/>
-           Transition Guide
-          </a>  
-
-          <a class="btn btn-primary" target="_blank" href="https://github.com/lmccart/p5.js/wiki/Development">
-            <i class="fa fa-comment fa-2x"></i><br/>
-            Contribute
-          </a>  
-
-          <a class="btn btn-primary" target="_blank" href="/examples/">
-            <i class="fa fa-magic fa-2x"></i><br/>
-            View Examples
-          </a>    
-
-
-          <a class="btn btn-primary" target="_blank" href="/about/">
-            <i class="fa fa-video-camera fa-2x"></i><br/>
-            About this Video
-          </a>           
         </div>
- 
       </div>
-    </div>   
 
-    <!--
-    <div id="about">
-
-    This demo was designed and developed by Scott Garner with input and support from Dan Shiffman and NYU ITP. Example p5.js code was authored by Scott and Dan.
-
-    Development of p5.js is lead by Lauren McCarthy with the support of the Processing Foundation, NYU ITP, Bocoup, and RISD 2050. 
-
-    Popcorn.js, part of Mozilla's Popcorn project, was used to trigger javascript events in sync with the video. Realtime compositing of the presenters was done with Seriously.js, created by Brian Chirls with support from Mozilla.
-
-    Other libraries and frameworks include the Ace Editor, Twitter Bootstrap and jQuery.
 
     </div>
-    -->
+  </div>   
 
-  </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
+</div>
 
-  <script src="js/vendor/bootstrap.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
 
-  
-  <script src="js/vendor/p5.js"></script>
-  <script src="js/vendor/addons/p5.dom.js"></script>
-  <script src="js/vendor/addons/p5.sound.js"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
 
-  <script src="js/vendor/popcorn.js"></script>
+<script src="js/vendor/p5.js"></script>
+<script src="js/vendor/addons/p5.dom.js"></script>
+<script src="js/vendor/addons/p5.sound.js"></script>
 
-  <script src="js/vendor/seriously.js"></script>
-  <script src="js/vendor/effects/seriously.throttle.js"></script>
-  <script src="js/vendor/effects/seriously.chroma.js"></script>
+<script src="js/vendor/popcorn.js"></script>
 
-  <script src="js/script.js"></script>
-  <script src="js/main.js"></script>
+<script src="js/vendor/seriously.js"></script>
+<script src="js/vendor/effects/seriously.throttle.js"></script>
+<script src="js/vendor/effects/seriously.chroma.js"></script>
 
-  <script src="demos/label/sketch.js"></script>
-  <link rel="stylesheet" href="demos/label/main.css">
-  <script src="demos/circle/sketch.js"></script>
-  <script src="demos/flockingOptimized/sketch.js"></script>
-  <link rel="stylesheet" href="demos/flockingOptimized/main.css">
-  <script src="demos/song/sketch.js"></script>
-  <link rel="stylesheet" href="demos/song/main.css">
-  <script src="demos/painting/sketch.js"></script>
+<script src="js/script.js"></script>
+<script src="js/main.js"></script>
 
-</body>
-</html>
+<script src="demos/label/sketch.js"></script>
+<link rel="stylesheet" href="demos/label/main.css">
+<script src="demos/circle/sketch.js"></script>
+<script src="demos/flockingOptimized/sketch.js"></script>
+<link rel="stylesheet" href="demos/flockingOptimized/main.css">
+<script src="demos/song/sketch.js"></script>
+<link rel="stylesheet" href="demos/song/main.css">
+<script src="demos/painting/sketch.js"></script>

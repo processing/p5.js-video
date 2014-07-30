@@ -27,7 +27,7 @@ input[type="range"] {
 }
 
 h1, h2 {
-  font-family: "AvenirNextLTW01-MediumS";
+  font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
   margin:  0 0 5px 0;
 }
 
@@ -47,23 +47,12 @@ h1, h2 {
   right: 0;
   bottom: 0;
   z-index: -1;
-
   background: #fff;
-  /*
-  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%);
-  */
 }
 
-#welcome, #error {
-  position: absolute;
-  width: 128px;
-  text-align: center;
-  top: 50%;
-  left: 50%;
-  margin-left: -64px;
-  margin-top: -64px;
-  display: none;
-}
+/**
+ * UI
+ */
 
 #p5 {
   position:absolute;
@@ -98,6 +87,10 @@ h1, h2 {
   border-radius: 4px;
 }
 
+/**
+ * Sketch
+ */
+
 #sketchCanvas, #sketchOverlay {
   position: absolute;
   width: 100%;
@@ -107,6 +100,10 @@ h1, h2 {
 #sketchCanvas.foreground, #sketchOverlay {
   z-index: 600;
 }
+
+/**
+ * Video
+ */
 
 #videoClip {
   position: absolute;
@@ -126,6 +123,39 @@ h1, h2 {
   z-index: 200;
 }
 
+/**
+ * Welcome Panel
+ */
+
+#welcome {
+  position: absolute;
+  width: 128px;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  margin-left: -64px;
+  margin-top: -64px;
+  display: none;
+}
+
+/**
+ * Error Panel
+ */
+
+#error {
+  position: absolute;
+  width: 480px;
+  text-align: left;
+  top: 50%;
+  left: 50%;
+  margin-left: -240px;
+  margin-top: -76px;
+  display: none;
+}
+
+/**
+ * CTA Panel
+ */
 
 #cta {
 
@@ -139,21 +169,21 @@ h1, h2 {
   display: none;
 }
 
-#ctaHeader {
+.panelHeader {
   background: #ED225D;
   color: white;
   padding: 16px;
 }
 
-#ctaBody {
+.panelBody {
   padding: 16px;
   border: 1px solid #ccc;
   border-top: none;
-  text-transform: lowercase;
 }
 
-#ctaBody .btn {
+.panelBody .btn {
   width: 160px;
   margin-bottom: 4px;
+  text-transform: lowercase;
   font-family: "AvenirNextLTW01-MediumS";
 }

@@ -1,15 +1,3 @@
-$(document).ready( function () {
-
-  if (Seriously.incompatible()){
-    $("#error").fadeIn();
-  } else {
-    main.init();
-  }
-
-});
-
-//
-
 var main = {
   sketch: null,
 

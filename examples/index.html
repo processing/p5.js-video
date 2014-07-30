@@ -1,0 +1,80 @@
+---
+layout: default
+title: Examples
+---
+
+<style>
+
+#exampleSelector {
+	position:absolute;
+	width:480px;
+	height:240px;
+	top: 50%;
+	left: 50%;
+	margin-left: -240px;
+	margin-top: -120px;
+}
+
+#exampleDisplay {
+	position: absolute;
+	height: 480px;
+	width: 960px;
+	top: 50%;
+	left: 50%;
+	margin-top: -240px;
+	margin-left: -480px;
+	display: none;
+	background:white;
+}
+#exampleFrame, #exampleEditor {
+	position:absolute;
+	width:480px;
+	height:480px;
+	border: 1px solid #999;
+}
+#exampleFrame {
+	left:480px;
+	border-left: none;
+}
+#buttons {
+	position:absolute;
+	bottom: -40px;	
+}
+
+</style>
+
+<div id="exampleSelector">
+	<div class="panelHeader">
+		<h2>Choose an Example</h2>
+	</div>
+	<div class="panelBody">
+		<a href="/examples/circle/sketch.js">circle</a>
+		<p>Draw a simple circle</p>
+	</div>
+
+</div>
+
+<div id="exampleDisplay">
+	<div id="exampleEditor"></div>
+	<iframe id="exampleFrame" src="example.html" style="width: 480px; height: 480px;"></iframe>
+	<div id="buttons">
+		<button id="runButton" class="btn btn-primary">Run</button>
+		<button id="resetButton" class="btn btn-primary">Reset</button>
+		<button id="closeButton" class="btn btn-primary">Close</button>
+	</div>
+</div>
+
+<script src="/js/examples.js"></script>
+
+<script src="/js/vendor/jquery-1.11.0.min.js"></script>
+<script src="/js/vendor/bootstrap.min.js"></script>
+
+<script src="/js/vendor/ace/ace.js"></script>
+
+<script>
+
+  $(document).ready( function () {
+  		examples.init();
+  });
+
+</script>

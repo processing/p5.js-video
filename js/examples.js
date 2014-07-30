@@ -15,7 +15,8 @@ var examples = {
 			examples.resetExample();    		
     	});
     	$("#closeButton").click( function() { 
-			$("#exampleDisplay").hide();    		
+			$("#exampleSelector").show();  
+			$("#exampleDisplay").hide();   		
     	});    	    	
 
     	// Example Frame
@@ -23,11 +24,23 @@ var examples = {
     	$("#exampleFrame").load(function() {
 			var exampleCode = examples.editor.getSession().getValue();
 			try {    		
-    			$("#exampleFrame")[0].contentWindow.eval(exampleCode);
+
+				var p5Script = $("#exampleFrame")[0].contentWindow.document.createElement("script");
+				p5Script.type = "text/javascript";
+				p5Script.src = "/js/vendor/p5.js";
+				p5Script.async = false;
+				$("#exampleFrame")[0].contentWindow.document.body.appendChild(p5Script);
+
+				 var userScript = $("#exampleFrame")[0].contentWindow.document.createElement("script");
+				 userScript.type = "text/javascript";
+				 userScript.text = exampleCode;
+				 userScript.async = false;
+				 $("#exampleFrame")[0].contentWindow.document.body.appendChild(userScript);
+    			
     		} catch (e) {
     			console.log(e.message);
     		}
-    	})
+    	});
 
 		// Capture clicks
 
@@ -39,6 +52,7 @@ var examples = {
 					dataType: 'text'
 				})
 				.done(function (data) {
+					$("#exampleSelector").hide(); 
 					examples.resetData = data;
 					examples.showExample();
 				})

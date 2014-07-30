@@ -1,10 +1,5 @@
 $(document).ready( function () {
 
-  //sketch = new p5(flockingSketch, "sketchCanvas");
-  //script.positionSketch({left:0, top:0} , false);
-
-  // Let's go
-
   if (Seriously.incompatible()){
     $("#error").fadeIn();
   } else {
@@ -76,20 +71,15 @@ var main = {
     // Buttons
 
     $("#pause").click( function () {
-      //editor.getSession().setValue($.trim($(sketch.exampleDiv).text())); 
-      //$("#example").fadeIn("fast");
-      //$("#showExample").fadeOut("fast");
-        
       if (script.popcorn.paused()) {
         script.popcorn.play();
       } else {             
         script.popcorn.pause();
       }
-
     });
 
     $("#begin").click( function() {
-      main.start();
+      main.playVideo();
     });
     $("#begin").button('loading');
 
@@ -108,13 +98,43 @@ var main = {
 
   },
 
+  prepareVideo: function() {
+      // Setup Seriously
+
+      var seriously,
+      chroma, fxaa,
+      target;
+
+      seriously = new Seriously();
+
+      target = seriously.target('#videoCanvas');
+      chroma = seriously.effect('chroma');
+      throttle = seriously.effect('throttle');
+
+      //chroma.weight = 1.0;
+      //chroma.balance = 0;
+      chroma.screen = 'rgb(100, 255, 100)';
+      //chroma.clipWhite = 1.0;
+      //chroma.clipBlack = 0.0;
+      
+      throttle.frameRate = 30;
+
+      throttle.source = "#"+script.popcorn.media.id;
+      chroma.source = throttle;
+      target.source = chroma;
+      seriously.go();
+
+      // Set button state
+
+      $("#begin").button('reset');
+  },
+
   // Start Video
 
-  start: function() {
+  playVideo: function() {
 
     console.log("Starting video.");
     console.log("Length " + script.popcorn.duration() + ".");
-
 
     $("#welcome").fadeOut();
     $("#videoCanvas").fadeIn(); 

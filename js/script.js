@@ -6,7 +6,7 @@ var script = {
     pop.autoplay(false);
 
     pop.on( "canplayall", function(e) {
-      script.start();
+      main.prepareVideo();
     });  
 
     pop.on( "play", function(e) {
@@ -433,54 +433,6 @@ var script = {
 
     script.popcorn = pop;
 
-  },
-
-  start: function() {
-      // Setup Seriously
-
-      var seriously,
-      chroma, fxaa,
-      target;
-
-      seriously = new Seriously();
-
-      target = seriously.target('#videoCanvas');
-      chroma = seriously.effect('chroma');
-      throttle = seriously.effect('throttle');
-
-      //chroma.weight = 1.0;
-      //chroma.balance = 0;
-      chroma.screen = 'rgb(100, 255, 100)';
-      //chroma.clipWhite = 1.0;
-      //chroma.clipBlack = 0.0;
-      
-      throttle.frameRate = 30;
-
-      throttle.source = "#"+script.popcorn.media.id;
-      chroma.source = throttle;
-      target.source = chroma;
-      seriously.go();
-
-      // Set button state
-
-      $("#begin").button('reset');
-  },
-
-  positionSketch: function(position, relative) {
-
-    if (relative) {
-
-      videoBaseX = $(window).width()/2;
-      videoBaseY = $(window).height();
-
-      position.left = videoBaseX + position.left;
-      position.top = videoBaseY - position.top;
-    }
-
-    $("#sketchCanvas").css({
-      left: position.left,
-      top: position.top,
-    });
-
   }
+
 }

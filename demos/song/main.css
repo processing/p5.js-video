@@ -1,4 +1,4 @@
-  #notesContainer {
+  #noteContainer {
   	position: absolute;
   	top: 10px;
   	left: 0;
@@ -6,11 +6,27 @@
   	text-align:center;
   }
 
-  #notes {
+  .note {
   	display: inline-block;
-  	color: rgb(45,123,182);
-  	padding: 16px;
-  	font-size: 2.5em;
-  	text-align: center;
-  	position:static;
+
+    height: 60px;
+    width: 60px;
+    line-height: 60px;
+
+    font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
+    font-size: 32px;
+    text-align: center;
+
+  	background: rgba(45,123,182,.80);
+    border: 2px solid rgb(45,123,182);
+    color: white;
+
+    margin: 0 4px;
+    border-radius: 50%;
+    box-sizing: content-box;
+  }
+
+  .note:hover {
+    background: rgba(255, 184, 0, .50);
+    border: 2px solid rgb(255, 184, 0);    
   }

@@ -4,7 +4,6 @@ var songSketch = function( sketch ) {
   sketch.circles = null;
   sketch.noteContainerDiv = null;
   sketch.noteDiv = null;
-  sketch.noteString = "";
   
   sketch.triOsc = null;
   sketch.env = null;
@@ -47,10 +46,7 @@ var songSketch = function( sketch ) {
     sketch.env = new sketch.Env(sketch.attackTime, sketch.attackLevel, sketch.decayTime, sketch.sustainLevel, sketch.sustainTime, sketch.releaseTime);
   
     sketch.noteContainerDiv = sketch.createDiv("");
-    sketch.noteContainerDiv.id("notesContainer");
-    sketch.noteDiv = sketch.createDiv("");
-    sketch.noteDiv.id("notes");
-    sketch.noteDiv.parent("notesContainer");
+    sketch.noteContainerDiv.id("noteContainer");
   };
 
   sketch.draw = function() {
@@ -64,8 +60,12 @@ var songSketch = function( sketch ) {
 
       //sketch.circles.add(Math.random() * sketch.width, Math.random() * sketch.height);
 
-      sketch.noteString += " " + sketch.notes[sketch.note][2];
-      sketch.noteDiv.html(sketch.noteString);
+      //sketch.noteString += " " + sketch.notes[sketch.note][2];
+      //sketch.noteDiv.html(sketch.noteString);
+
+      sketch.noteDiv = sketch.createDiv(sketch.notes[sketch.note][2]);
+      sketch.noteDiv.addClass("note");
+      sketch.noteDiv.parent("noteContainer");      
 
       sketch.triOsc.freq(sketch.midiToFreq(currentNote));
       

@@ -17,8 +17,6 @@ var flockingSketch = function( sketch ) {
   sketch.hideWeather = false;
   sketch.weatherElement = null;
 
-  sketch.maxDistance = Math.sqrt( Math.pow(window.innerWidth,2),  Math.pow(window.innerHeight,2));
-
   sketch.setup = function() {
     sketch.createCanvas(window.innerWidth,window.innerHeight);
 

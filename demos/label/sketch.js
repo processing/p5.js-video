@@ -18,7 +18,6 @@ var labelSketch = function( sketch ) {
     sketch.labelSpan.parent("labelContainer");
     sketch.labelContainer.hide();
 
-    sketch.showLabel("Lauren",200,200);
   }
 
   sketch.showLabel = function(text,x,y) {

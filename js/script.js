@@ -116,7 +116,7 @@ var script = {
       start: 57 ,
       onStart: function( options ) {        
         var position = main.getRelativePosition({left:180, top:360});
-        var panel = main.sketch.showCode("ellipse(x,y,width,height);", position.left, position.top );
+        var panel = main.sketch.showCode("ellipse(80,80,148,148);", position.left, position.top );
         panel.parent('sketchOverlay');
       }
     });  
@@ -143,7 +143,7 @@ var script = {
       start: 77.75 ,
       onStart: function( options ) {        
         var position = main.getRelativePosition({left:180, top:360});
-        var panel = main.sketch.showCode("fill(red,green,blue);", position.left, position.top );
+        var panel = main.sketch.showCode("if (mousePressed) { <br/>&emsp;&emsp;fill(random(255), random(255), random(255));<br/>}", position.left, position.top );
         panel.parent('sketchOverlay');
       }
     });  

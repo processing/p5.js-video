@@ -71,8 +71,9 @@ h1, h2 {
 
 .codePanel {
   padding: 16px;
-  font-size: 2em;
+  font-size: 1.5em;
   background: rgba(45,123,182,.80);
+  border: 2px solid rgb(45,123,182);;
   position: absolute;
   color: white;
   border-radius: 4px;

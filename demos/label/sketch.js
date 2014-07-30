@@ -2,13 +2,13 @@ var labelSketch = function( sketch ) {
 
   sketch.setup = function() {
     
-    sketch.arrowCanvas =  sketch.createGraphics(128, 128);
+    sketch.arrowCanvas =  sketch.createGraphics(640, 640);
     sketch.arrowCanvas.noFill();
     sketch.arrowCanvas.stroke(45,123,182);
     sketch.arrowCanvas.strokeWeight(4);
-    sketch.arrowCanvas.arc(116, 6, 220, 220, sketch.HALF_PI,sketch.PI);
+    sketch.arrowCanvas.arc(58, 3, 110, 110, sketch.HALF_PI,sketch.PI);
 
-    sketch.arrowCanvas.translate(116,116);
+    sketch.arrowCanvas.translate(58,58);
     sketch.arrowCanvas.triangle(0,0, -8,-6, -8, 6, sketch.CLOSE );
 
     sketch.labelContainer = sketch.createDiv("");
@@ -23,9 +23,9 @@ var labelSketch = function( sketch ) {
 
   sketch.showLabel = function(text,x,y) {
     sketch.labelSpan.html(text);
-    sketch.labelContainer.position(x-116, y-116);
+    sketch.labelContainer.position(x-58, y-58);
     sketch.labelContainer.show();
-    sketch.arrowCanvas.position(x-116, y-116);
+    sketch.arrowCanvas.position(x-58, y-58);
     sketch.arrowCanvas.show();
   }
 

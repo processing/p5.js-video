@@ -29,7 +29,7 @@ var script = {
       start: 1 ,
       onStart: function( options ) {
 
-        var position = main.getRelativePosition({left:-163, top:472});
+        var position = main.getRelativePosition({left:-177.5, top:463} );
         main.sketch = new p5(labelSketch, "sketchCanvas");
         main.sketch.showLabel("Lauren McCarthy", position.left, position.top);
       }
@@ -48,7 +48,7 @@ var script = {
       start: 26  ,
       onStart: function( options ) {
 
-        var position = main.getRelativePosition({left:-190, top:553} );
+        var position = main.getRelativePosition({left:-212.5, top:565}  );
         main.sketch.showLabel("Dan Shiffman", position.left, position.top);
       }
     });

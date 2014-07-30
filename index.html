@@ -19,7 +19,11 @@ title: Home
     <div class="panelHeader"><h2>Sorry!</h2></div>
 
     <div class="panelBody">
-    <p>Your browser doesn't appear to support WebGL or it isn't enabled. Visit <a href="http://get.webgl.org/">get.webgl.org</a> to learn more or try the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>
+
+    <p id="errorWebGL">Your browser doesn't appear to support WebGL or it isn't enabled. Visit <a href="http://get.webgl.org/">get.webgl.org</a> to learn more or try the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>
+
+    <p id="errorResolution">This demo is not compatible with screens of this size.</p>    
+    
     </div>
 
   </div>    
@@ -127,7 +131,13 @@ title: Home
 
   $(document).ready( function () {
 
-    if (Seriously.incompatible()){
+    if (Seriously.incompatible()) {
+      $("#errorWebGL").show();
+      $("#errorResolution").hide();
+      $("#error").fadeIn();
+    } else if (screen.availWidth < 1024 || screen.availHeight < 768) {
+      $("#errorWebGL").hide();
+      $("#errorResolution").show();
       $("#error").fadeIn();
     } else {
       main.init();

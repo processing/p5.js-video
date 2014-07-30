@@ -5,7 +5,7 @@ $(document).ready( function () {
 
   // Let's go
 
-  if (!Seriously.incompatible()){
+  if (Seriously.incompatible()){
     $("#error").fadeIn();
   } else {
     main.init();

@@ -133,7 +133,7 @@ var script = {
     pop.code({
       start: 73.35,
       onStart: function( options ) {
-        main.sketch.hue = 0;
+        main.sketch.hue = 100;
       }
     });    
 
@@ -164,6 +164,22 @@ var script = {
         //slider.parent('sketchOverlay');
       }
     });       
+
+    pop.code({
+      start: 104.65615,
+      onStart: function( options ) {
+        var time = 104.956147 - 104.65615;
+        main.sketch.animateSlider(100, 0, time);
+      }
+    });    
+
+    pop.code({
+      start: 104.981121,
+      onStart: function( options ) {
+        var time = 105.247785 - 104.981121;
+        main.sketch.animateSlider(0, 100, time);
+      }
+    });   
 
     // Show Code
 

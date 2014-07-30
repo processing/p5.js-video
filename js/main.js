@@ -48,13 +48,13 @@ var main = {
 
       if(keypress == "."){
         if (!script.popcorn.paused()) script.popcorn.pause();
-        script.popcorn.currentTime( script.popcorn.currentTime() + .25);
+        script.popcorn.currentTime( script.popcorn.currentTime() + (1.0/30.0));
         console.log( script.popcorn.currentTime());
       }   
 
       if(keypress == ","){
         if (!script.popcorn.paused()) script.popcorn.pause();
-        script.popcorn.currentTime( script.popcorn.currentTime() - .25);
+        script.popcorn.currentTime( script.popcorn.currentTime() - (1.0/30.0));
         console.log( script.popcorn.currentTime());
       }          
 

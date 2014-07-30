@@ -18,6 +18,13 @@ var circleSketch = function( sketch ) {
     sketch.circleStartHue = 0;
     sketch.circleEndHue = sketch.hue;
 
+    sketch.lerpStartTime = 0;
+    sketch.lerpEndTime = 0;
+    sketch.lerpStartValue = 0;
+    sketch.lerpEndValue = 0;
+
+    sketch.sliding = false;    
+
     sketch.codePanel = sketch.createDiv("");
     sketch.codePanel.addClass("codePanel");
     sketch.codePanel.hide();
@@ -28,12 +35,20 @@ var circleSketch = function( sketch ) {
       });     
 
     //sketch.addSlider();
+    //sketch.animateSlider(100, 0, 2);
     //sketch.showCode("if (mousePressed()) {<br/>  &emsp;fill(r,g,b); <br/> }",100,100);
 
   };
 
   sketch.draw = function() {
     sketch.clear();
+
+    if (sketch.sliding) {
+      var currentTime = (sketch.millis() < sketch.lerpEndTime) ? sketch.millis() : sketch.lerpEndTime;
+      var value = sketch.map( currentTime, sketch.lerpStartTime, sketch.lerpEndTime, sketch.lerpStartValue, sketch.lerpEndValue );
+      sketch.hueSlider.value(value);
+      if (sketch.millis() >= sketch.lerpEndTime) sketch.sliding = false;
+    }    
 
     if (sketch.hueSlider) {
       sketch.hue = sketch.hueSlider.value();
@@ -52,7 +67,7 @@ var circleSketch = function( sketch ) {
         sketch.hue = sketch.map(sketchTime, sketch.shinkTime, sketch.shinkTime + sketch.shrinkDuration,  sketch.circleStartHue, sketch.circleEndHue);
         sketch.circleY = sketch.map(sketchTime, sketch.shinkTime, sketch.shinkTime + sketch.shrinkDuration,  sketch.width/2, 240);
 
-    }    
+    }        
 
     sketch.strokeWeight(sketch.circleStrokeWeight);
     sketch.stroke(sketch.hue, 100, 100);
@@ -99,7 +114,7 @@ var circleSketch = function( sketch ) {
 
   sketch.addSlider = function() {
     //console.log("Adding slider");  
-    console.log(sketch.hue);
+    //console.log(sketch.hue);
 
     var x = parseFloat(sketch.mainCanvas.style('left'));
     var y = parseFloat(sketch.mainCanvas.style('top'));
@@ -113,6 +128,15 @@ var circleSketch = function( sketch ) {
 
   sketch.hideSlider = function() {
     sketch.hueSlider.hide();
+  }
+
+  sketch.animateSlider = function(start, end, time) {
+    sketch.lerpStartTime = sketch.millis();
+    sketch.lerpEndTime = sketch.millis() + (time * 1000);
+    sketch.lerpStartValue = start;
+    sketch.lerpEndValue = end;
+
+    sketch.sliding = true;
   }
 
   sketch.showCode = function (text,x,y) {

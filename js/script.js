@@ -7,7 +7,21 @@ var script = {
 
     pop.on( "canplayall", function(e) {
       script.start();
-    });   
+    });  
+
+    pop.on( "play", function(e) {
+        $("#pauseButton").addClass("fa-pause");
+        $("#pauseButton").removeClass("fa-play"); 
+    });
+
+    pop.on( "pause", function(e) {
+        $("#pauseButton").removeClass("fa-pause");
+        $("#pauseButton").addClass("fa-play"); 
+    });         
+
+    /**
+     * Script
+     */
 
     // Lauren
 
@@ -241,97 +255,7 @@ var script = {
       }
     });  
 
-    // Show Pause
 
-    /*
-    pop.code({
-      start: 80.5,
-      onStart: function( options ) {
-        $("#pause").fadeIn();
-        $("#arrow").attr("class","pause").fadeIn();
-        $("#label").text("Pause").attr("class","pause").fadeIn();
-      }
-    });
-
-    pop.code({
-      start: 87.5,
-      onStart: function( options ) {
-        $("#arrow").stop().fadeOut();
-        $("#label").stop().fadeOut();
-      }
-    });  
-    */  
-
-    // Slider Sketch
-
-    /*
-    pop.code({
-      start: 96.5 ,
-      onStart: function( options ) {
-        sketch.remove();
-
-        sketch = new p5(circleSliderSketch, "sketchCanvas");
-        script.positionSketch({left:-340, top:540} , true);
-
-      }
-    });
-  */
-
-    // Flocking
-
-    // pop.code({
-    //   start: 149.7,
-    //   onStart: function( options ) {
-        
-    //     sketch.remove();
-    //     $("#sketchCanvas").empty();
-
-    //     sketch = new p5(flockingSketch, "sketchCanvas");
-    //     script.positionSketch({left:0, top:0}, false);
-
-    //   }
-    // });
-
-    // Start Flocking
-
-    // pop.code({
-    //   start: 143.25,
-    //   onStart: function( options ) {
-    //     sketch.startFlocking();
-    //   }
-    // });
-
-    // Weater
-
-    /*
-    pop.code({
-      start: 129,
-      onStart: function( options ) {
-        sketch.getWeather();
-      }
-    });
-    */
-
-    // Remove Sketch
-
-    // pop.code({
-    //   start: 144.25,
-    //   onStart: function( options ) {
-    //     $("#weather").fadeOut(1000);
-    //     $("#sketchCanvas").fadeOut(1000);
-    //   }
-    // });
-
-    // pop.code({
-    //   start: 146.25,
-    //   onStart: function( options ) {
-    //       sketch.remove();
-    //       $("#sketchCanvas").stop(); 
-    //       $("#sketchCanvas").css({opacity:1});          
-    //       $("#sketchCanvas").empty(); 
-    //       $("#sketchCanvas").hide();        
-    //   }
-    // });     
 
     // Song
 
@@ -350,33 +274,6 @@ var script = {
     });  
 
     // Drawing
-    
-    /*
-203.656728 main.js:32
-{left:-239, top:449} main.js:35
-
-203.906728 main.js:32
-{left:-56, top:585} main.js:35
-
-204.156728 main.js:32
-{left:29, top:495} main.js:35
-
-204.406728 main.js:32
-{left:171, top:400} main.js:35
-
-204.656728 main.js:32
-{left:111, top:548} main.js:35
-
-204.906728 main.js:32
-{left:-33, top:500} main.js:35
-
-205.156728 main.js:32
-{left:-167, top:423} main.js:35
-
-205.406728 main.js:32
-{left:-214, top:504} main.js:35
-
-     */
 
     pop.code({
       start: 200.0,

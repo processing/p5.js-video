@@ -81,12 +81,8 @@ var main = {
       //$("#showExample").fadeOut("fast");
         
       if (script.popcorn.paused()) {
-        $("#pauseButton").addClass("fa-pause");
-        $("#pauseButton").removeClass("fa-play"); 
         script.popcorn.play();
-      } else {
-        $("#pauseButton").removeClass("fa-pause");
-        $("#pauseButton").addClass("fa-play");               
+      } else {             
         script.popcorn.pause();
       }
 
@@ -96,6 +92,17 @@ var main = {
       main.start();
     });
     $("#begin").button('loading');
+
+
+    // Pause on click
+
+    $("a")
+        .attr('target', "_blank")
+        .click(function () {
+            script.popcorn.pause();
+        });
+
+    // Show welcome
 
     $("#welcome").fadeIn();
 

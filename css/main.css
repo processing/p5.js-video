@@ -71,13 +71,15 @@ h1, h2 {
 
 .codePanel {
   padding: 16px;
-  font-size: 1.5em;
+  font-size: 1.25em;
   background: rgba(45,123,182,.80);
   color: white !important;
   border: 2px solid rgb(45,123,182);;
   position: absolute;
   color: white;
   border-radius: 4px;
+  font-family: 'Inconsolata', monospace;
+  white-space:nowrap;
 }
 
 .codePanel a {

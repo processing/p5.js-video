@@ -115,7 +115,7 @@ var script = {
     pop.code({
       start: 57 ,
       onStart: function( options ) {        
-        var position = main.getRelativePosition({left:180, top:360});
+        var position = main.getRelativePosition({left:160, top:360});
         var panel = main.sketch.showCode("ellipse(80, 80, 148, 148);", position.left, position.top );
         panel.parent('sketchOverlay');
       }
@@ -142,7 +142,7 @@ var script = {
     pop.code({
       start: 77.75 ,
       onStart: function( options ) {        
-        var position = main.getRelativePosition({left:180, top:360});
+        var position = main.getRelativePosition({left:160, top:360});
         var panel = main.sketch.showCode("if (mousePressed) { <br/>&emsp;&emsp;fill(random(255), random(255), random(255));<br/>}", position.left, position.top );
         panel.parent('sketchOverlay');
       }
@@ -169,7 +169,7 @@ var script = {
       start: 104.65615,
       onStart: function( options ) {
         var time = 104.956147 - 104.65615;
-        main.sketch.animateSlider(100, 0, time);
+        main.sketch.animateSlider(99, 0, time);
       }
     });    
 
@@ -177,7 +177,7 @@ var script = {
       start: 104.981121,
       onStart: function( options ) {
         var time = 105.247785 - 104.981121;
-        main.sketch.animateSlider(0, 100, time);
+        main.sketch.animateSlider(0, 99, time);
       }
     });   
 
@@ -186,7 +186,7 @@ var script = {
     pop.code({
       start: 110.5 ,
       onStart: function( options ) {        
-        var position = main.getRelativePosition({left:180, top:360});
+        var position = main.getRelativePosition({left:160, top:360});
         var panel = main.sketch.showCode("var slider = createSlider(0, 255, 127);", position.left, position.top );
         panel.parent('sketchOverlay');
       }

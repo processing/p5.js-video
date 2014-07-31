@@ -23,7 +23,6 @@ var flockingSketch = function( sketch ) {
     // Performance stamping an image is faster than ellipse
 
     sketch.circleCanvas = sketch.createGraphics(26,26);
-    //sketch.circleCanvas.strokeWeight(2);
     sketch.circleCanvas.colorMode(sketch.HSB, 100);
     sketch.circleCanvas.stroke(sketch.hue, 100,100);
     sketch.circleCanvas.fill(sketch.hue, 100,100, 80);
@@ -31,6 +30,7 @@ var flockingSketch = function( sketch ) {
 
     sketch.flock = new sketch.Flock();
 
+    sketch.createUI();
     //sketch.addBoids(); // Called by Popcorn
     //sketch.getWeather(); // Called by Popcorn 
 
@@ -57,6 +57,60 @@ var flockingSketch = function( sketch ) {
 
     //sketch.drawVector(sketch.wind,600,120,1000);
   }  
+
+  sketch.createUI = function() {
+
+    // Create UI
+    
+    var weatherElement = sketch.createDiv("");
+    weatherElement.id("weather");
+
+    var weatherSpanElement = sketch.createSpan("");
+    weatherSpanElement.id("weatherSpan");
+    weatherSpanElement.parent("weather");
+
+    var temperatureElement = sketch.createDiv("75&deg")
+    temperatureElement.id("temperature");
+    temperatureElement.parent("weatherSpan");
+
+    var windElement = sketch.createDiv("");
+    windElement.id("wind");
+    windElement.parent("weatherSpan");
+
+    var speedElement = sketch.createDiv("WIND 4 <small>MPH</small>");
+    speedElement.id("speed");
+    speedElement.parent("wind");
+
+    var gustElement = sketch.createDiv("GUST 5 <small>MPH</small>");
+    gustElement.id("gust");
+    gustElement.parent("wind");        
+
+    gaugeElement = sketch.createDiv("");
+    gaugeElement.id("gauge");
+    gaugeElement.parent("weatherSpan");  
+
+    var gaugeCanvas = sketch.createGraphics(48,48);
+    gaugeCanvas.noStroke();
+    
+    gaugeCanvas.fill(255);
+    gaugeCanvas.ellipse(24,24,48,48);
+    
+    gaugeCanvas.stroke(45,123,182);
+    gaugeCanvas.strokeWeight(3);
+    gaugeCanvas.line(24,8, 24, 40);
+    
+    gaugeCanvas.noStroke();
+    gaugeCanvas.fill(45,123,182);
+    gaugeCanvas.triangle(24,6, 18, 14, 30, 14)
+
+    gaugeCanvas.show(); 
+    gaugeCanvas.parent("gauge");    
+
+    //weatherElement.show();
+    
+    sketch.weatherElement = weatherElement;
+
+  }
 
   sketch.enableStaticRepel = function() {
     sketch.staticRepel = true;
@@ -96,8 +150,6 @@ var flockingSketch = function( sketch ) {
 
   sketch.gotWeather = function(weather) {
 
-    console.log(weather);
-
     var dir = Number(weather.wind.deg);
     var windmag = Number(weather.wind.speed);
     var gustmag;
@@ -105,32 +157,6 @@ var flockingSketch = function( sketch ) {
       gustmag = Number(weather.wind.gust);
     else
       gustmag = windmag;
-
-
-    // Create UI
-    
-    var weatherElement = sketch.createDiv("");
-    weatherElement.id("weather");
-
-    var temperatureElement = sketch.createDiv("")
-    temperatureElement.id("temperature");
-    temperatureElement.parent("weather");
-
-    var windElement = sketch.createDiv("");
-    windElement.id("wind");
-    windElement.parent("weather");
-
-    var speedElement = sketch.createDiv("");
-    speedElement.id("speed");
-    speedElement.parent("wind");
-
-    var gustElement = sketch.createDiv("");
-    gustElement.id("gust");
-    gustElement.parent("wind");        
-
-    var gaugeElement = sketch.createDiv("");
-    gaugeElement.id("gauge");
-    gaugeElement.parent("weather");    
  
     // Setup UI
 
@@ -151,7 +177,6 @@ var flockingSketch = function( sketch ) {
 
     // Popcorn timing fix
     
-    sketch.weatherElement = weatherElement;
     if (sketch.hideWeather == true) weatherElement.hide();    
 
   }

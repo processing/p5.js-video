@@ -4,41 +4,52 @@ body {
 
 #weather {
   position: absolute;
-  border-radius: 4px;
-  background: rgba(45,123,182,.80);
-  color: white;
-  left: 0;
-  bottom: 640px;
   display: none;
+
+  bottom: 640px;
   width: 400px;
   left: 50%;
   margin-left: -200px;
+  
   text-align: center;
-  vertical-align: top;
+}
+
+#weatherSpan {
+  display: inline-block;
+  border-radius: 4px;
+  background: rgba(45,123,182,.80);
+  border: 2px solid rgb(45,123,182);
+  color: white;
+  padding: 6px 24px;
+  font-size: 60px;
+  line-height: 60px;
+  box-sizing: content-box;
 
 }
 
 #temperature {
-    display: inline-block;
-    font-size: 60px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 #wind {
   display: inline-block;
   text-align: left;
-  margin-top: 14px;
-  margin-left: 24px;
+  vertical-align: middle;
 }
 
 #speed, #gust {
-  font-size: 14pt;
+  font-size: 20px;
+  line-height: 20px;
+  margin-left: 24px;
+  margin-right: 32px;
 }
 
-#gauge {
-  width: 48px;
-  height: 48px;
+#speed {
+  margin-bottom: 8px;
+}
+
+#gauge { 
   display: inline-block;
-  margin-left: 24px;
-  background-image: url('wind.png');
-  
+  vertical-align: middle;
 }

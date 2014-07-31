@@ -408,14 +408,7 @@ var script = {
         main.sketch.stopDrawing();
         $("#sketchCanvas").fadeOut(1000);
       }
-    });     
-
-    pop.code({
-      start: 262.0,
-      onStart: function( options ) {   
-        // Get In Touch
-      }
-    });     
+    });        
 
     pop.code({
       start: 245.0,
@@ -426,7 +419,73 @@ var script = {
         $("#sketchCanvas").css({opacity:1});
         $("#sketchCanvas").show();          
       }
-    });       
+    });   
+
+    pop.code({
+      start: 256.37,
+      onStart: function( options ) {   
+        main.sketch = new p5(outroSketch, "sketchCanvas");
+
+        var position = main.getRelativePosition({left:-326, top:552});
+        main.sketch.showOutro('<i class="fa fa-scissors fa-4x fa-fw"></i>', position.left, position.top);
+      }
+    });      
+
+    pop.code({
+      start: 256.9,
+      onStart: function( options ) {   
+        var position = main.getRelativePosition({left:-326, top:552});
+        main.sketch.showOutro('<i class="fa fa-lightbulb-o fa-4x fa-fw"></i>', position.left, position.top);
+      }
+    });  
+
+    pop.code({
+      start: 257.60,
+      onStart: function( options ) {   
+        var position = main.getRelativePosition({left:-326, top:552});
+        main.sketch.showOutro('<i class="fa fa-laptop fa-4x fa-fw"></i>', position.left, position.top);
+      }
+    });     
+
+    pop.code({
+      start: 258.56,
+      onStart: function( options ) {   
+        var position = main.getRelativePosition({left:-326, top:552});
+        main.sketch.showOutro('<i class="fa fa-pencil fa-4x fa-fw"></i>', position.left, position.top);
+      }
+    });    
+    
+    pop.code({
+      start: 259.10,
+      onStart: function( options ) {   
+        var position = main.getRelativePosition({left:-326, top:552});
+        main.sketch.showOutro('<i class="fa fa-graduation-cap fa-4x fa-fw"></i>', position.left, position.top);
+      }
+    });  
+    
+    pop.code({
+      start: 259.50,
+      onStart: function( options ) {   
+        var position = main.getRelativePosition({left:-326, top:552});
+        main.sketch.showOutro('<i class="fa fa-asterisk fa-spin fa-4x fa-fw"></i>', position.left, position.top);
+      }
+    });          
+
+    pop.code({
+      start: 261.7,
+      onStart: function( options ) { 
+        var position = main.getRelativePosition({left:-389, top:552} );        
+        main.sketch.showOutro('<a href="mailto:hello@p5js.org">hello@p5js.org</a>', position.left, position.top);
+        main.sketch.labelContainer.addClass("codePanel");
+      }
+    });   
+
+    pop.code({
+      start: 266.123141 ,
+      onStart: function( options ) {   
+        main.sketch.remove();
+      }
+    });            
 
     // CTA
     

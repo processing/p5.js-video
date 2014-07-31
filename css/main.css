@@ -73,11 +73,22 @@ h1, h2 {
   padding: 16px;
   font-size: 1.5em;
   background: rgba(45,123,182,.80);
+  color: white !important;
   border: 2px solid rgb(45,123,182);;
   position: absolute;
   color: white;
   border-radius: 4px;
 }
+
+.codePanel a {
+  text-decoration: none;
+  color: white !important;
+}
+
+.codePanel:hover {
+    background: rgba(255, 184, 0, .50);
+    border: 2px solid rgb(255, 184, 0);    
+  }
 
 /**
  * Sketch

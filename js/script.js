@@ -404,6 +404,8 @@ var script = {
     pop.code({
       start: 243.0,
       onStart: function( options ) {   
+        main.sketch.disableMouse();
+        main.sketch.stopDrawing();
         $("#sketchCanvas").fadeOut(1000);
       }
     });     

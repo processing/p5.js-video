@@ -1,4 +1,5 @@
 var flockingSketch = function( sketch ) {
+  sketch.scaleFactor = 1.0;
 
   sketch.flock;
   sketch.boids = false;
@@ -18,7 +19,7 @@ var flockingSketch = function( sketch ) {
   sketch.weatherElement = null;
 
   sketch.setup = function() {
-    sketch.createCanvas(window.innerWidth,window.innerHeight);
+    sketch.createCanvas(1280,800);
 
     // Performance stamping an image is faster than ellipse
 
@@ -215,8 +216,9 @@ var flockingSketch = function( sketch ) {
       // Static Repel
       
       if (sketch.mouseRepel) {
-        sketch.mouseRepelTarget.x = sketch.mouseX;
-        sketch.mouseRepelTarget.y = sketch.mouseY;
+        sketch.mouseRepelTarget.x = sketch.mouseX / sketch.scaleFactor;
+        sketch.mouseRepelTarget.y = sketch.mouseY / sketch.scaleFactor;
+        sketch.ellipse(sketch.mouseRepelTarget.x, sketch.mouseRepelTarget.y, 100,100);
         this.boids[i].repel(sketch.mouseRepelTarget);
       }
 

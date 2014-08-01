@@ -143,7 +143,7 @@ var script = {
       start: 77.75 ,
       onStart: function( options ) {        
         var position = main.getRelativePosition({left:160, top:360});
-        var panel = main.sketch.showCode("if (mousePressed) { <br/>&emsp;&emsp;fill(random(255), random(255), random(255));<br/>}", position.left, position.top );
+        var panel = main.sketch.showCode("if (mousePressed) { <br/>&emsp;&emsp;fill(255, 0, 0);<br/>}", position.left, position.top );
         panel.parent('sketchOverlay');
       }
     });  
@@ -220,6 +220,7 @@ var script = {
         main.sketch.remove();
 
         main.sketch = new p5(flockingSketch, "sketchCanvas");
+        main.sketch.scaleFactor = main.scaleFactor;
         main.sketch.addCircle(position);
         //$("#sketchCanvas").css({left: 0, top: 0, width: "100%"});   
 
@@ -296,6 +297,7 @@ var script = {
       onStart: function( options ) {     
         $("#sketchCanvas").addClass("foreground");
         main.sketch = new p5(paintingSketch, "sketchCanvas");
+        main.sketch.scaleFactor = main.scaleFactor;
         main.sketch.disableMouse();
       }
     });   

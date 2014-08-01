@@ -2,7 +2,7 @@ var labelSketch = function( sketch ) {
 
   sketch.setup = function() {
     
-    sketch.arrowCanvas =  sketch.createGraphics(640, 640);
+    sketch.arrowCanvas =  sketch.createGraphics(80, 80);
     sketch.arrowCanvas.noFill();
     sketch.arrowCanvas.stroke(45,123,182);
     sketch.arrowCanvas.strokeWeight(4);

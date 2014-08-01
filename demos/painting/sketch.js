@@ -1,4 +1,5 @@
 var paintingSketch = function( sketch ) {
+  sketch.scaleFactor = 1.0;
 
   sketch.paths = [];
   sketch.buffer = null;
@@ -22,7 +23,7 @@ var paintingSketch = function( sketch ) {
 
     // Full-window canvas
     // 
-    sketch.createCanvas(window.innerWidth,window.innerHeight);
+    sketch.createCanvas(1280, 800);
     //sketch.strokeWeight(2);
     sketch.colorMode(sketch.HSB, 100);
 
@@ -81,6 +82,9 @@ var paintingSketch = function( sketch ) {
       
       sketch.mousePosition.x = (sketch.mouseX > sketch.touchX) ? sketch.mouseX : sketch.touchX;
       sketch.mousePosition.y = (sketch.mouseY > sketch.touchY) ? sketch.mouseY : sketch.touchY;
+
+      sketch.mousePosition.x /= sketch.scaleFactor;
+      sketch.mousePosition.y /= sketch.scaleFactor;
 
       // New particle's force is based on mouse movement
       var force = p5.Vector.sub(sketch.mousePosition, sketch.lastPosition);
@@ -161,6 +165,8 @@ var paintingSketch = function( sketch ) {
     sketch.lastPosition.x = ((sketch.mouseX > sketch.touchX) ? sketch.mouseX : sketch.touchX) - 10;
     sketch.lastPosition.y = ((sketch.mouseY > sketch.touchY) ? sketch.mouseY : sketch.touchY) - 10;
 
+    sketch.lastPosition.x /= sketch.scaleFactor;
+    sketch.lastPosition.y /= sketch.scaleFactor;
 
     sketch.paths.push(new sketch.Paths());
   }

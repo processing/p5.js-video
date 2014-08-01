@@ -1,9 +1,12 @@
 var main = {
   sketch: null,
+  scaleFactor: 1.0,
 
   // Initalize Demo
 
   init: function() {
+
+    main.resize();
 
     // Popcorn Setup
 
@@ -16,6 +19,12 @@ var main = {
       var clickX = e.pageX - ($(window).width()/2)
         clickY = $(window).height() - e.pageY;
       console.log( "{left:" + clickX + ", top:" + clickY + "}");
+    });
+
+    $(window).resize( function() {
+
+      main.resize();
+
     });
 
     // Keyboad events
@@ -147,14 +156,29 @@ var main = {
 
   getRelativePosition: function(position) {
 
-      videoBaseX = $(window).width()/2;
-      videoBaseY = $(window).height();
+      videoBaseX = $("#main").width()/2;
+      videoBaseY = $("#main").height();
 
       position.left = videoBaseX + position.left;
       position.top = videoBaseY - position.top;
   
       return position;
 
+  },
+
+  resize: function() {
+      var ratio = 1.0;
+
+      if (window.innerWidth < 1280 || window.innerHeight < 800) {
+        ratio = window.innerWidth / 1280;
+        if (ratio * 800 > window.innerHeight) {
+          ratio = window.innerHeight / 800;
+        }
+      } 
+
+      main.scaleFactor = ratio;
+      if (main.sketch) main.sketch.scaleFactor = main.scaleFactor;
+      $('#main').css('transform', 'scale('+ratio+')');
   }
 
 }

@@ -1,6 +1,8 @@
 var circleSketch = function( sketch ) {
 
   sketch.setup = function() {
+    sketch._pixelDensity = 1;
+    
     sketch.mainCanvas = sketch.createCanvas(160, 360);
     sketch.mainCanvas.position(0,0);
 

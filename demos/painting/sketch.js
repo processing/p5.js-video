@@ -22,7 +22,7 @@ var paintingSketch = function( sketch ) {
   sketch.setup = function() {
 
     // Full-window canvas
-    // 
+    sketch._pixelDensity = 1;
     sketch.createCanvas(1280, 800);
     //sketch.strokeWeight(2);
     sketch.colorMode(sketch.HSB, 100);

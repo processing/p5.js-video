@@ -19,6 +19,7 @@ var flockingSketch = function( sketch ) {
   sketch.weatherElement = null;
 
   sketch.setup = function() {
+    sketch._pixelDensity = 1;
     sketch.createCanvas(1280,800);
 
     // Performance stamping an image is faster than ellipse

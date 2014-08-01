@@ -1,6 +1,7 @@
 var labelSketch = function( sketch ) {
 
   sketch.setup = function() {
+    sketch._pixelDensity = 1;
     
     sketch.arrowCanvas =  sketch.createGraphics(80, 80);
     sketch.arrowCanvas.noFill();

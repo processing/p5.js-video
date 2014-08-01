@@ -121,7 +121,7 @@ h1, h2 {
 }
 
 #videoCanvas {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 50%;
   margin-left: -480px;

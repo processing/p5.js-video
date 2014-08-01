@@ -22,7 +22,7 @@ var labelSketch = function( sketch ) {
 
   sketch.showLabel = function(text,x,y) {
     sketch.labelSpan.html(text);
-    sketch.labelContainer.position(x-58, y-58);
+    sketch.labelContainer.position(x-64, y-64);
     sketch.labelContainer.show();
     sketch.arrowCanvas.position(x-58, y-58);
     sketch.arrowCanvas.show();

@@ -323,6 +323,7 @@ h1, h2 {
   text-align: center;
 }
 #labelSpan {
+  font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
   font-size: 2.4em;
   color: rgb(45,123,182);
 }

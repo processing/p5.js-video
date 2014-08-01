@@ -227,7 +227,7 @@ h1, h2 {
   position: absolute;
   display: none;
 
-  bottom: 640px;
+  top: 24px;
   width: 400px;
   left: 50%;
   margin-left: -200px;
@@ -281,7 +281,7 @@ h1, h2 {
 
 #noteContainer {
   position: absolute;
-  top: 10px;
+  top: 24px;
   left: 0;
   width: 100%;
   text-align:center;

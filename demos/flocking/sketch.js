@@ -33,7 +33,8 @@ var flockingSketch = function( sketch ) {
 
     sketch.createUI();
     //sketch.addBoids(); // Called by Popcorn
-    //sketch.getWeather(); // Called by Popcorn 
+    //sketch.getWeather(); // Called by Popcorn
+    //sketch.enableMouseRepel(); // Called by Popcorn
 
   }
 
@@ -107,7 +108,7 @@ var flockingSketch = function( sketch ) {
     gaugeCanvas.show(); 
     gaugeCanvas.parent("gauge");    
 
-    //weatherElement.show();
+    weatherElement.hide();
     
     sketch.weatherElement = weatherElement;
 

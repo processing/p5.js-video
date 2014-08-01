@@ -179,7 +179,7 @@ var script = {
         var time = 105.247785 - 104.981121;
         main.sketch.animateSlider(0, 99, time);
       }
-    });   
+    });     
 
     // Show Code
 

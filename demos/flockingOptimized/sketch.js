@@ -213,12 +213,12 @@ var flockingSketch = function( sketch ) {
 
       this.boids[i].applyForce(sketch.wind);
 
-      // Static Repel
+      // Repel
       
       if (sketch.mouseRepel) {
         sketch.mouseRepelTarget.x = sketch.mouseX / sketch.scaleFactor;
         sketch.mouseRepelTarget.y = sketch.mouseY / sketch.scaleFactor;
-        sketch.ellipse(sketch.mouseRepelTarget.x, sketch.mouseRepelTarget.y, 100,100);
+        //sketch.ellipse(sketch.mouseRepelTarget.x, sketch.mouseRepelTarget.y, 100,100);
         this.boids[i].repel(sketch.mouseRepelTarget);
       }
 

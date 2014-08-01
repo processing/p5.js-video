@@ -167,18 +167,19 @@ var main = {
   },
 
   resize: function() {
-      var ratio = 1.0;
+      var transform = none;
 
       if (window.innerWidth < 1280 || window.innerHeight < 800) {
         ratio = window.innerWidth / 1280;
         if (ratio * 800 > window.innerHeight) {
           ratio = window.innerHeight / 800;
         }
+        transform = 'scale('+ratio+')';
       } 
 
       main.scaleFactor = ratio;
       if (main.sketch) main.sketch.scaleFactor = main.scaleFactor;
-      $('#main').css('transform', 'scale('+ratio+')');
+      $('#main').css('transform', transform);
   }
 
 }

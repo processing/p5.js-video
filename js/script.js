@@ -477,8 +477,8 @@ var script = {
       start: 261.7,
       onStart: function( options ) { 
         var position = main.getRelativePosition({left:-389, top:552} );        
-        main.sketch.showOutro('<a href="mailto:hello@p5js.org">hello@p5js.org</a>', position.left, position.top);
-        main.sketch.labelContainer.addClass("codePanel");
+        main.sketch.showOutro('<a class="codePanel" href="mailto:hello@p5js.org">hello@p5js.org</a>', position.left, position.top);
+      
       }
     });   
 

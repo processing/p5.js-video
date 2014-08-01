@@ -33,8 +33,24 @@ h1, h2 {
   margin:  0 0 5px 0;
 }
 
+#fontLoad {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: white;
+  opacity: 0;
+}
+
+.fontLoadA{
+    font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
+}
+
+.fontLoadB {
+  font-family: 'Inconsolata', monospace;
+}
+
 #main {
-  overflow:none;
+  overflow:hidden;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -86,12 +102,9 @@ h1, h2 {
   white-space:nowrap;
 }
 
-.codePanel a {
-  text-decoration: none;
-  color: white !important;
-}
 
 .codePanel:hover {
+    text-decoration: none;
     background: rgba(255, 184, 0, .50);
     border: 2px solid rgb(255, 184, 0);    
   }

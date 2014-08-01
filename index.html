@@ -22,7 +22,7 @@ title: Home
 
     <p id="errorWebGL">Your browser doesn't appear to support WebGL or it isn't enabled. Visit <a href="http://get.webgl.org/">get.webgl.org</a> to learn more or try the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>
 
-    <p id="errorResolution">This demo is not compatible with screens of this size.</p>    
+    <p id="errorFeature">Your browser doesn't support all of the features required for this demo. Please consider using the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>    
     
     </div>
 
@@ -118,9 +118,9 @@ title: Home
       $("#errorWebGL").show();
       $("#errorResolution").hide();
       $("#error").fadeIn();
-    } else if (screen.availWidth < 1024 || screen.availHeight < 768) {
+    } else if (!Modernizr.webaudio || !Modernizr.csstransforms) {
       $("#errorWebGL").hide();
-      $("#errorResolution").show();
+      $("#errorFeature").show();
       $("#error").fadeIn();
     } else {
       main.init();

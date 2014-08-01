@@ -167,7 +167,7 @@ var main = {
   },
 
   resize: function() {
-      var transform = none;
+      var transform = "none";
 
       if (window.innerWidth < 1280 || window.innerHeight < 800) {
         ratio = window.innerWidth / 1280;

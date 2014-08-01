@@ -429,7 +429,7 @@ var script = {
         main.sketch = new p5(outroSketch, "sketchCanvas");
 
         var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-scissors fa-4x fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<i class="fa fa-scissors fa-fw"></i>', position.left, position.top);
       }
     });      
 
@@ -437,7 +437,7 @@ var script = {
       start: 256.9,
       onStart: function( options ) {   
         var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-lightbulb-o fa-4x fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<i class="fa fa-lightbulb-o fa-fw"></i>', position.left, position.top);
       }
     });  
 
@@ -445,7 +445,7 @@ var script = {
       start: 257.60,
       onStart: function( options ) {   
         var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-laptop fa-4x fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<i class="fa fa-laptop fa-fw"></i>', position.left, position.top);
       }
     });     
 
@@ -453,7 +453,7 @@ var script = {
       start: 258.56,
       onStart: function( options ) {   
         var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-pencil fa-4x fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<i class="fa fa-pencil fa-fw"></i>', position.left, position.top);
       }
     });    
     
@@ -461,7 +461,7 @@ var script = {
       start: 259.10,
       onStart: function( options ) {   
         var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-graduation-cap fa-4x fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<i class="fa fa-graduation-cap fa-fw"></i>', position.left, position.top);
       }
     });  
     
@@ -469,14 +469,14 @@ var script = {
       start: 259.50,
       onStart: function( options ) {   
         var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-asterisk fa-spin fa-4x fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<i class="fa fa-asterisk fa-spin fa-fw"></i>', position.left, position.top);
       }
     });          
 
     pop.code({
       start: 261.7,
       onStart: function( options ) { 
-        var position = main.getRelativePosition({left:-389, top:552} );        
+        var position = main.getRelativePosition({left:-330, top:520});        
         main.sketch.showOutro('<a class="codePanel" href="mailto:hello@p5js.org">hello@p5js.org</a>', position.left, position.top);
       
       }

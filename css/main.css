@@ -33,22 +33,6 @@ h1, h2 {
   margin:  0 0 5px 0;
 }
 
-#fontLoad {
-  position: absolute;
-  top: 0;
-  left: 0;
-  color: white;
-  opacity: 0;
-}
-
-.fontLoadA{
-    font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
-}
-
-.fontLoadB {
-  font-family: 'Inconsolata', monospace;
-}
-
 #main {
   overflow:hidden;
   position: absolute;
@@ -91,7 +75,7 @@ h1, h2 {
 
 .codePanel {
   padding: 16px;
-  font-size: 1.25em;
+  font-size: 1.5em;
   background: rgba(45,123,182,.80);
   color: white !important;
   border: 2px solid rgb(45,123,182);;
@@ -146,6 +130,26 @@ h1, h2 {
 }
 
 /**
+ * Font Preload
+ */
+
+#fontLoad {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: white;
+  opacity: 0;
+}
+
+.fontLoadA{
+    font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
+}
+
+.fontLoadB {
+  font-family: 'Inconsolata', monospace;
+}
+
+/**
  * Welcome Panel
  */
 
@@ -192,22 +196,6 @@ h1, h2 {
 }
 
 /**
- * About
- */
-
-#about {
-  position: absolute;
-  width: 540px;
-  text-align: left;
-  top: 50%;
-  left: 50%;
-  margin-left: -270px;
-  margin-top: -196px;
-  background: white;
-  display:none;
-}
-
-/**
  * Panel Classes
  */
 
@@ -229,4 +217,125 @@ h1, h2 {
   margin-bottom: 4px;
   text-transform: lowercase;
   font-family: "AvenirNextLTW01-MediumS";
+}
+
+/** 
+ * Weather Demo
+ */
+
+#weather {
+  position: absolute;
+  display: none;
+
+  bottom: 640px;
+  width: 400px;
+  left: 50%;
+  margin-left: -200px;
+  
+  text-align: center;
+}
+
+#weatherSpan {
+  display: inline-block;
+  border-radius: 4px;
+  background: rgba(45,123,182,.80);
+  border: 2px solid rgb(45,123,182);
+  color: white;
+  padding: 6px 24px;
+  font-size: 60px;
+  line-height: 60px;
+  box-sizing: content-box;
+
+}
+
+#temperature {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#wind {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
+#speed, #gust {
+  font-size: 20px;
+  line-height: 20px;
+  margin-left: 24px;
+  margin-right: 32px;
+}
+
+#speed {
+  margin-bottom: 8px;
+}
+
+#gauge { 
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/**
+ * Song Demo
+ */
+
+#noteContainer {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  text-align:center;
+}
+
+.note {
+  display: inline-block;
+
+  height: 60px;
+  width: 60px;
+  line-height: 60px;
+
+  font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
+  font-size: 32px;
+  text-align: center;
+
+  background: rgba(45,123,182,.80);
+  border: 2px solid rgb(45,123,182);
+  color: white;
+
+  margin: 0 4px;
+  border-radius: 50%;
+  box-sizing: content-box;
+}
+
+.note:hover {
+  background: rgba(255, 184, 0, .50);
+  border: 2px solid rgb(255, 184, 0);    
+}
+
+/**
+ * Label Demo
+ */
+
+#labelContainer {
+  width: 500px;
+  margin-left: -250px;
+  margin-top: -2.8em;
+  text-align: center;
+}
+#labelSpan {
+  font-size: 2.4em;
+  color: rgb(45,123,182);
+}
+
+/**
+ * Outro Demo
+ */
+
+#outroContainer {
+  text-align: center;
+  color: rgb(45,123,182);
+}
+
+#outroContainer .fa {
+  font-size: 10em;
 }

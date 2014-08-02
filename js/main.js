@@ -98,7 +98,7 @@ var main = {
       // Setup Seriously
 
       var seriously,
-      chroma, fxaa,
+      chroma, throttle,
       target;
 
       seriously = new Seriously();
@@ -107,11 +107,11 @@ var main = {
       chroma = seriously.effect('chroma');
       throttle = seriously.effect('throttle');
 
-      //chroma.weight = 1.0;
-      //chroma.balance = 0;
-      chroma.screen = 'rgb(100, 255, 100)';
+      chroma.weight = 1.25;
+      //chroma.balance = 1;
+      chroma.screen = [.15,.85,0,1];
       //chroma.clipWhite = 1.0;
-      //chroma.clipBlack = 0.0;
+      //chroma.clipBlack = 0.1;
       
       throttle.frameRate = 30;
 

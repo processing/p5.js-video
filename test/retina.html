@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <script language="javascript" type="text/javascript" src="/js/vendor/p5.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/vendor/addons/p5.dom.js"></script>   
+    <script>
+
+    var retinaSketch = function (sketch) {
+
+      sketch.ellipseX = 0;
+
+      sketch.setup = function() {
+        //Pretend we're on a retina
+
+        sketch._pixelDensity = 2;
+
+        // Main canvas is fine because of css sizing
+
+        sketch.createCanvas(256,256);
+        sketch.background(128)
+
+        // This should display as the same size as the canvas
+
+        sketch.graphics = sketch.createGraphics(256,256);
+        sketch.graphics.background(192);
+        sketch.graphics.show();
+
+        sketch.strokeWeight(2);
+        sketch.stroke(0,255,0);
+        sketch.fill(0,0,255);
+
+      }
+
+      sketch.draw = function() {
+        sketch.clear(); // Seems to break everything
+        sketch.background(128); 
+
+        // Draw graphics to sketch
+
+        sketch.image(sketch.graphics,0,0);
+
+        // Draw an ellipse under the mouse
+
+        sketch.ellipse(sketch.mouseX,sketch.mouseY,10,10);
+
+        // Wrap at canvas width
+  
+        sketch.ellipse(sketch.ellipseX++, 128, 10, 10);
+        if (sketch.ellipseX > sketch.width) sketch.ellipseX = 0;
+      }
+    }
+
+    new p5(retinaSketch);
+
+    </script>
+  </head>
+
+  <body style="margin:0;padding:0;"></body>
+</html>

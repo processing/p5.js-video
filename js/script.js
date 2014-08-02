@@ -181,6 +181,14 @@ var script = {
       }
     });     
 
+    pop.code({
+      start: 105.254753,
+      onStart: function( options ) {
+        var time = 105.454751 - 105.254753 ;
+        main.sketch.animateSlider(99, 0, time);
+      }
+    });      
+
     // Show Code
 
     pop.code({

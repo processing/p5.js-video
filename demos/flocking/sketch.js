@@ -33,7 +33,11 @@ var flockingSketch = function( sketch ) {
     sketch.flock = new sketch.Flock();
 
     sketch.createUI();
-    //sketch.addBoids(); // Called by Popcorn
+
+    sketch.enableStaticRepel();
+    sketch.enableMouseRepel();
+
+    sketch.addBoids(); // Called by Popcorn
     //sketch.getWeather(); // Called by Popcorn
     //sketch.enableMouseRepel(); // Called by Popcorn
 

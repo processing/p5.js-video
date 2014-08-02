@@ -107,11 +107,15 @@ var main = {
       chroma = seriously.effect('chroma');
       throttle = seriously.effect('throttle');
 
-      chroma.weight = 1.25;
-      //chroma.balance = 1;
-      chroma.screen = [.15,.85,0,1];
-      //chroma.clipWhite = 1.0;
-      //chroma.clipBlack = 0.1;
+      if (Modernizr.video.webm && Modernizr.video.h264) {
+        console.log("True");
+        chroma.weight = .9;
+        chroma.screen = [.1,.9,0,1];
+      } else {
+        console.log("Adjusted");
+        chroma.weight = 1.25;
+        chroma.screen = [.3,1,.15,1];
+      }
       
       throttle.frameRate = 30;
 

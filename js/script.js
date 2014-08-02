@@ -468,7 +468,7 @@ var script = {
       start: 259.50,
       onStart: function( options ) {   
         var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-asterisk fa-spin fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<img class="outroImage fa-spin" src="/assets/thick-asterisk-alone.svg" alt="" />', position.left, position.top);
       }
     });          
 

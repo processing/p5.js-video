@@ -157,7 +157,7 @@ var flockingSketch = function( sketch ) {
 
   sketch.gotWeather = function(weather) {
 
-    if (!sketch.weatherElement ) return;
+    if (! sketch.getElement("temperature")) return;
 
     var dir = Number(weather.wind.deg);
     var windmag = Number(weather.wind.speed);

@@ -130,10 +130,10 @@ h1, h2 {
 }
 
 /**
- * Font Preload
+ *  Preload
  */
 
-#fontLoad {
+#preloader {
   position: absolute;
   top: 0;
   left: 0;
@@ -339,4 +339,10 @@ h1, h2 {
 
 #outroContainer .fa {
   font-size: 10em;
+}
+
+#outroContainer img {
+  width:128px; 
+  height:128px;
+  margin-left:24px;
 }

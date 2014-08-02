@@ -2,7 +2,7 @@ var script = {
   popcorn: null,
   init: function() {
 
-    var pop = Popcorn.smart("#videoClip", ["assets/video.webm","assets/video.mp4"]);
+    var pop = Popcorn.smart("#videoClip", ["assets/video.mp4","assets/video.webm"]);
     pop.autoplay(false);
 
     pop.on( "canplayall", function(e) {

@@ -17,33 +17,32 @@
           target = seriously.target('#canvas');
           chroma = seriously.effect('chroma');
 
-          chroma.weight = "#weight";
-          chroma.balance = "#balance"
-          chroma.screen = [0,1,0,1];
-          chroma.clipWhite = "#clipWhite";
-          chroma.clipBlack = "#clipBlack";
-          
-
           chroma.source = "#video";
           target.source = chroma;
+          chroma.screen = [0,1,0,1];
           seriously.go();
 
-          $("input[type=range]").bind("input",function(e) {
-            var id = $(this).attr('id')
-            var value = $(this).val();
+          $("input[type=range]").bind("input",function(e) { 
+            update(this);
+          });
+
+          function update(elment) {
+            var id = $(elment).attr('id')
+            var value = $(elment).val();
+
+            $("#"+id+"Value").html(value);
 
             if ($.inArray(id, ['red','green','blue']) > - 1) {
               var red = parseFloat($("#red").val());
               var green = parseFloat($("#green").val());
               var blue = parseFloat($("#blue").val());
-              id = screen;
+              id = "screen";
               value = [red,green,blue,1];
               chroma.screen = value;
             }
 
-              console.log(value) ; 
-
-          })
+            chroma[id] = value;
+          }
 
         });
 
@@ -92,20 +91,20 @@
       <div id="background"></div>
 
       <div id="controls">
-        <label>weight</label>
-        <input type="range" id="weight" min="0" max="2" step="0.0001" value="1"/><br/>    
-        <label>clipWhite</label>
-        <input type="range" id="clipWhite" min="0" max="1" step="0.0001" value="1"/><br/> 
-        <label>clipBlack</label>
-        <input type="range" id="clipBlack" min="0" max="1" step="0.0001" value="0"/><br/> 
-        <label>balance</label>
-        <input type="range" id="balance" min="0" max="1" step="0.0001" value="1"/><br/>       
-        <label>red</label>
-        <input type="range" id="red" min="0" max="1" step="0.0001" value="0"/><br/>  
-        <label>green</label>
-        <input type="range" id="green" min="0" max="1" step="0.0001" value="1"/><br/>
-        <label>blue</label>
-        <input type="range" id="blue" min="0" max="1" step="0.0001" value="0"/><br/>  
+        <label>weight: <span id="weightValue">1</span></label><br/>
+        <input type="range" id="weight" min="0" max="2" step="0.01" value="1"/><br/>    
+        <label>clipWhite: <span id="clipWhiteValue">1</span></label><br/>
+        <input type="range" id="clipWhite" min="0" max="1" step="0.01" value="1"/><br/> 
+        <label>clipBlack: <span id="clipBlackValue">0</span></label><br/>
+        <input type="range" id="clipBlack" min="0" max="1" step="0.01" value="0"/><br/> 
+        <label>balance: <span id="balanceValue">1</span></label><br/>
+        <input type="range" id="balance" min="0" max="1" step="0.01" value="1"/><br/>       
+        <label>red: <span id="redValue"></span>0</label><br/>
+        <input type="range" id="red" min="0" max="1" step="0.01" value="0"/><br/>  
+        <label>green: <span id="greenValue">1</span></label><br/>
+        <input type="range" id="green" min="0" max="1" step="0.01" value="1"/><br/>
+        <label>blue: <span id="blueValue">0</span></label><br/>
+        <input type="range" id="blue" min="0" max="1" step="0.01" value="0"/><br/>  
       </div>
   </body>
 </html

@@ -218,7 +218,7 @@ var script = {
     });  
 
     pop.code({
-      start: 127,
+      start: 127.2,
       onStart: function( options ) {
 
         var position = {

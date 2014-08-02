@@ -37,7 +37,7 @@ var flockingSketch = function( sketch ) {
     sketch.enableStaticRepel();
     sketch.enableMouseRepel();
 
-    sketch.addBoids(); // Called by Popcorn
+    //sketch.addBoids(); // Called by Popcorn
     //sketch.getWeather(); // Called by Popcorn
     //sketch.enableMouseRepel(); // Called by Popcorn
 

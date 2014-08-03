@@ -143,7 +143,7 @@ var script = {
       start: 77.75 ,
       onStart: function( options ) {        
         var position = main.getRelativePosition({left:160, top:360});
-        var panel = main.sketch.showCode("if (mousePressed) {<br/>&emsp;var red = random(255);<br/>&emsp;var green = random(255);<br/>&emsp;var blue = random(255);<br/>&emsp;fill(red, green, blue);<br/>}", position.left, position.top );
+        var panel = main.sketch.showCode("if (isMousePressed) {<br/>&emsp;var red = random(255);<br/>&emsp;var green = random(255);<br/>&emsp;var blue = random(255);<br/>&emsp;fill(red, green, blue);<br/>}", position.left, position.top );
         panel.parent('sketchOverlay');
       }
     });  

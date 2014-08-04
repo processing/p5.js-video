@@ -1,4 +1,4 @@
-var labelSketch = function( sketch ) {
+var introSketch = function( sketch ) {
 
   sketch.setup = function() {
     sketch._pixelDensity = 1;

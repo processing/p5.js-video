@@ -98,14 +98,12 @@ var main = {
       // Setup Seriously
 
       var seriously,
-      chroma, throttle,
-      target;
+      chroma, target;
 
       seriously = new Seriously();
 
       target = seriously.target('#videoCanvas');
       chroma = seriously.effect('chroma');
-      throttle = seriously.effect('throttle');
 
       if (Modernizr.video.webm && Modernizr.video.h264) {
         console.log("Chrome");
@@ -130,10 +128,8 @@ var main = {
         chroma.screen = [.14,.95,0,1];
       }
       
-      throttle.frameRate = 30;
 
-      throttle.source = "#"+script.popcorn.media.id;
-      chroma.source = throttle;
+      chroma.source = "#"+script.popcorn.media.id;
       target.source = chroma;
       seriously.go();
 

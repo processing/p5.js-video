@@ -19,6 +19,48 @@ var introSketch = function( sketch ) {
     sketch.labelSpan.parent("labelContainer");
     sketch.labelContainer.hide();
 
+    sketch.logo = sketch.createImg("/assets/p5js-rect.svg");
+    sketch.logo.size(100);
+    sketch.logo.hide();
+
+    sketch.bulletList = [];
+    sketch.bullets = sketch.createDiv("");
+    sketch.bullets.id("bullets");
+    sketch.bullets.hide();
+    sketch.bulletTime = 0;
+  }
+
+  sketch.draw = function() {
+
+    if (sketch.bulletList.length > 0) {
+      if (sketch.bulletTime < sketch.millis()) {
+        var newBullet = sketch.bulletList.shift();
+        var newBulletDiv = sketch.createDiv('<i class="fa fa-check-circle"></i>' + newBullet);
+        newBulletDiv.parent("bullets");
+
+        sketch.bulletTime = sketch.millis() + 200;
+      }
+    }
+
+  }
+
+  sketch.showLogo = function(x,y) {
+    sketch.logo.position(x,y);
+    sketch.logo.show();
+  }
+
+  sketch.hideLogo = function() {
+    sketch.logo.hide();
+  }
+
+  sketch.showBullets = function(bullets, x, y) {
+    sketch.bullets.position(x,y);
+    sketch.bullets.show();
+    sketch.bulletList = bullets;
+  }
+
+  sketch.hideBullets = function() {
+    sketch.bullets.hide();
   }
 
   sketch.showLabel = function(text,x,y) {

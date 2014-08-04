@@ -30,17 +30,42 @@ var script = {
       onStart: function( options ) {
 
         var position = main.getRelativePosition({left:-177.5, top:463} );
-        main.sketch = new p5(labelSketch, "sketchCanvas");
+        main.sketch = new p5(introSketch, "sketchCanvas");
         main.sketch.showLabel("Lauren McCarthy", position.left, position.top);
       }
     });
 
     pop.code({
-      start: 5,
+      start: 4.546548,
       onStart: function( options ) {
         main.sketch.hideLabel();
+        var position = main.getRelativePosition({left:-388, top:540});
+        main.sketch.showLogo(position.left, position.top);
+      }
+    });     
+
+    pop.code({
+      start: 7.485301,
+      onStart: function( options ) {
+        main.sketch.hideLogo();
+        var bullets = [
+          "Beginner Friendly",
+          "Powerful Drawing Tools",
+          "Video and Audio Support",
+          "Expandable with Add-Ons"
+        ]
+
+        var position = main.getRelativePosition({left:-432, top:540});
+        main.sketch.showBullets(bullets, position.left, position.top);
       }
     }); 
+
+    pop.code({
+      start: 14.946752,
+      onStart: function( options ) {
+        main.sketch.hideBullets();
+      }
+    });  
 
     // Shiffman
 
@@ -194,7 +219,7 @@ var script = {
     pop.code({
       start: 110.5 ,
       onStart: function( options ) {        
-        var position = main.getRelativePosition({left:160, top:360});
+        var position = main.getRelativePosition({left:140, top:360});
         var panel = main.sketch.showCode("var slider = createSlider(0, 255, 127);", position.left, position.top );
         panel.parent('sketchOverlay');
       }

@@ -313,7 +313,7 @@ h1, h2 {
 }
 
 /**
- * Label Demo
+ * Intro Demo
  */
 
 #labelContainer {
@@ -326,6 +326,12 @@ h1, h2 {
   font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
   font-size: 2.4em;
   color: rgb(45,123,182);
+}
+
+#bullets {
+  font-size: 1.8em;
+  line-height: 2.0em;
+  color: #2D7BB6;
 }
 
 /**

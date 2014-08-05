@@ -102,12 +102,12 @@ var flockingSketch = function( sketch ) {
     gaugeCanvas.fill(255);
     gaugeCanvas.ellipse(24,24,48,48);
     
-    gaugeCanvas.stroke(45,123,182);
+    gaugeCanvas.stroke(87, 149, 196);
     gaugeCanvas.strokeWeight(3);
     gaugeCanvas.line(24,8, 24, 40);
     
     gaugeCanvas.noStroke();
-    gaugeCanvas.fill(45,123,182);
+    gaugeCanvas.fill(87, 149, 196);
     gaugeCanvas.triangle(24,6, 18, 14, 30, 14)
 
     gaugeCanvas.show(); 

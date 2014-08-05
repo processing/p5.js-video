@@ -20,6 +20,7 @@ var introSketch = function( sketch ) {
     sketch.labelContainer.hide();
 
     sketch.logo = sketch.createImg("/assets/p5js-rect.svg");
+    sketch.logo.id('introLogo');
     sketch.logo.size(100);
     sketch.logo.hide();
 
@@ -28,6 +29,11 @@ var introSketch = function( sketch ) {
     sketch.bullets.id("bullets");
     sketch.bullets.hide();
     sketch.bulletTime = 0;
+
+    sketch.examples = sketch.createDiv("");
+    sketch.examples.id("examples");
+    sketch.examples.hide();
+
   }
 
   sketch.draw = function() {
@@ -35,7 +41,7 @@ var introSketch = function( sketch ) {
     if (sketch.bulletList.length > 0) {
       if (sketch.bulletTime < sketch.millis()) {
         var newBullet = sketch.bulletList.shift();
-        var newBulletDiv = sketch.createDiv('<i class="fa fa-check-circle"></i>' + newBullet);
+        var newBulletDiv = sketch.createDiv('<i class="fa fa-check-circle"></i> ' + newBullet);
         newBulletDiv.parent("bullets");
 
         sketch.bulletTime = sketch.millis() + 200;
@@ -76,4 +82,16 @@ var introSketch = function( sketch ) {
     sketch.arrowCanvas.hide();
   }
 
+  sketch.showExample = function(text, x, y) {
+    sketch.examples.show();
+
+    var div = sketch.createDiv(text);
+    div.parent("examples");
+    div.addClass("exampleText");
+    div.position(x,y);
+  }
+
+  sketch.hideExamples = function() {
+    sketch.examples.hide();
+  }
 };

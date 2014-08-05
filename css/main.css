@@ -6,11 +6,11 @@ Blue highlight/link #2D7BB6
  */
 
 * {
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -o-user-select: text;
+    user-select: text;
 }
 
 body {
@@ -29,7 +29,7 @@ input[type="range"] {
 }
 
 h1, h2 {
-  font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
+  font-family: "AvenirNextLTW01-MediumS", Helvetica, sans-serif;
   margin:  0 0 5px 0;
 }
 
@@ -142,7 +142,7 @@ h1, h2 {
 }
 
 .fontLoadA{
-    font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
+    font-family: "AvenirNextLTW01-MediumS", Helvetica, sans-serif;
 }
 
 .fontLoadB {
@@ -294,7 +294,7 @@ h1, h2 {
   width: 60px;
   line-height: 60px;
 
-  font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
+  font-family: "AvenirNextLTW01-MediumS", Helvetica, sans-serif;
   font-size: 32px;
   text-align: center;
 
@@ -323,15 +323,26 @@ h1, h2 {
   text-align: center;
 }
 #labelSpan {
-  font-family: "AvenirNextLTW01-MediumS", Helvectica, sans-serif;
+  font-family: "AvenirNextLTW01-MediumS", Helvetica, sans-serif;
   font-size: 2.4em;
   color: rgb(45,123,182);
+}
+
+#introLogo {
+  width: 200px;
+  height: auto;
 }
 
 #bullets {
   font-size: 1.8em;
   line-height: 2.0em;
   color: #2D7BB6;
+}
+
+.exampleText {
+  font-family: 'Inconsolata', monospace;
+  font-size: 2.6em;
+  color: #ccc; 
 }
 
 /**
@@ -343,14 +354,20 @@ h1, h2 {
   color: rgb(45,123,182);
 }
 
-#outroContainer .fa {
-  font-size: 10em;
+#outroContainer .fa-stack {
+  font-size: 7em;
 }
 
 #outroContainer img {
   width:128px; 
   height:128px;
   margin-left:24px;
+}
+
+.outroText{
+  font-family: "AvenirNextLTW01-MediumS", Helvetica, sans-serif;
+  font-size: 2.4em;
+  color: rgb(45,123,182);  
 }
 
 /**

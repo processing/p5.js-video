@@ -36,11 +36,10 @@ var script = {
     });
 
     pop.code({
-      start: 4.546548,
+      start: 4.402917 ,
       onStart: function( options ) {
         main.sketch.hideLabel();
-        var position = main.getRelativePosition({left:-388, top:540});
-        main.sketch.showLogo(position.left, position.top);
+        main.sketch.showLogo(288, 272);
       }
     });     
 
@@ -55,8 +54,7 @@ var script = {
           "Expandable with Add-Ons"
         ]
 
-        var position = main.getRelativePosition({left:-432, top:540});
-        main.sketch.showBullets(bullets, position.left, position.top);
+        main.sketch.showBullets(bullets, 150, 250);
       }
     }); 
 
@@ -67,13 +65,64 @@ var script = {
       }
     });  
 
+    pop.code({
+      start: 15.6,
+      onStart: function( options ) {
+        main.sketch.showExample("// DRAWING SHAPES", 75, 275);
+      }
+    });     
+
+    pop.code({
+      start: 15.9,
+      onStart: function( options ) {
+        main.sketch.showExample("// CREATING ELEMENTS", 75, 325);
+      }
+    }); 
+
+    pop.code({
+      start: 16.2,
+      onStart: function( options ) {
+        main.sketch.showExample("// MOUSE INTERACTION", 75, 375);
+      }
+    }); 
+
+    pop.code({
+      start: 16.5,
+      onStart: function( options ) {
+        main.sketch.showExample("// SIMPLE ANIMATIONS", 820, 275);
+      }
+    });    
+    
+    pop.code({
+      start: 16.8,
+      onStart: function( options ) {
+        main.sketch.showExample("// FETCHING API DATA", 820, 325);
+      }
+    }); 
+
+    pop.code({
+      start: 17.1,
+      onStart: function( options ) {
+        main.sketch.showExample("// GENERATING SOUND", 820, 375);
+      }
+    });  
+
+    pop.code({
+      start: 22,
+      onStart: function( options ) {
+        main.sketch.hideExamples();
+
+      }
+    });  
+
+
     // Shiffman
 
     pop.code({
       start: 26  ,
       onStart: function( options ) {
 
-        var position = main.getRelativePosition({left:-212.5, top:565}  );
+        var position = main.getRelativePosition({left:-190, top:565}  );
         main.sketch.showLabel("Dan Shiffman", position.left, position.top);
       }
     });
@@ -236,14 +285,14 @@ var script = {
     // Shrink 
 
     pop.code({
-      start: 126,
+      start: 126.2,
       onStart: function( options ) {
         main.sketch.shrink();
       }
     });  
 
     pop.code({
-      start: 127,
+      start: 127.2,
       onStart: function( options ) {
 
         var position = {
@@ -448,60 +497,58 @@ var script = {
     });   
 
     pop.code({
+      start: 255,
+      onStart: function( options ) {  
+        main.sketch = new p5(outroSketch, "sketchCanvas");
+      }
+    });         
+
+    pop.code({
       start: 256.37,
       onStart: function( options ) {   
-        main.sketch = new p5(outroSketch, "sketchCanvas");
-
-        var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-scissors fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<span class="fa-stack"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-scissors fa-stack-1x"></i></span>', 315,248);
       }
     });      
 
     pop.code({
       start: 256.9,
       onStart: function( options ) {   
-        var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-lightbulb-o fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<span class="fa-stack"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-lightbulb-o fa-stack-1x"></i></span>', 315,248);
       }
     });  
 
     pop.code({
       start: 257.60,
       onStart: function( options ) {   
-        var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-laptop fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<span class="fa-stack"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-laptop fa-stack-1x"></i></span>', 315,248);
       }
     });     
 
     pop.code({
       start: 258.56,
       onStart: function( options ) {   
-        var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-pencil fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<span class="fa-stack"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-pencil fa-stack-1x"></i></span>', 315,248);
       }
     });    
     
     pop.code({
       start: 259.10,
       onStart: function( options ) {   
-        var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<i class="fa fa-graduation-cap fa-fw"></i>', position.left, position.top);
+        main.sketch.showOutro('<span class="fa-stack"><i class="fa fa-circle-thin fa-stack-2x"></i><i class="fa fa-graduation-cap fa-stack-1x"></i></span>', 315,248);
       }
     });  
     
     pop.code({
       start: 259.50,
       onStart: function( options ) {   
-        var position = main.getRelativePosition({left:-326, top:552});
-        main.sketch.showOutro('<img class="outroImage fa-spin" src="/assets/thick-asterisk-alone.svg" alt="" />', position.left, position.top);
+        main.sketch.showOutro('<img class="outroImage fa-spin" src="/assets/thick-asterisk-alone.svg" alt="" />', 325, 280);
       }
     });          
 
     pop.code({
       start: 261.7,
       onStart: function( options ) { 
-        var position = main.getRelativePosition({left:-330, top:520});        
-        main.sketch.showOutro('<a class="codePanel" href="mailto:hello@p5js.org">hello@p5js.org</a>', position.left, position.top);
+        main.sketch.showOutro('<a class="outroText" href="mailto:hello@p5js.org">hello@p5js.org</a>', 270, 300);
       
       }
     });   

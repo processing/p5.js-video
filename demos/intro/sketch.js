@@ -35,6 +35,7 @@ var introSketch = function( sketch ) {
     sketch.exampleDiv.id("examples");
     sketch.exampleDiv.hide();
 
+
   }
 
   sketch.draw = function() {
@@ -53,7 +54,11 @@ var introSketch = function( sketch ) {
       var example = sketch.examples[i];
       var text = example.exampleText.substring(0,sketch.floor(example.letterIndex));
       example.exampleDiv.html(text);
-      example.letterIndex +=.5;
+      
+      if (sketch.millis() > example.nextLetterTime) {
+        example.letterIndex++;
+        example.nextLetterTime = sketch.millis() + 40;
+      }
     }
 
   }
@@ -62,6 +67,7 @@ var introSketch = function( sketch ) {
     this.exampleText = text;
     this.exampleDiv = div;
     this.letterIndex = 0;
+    this.nextLetterTime = 0;
   }  
 
   sketch.showLogo = function(x,y) {

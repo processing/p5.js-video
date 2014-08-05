@@ -5,92 +5,97 @@
     <script language="javascript" type="text/javascript" src="/js/vendor/addons/p5.sound.js"></script>   
     <script>
 
-    var imageSketch = function (sketch) {
       
-      sketch.index = 0;
-      sketch.notes = [ 60, 62, 64, 65, 67, 69, 71];
-      sketch.song = [ 
-        { note: 4, duration: 400, display: "D" },  
-        { note: 0, duration: 200, display: "G" },  
-        { note: 1, duration: 200, display: "A" },  
-        { note: 2, duration: 200, display: "B" }, 
-        { note: 3, duration: 200, display: "C" },  
-        { note: 4, duration: 400, display: "D" },  
-        { note: 0, duration: 400, display: "G" },  
-        { note: 0, duration: 400, display: "G" }
-      ];
-      sketch.trigger = 0;
-      sketch.autoplay = true;
+var index = 0;
+var notes = [ 60, 62, 64, 65, 67, 69, 71];
+var song = [ 
+  { note: 4, duration: 400, display: "D" },  
+  { note: 0, duration: 200, display: "G" },  
+  { note: 1, duration: 200, display: "A" },  
+  { note: 2, duration: 200, display: "B" }, 
+  { note: 3, duration: 200, display: "C" },  
+  { note: 4, duration: 400, display: "D" },  
+  { note: 0, duration: 400, display: "G" },  
+  { note: 0, duration: 400, display: "G" }
+];
+var trigger = 0;
+var autoplay = false;
 
-      sketch.txt;
+var txt;
 
-      sketch.setup = function() {
-        sketch.createCanvas(720,400);
-        sketch.background(128);
+var button;
 
-        sketch.osc = new sketch.TriOsc();
-        sketch.osc.fade(.5,.2);
-        sketch.osc.start();
+function setup() {
+  createCanvas(720,400);
+  background(128);
+  createP("Click to play notes or")
+  button = createA("#","play song automatically");
+  button.mousePressed(function() {
+    if (!autoplay) {
+      index = 0;
+      autoplay = true;
+    }
+  });
+
+  osc = new TriOsc();
+  osc.amp(0);
+  osc.start();
+}
+
+function playNote(note, duration) {
+  console.log(note);
+  osc.freq(midiToFreq(note));
+  osc.fade(.5,.2);
+
+  if (duration) {
+    setTimeout(function() {
+      osc.fade(0,0.2);
+    }, duration-50);
+  }
+}
+
+function draw() {
+
+  if (autoplay && millis() > trigger){
+    playNote(notes[song[index].note], song[index].duration);
+    trigger = millis() + song[index].duration;
+    index ++;
+  } else if (index >= song.length) {
+    autoplay = false;
+  }
+
+
+  for (var i = 0; i < notes.length; i++) {
+    var keyX = i * (width / notes.length);
+    var keyWidth = width /notes.length;
+    if (mouseX > keyX && mouseX < (keyX + keyWidth)) {
+      if (isMousePressed) {
+        fill(100,255,200);
+      } else {
+        fill(200);
       }
-
-      sketch.draw = function() {
-        
-        if (sketch.autoplay && sketch.millis() > sketch.trigger){
-          var note = sketch.notes[sketch.song[sketch.index].note];
-          var duration = sketch.song[sketch.index].duration;
-          sketch.osc.freq(sketch.midiToFreq(note));
-          sketch.trigger = sketch.millis() + duration;
-          sketch.txt = sketch.createSpan(sketch.song[sketch.index].display);
-          sketch.txt.style('font-size', '70px');
-          sketch.index ++;
-        } 
-
-        if (sketch.autoplay && sketch.index >= sketch.song.length) {
-          sketch.autoplay = false;
-          sketch.osc.fade(0,0.2);
-          // sketch.remove(sketch.txt);
-        }
-
-        for (var i = 0; i < sketch.notes.length; i++) {
-
-          var keyX = i * (sketch.width / sketch.notes.length);
-          var keyWidth = sketch.width /sketch.notes.length;
-
-          if (sketch.mouseX > keyX && sketch.mouseX < (keyX + keyWidth)) {
-            if (sketch.isMousePressed) {
-              sketch.fill(100,255,200);
-            } else {
-              sketch.fill(200);
-            }
-          } else {
-            sketch.fill(255);
-          }
-          
-          if (sketch.autoplay && i === sketch.song[sketch.index-1].note) {
-            sketch.fill(100,255,200);
-          }
-
-          sketch.rect(keyX,0, keyWidth -1, sketch.height -1); 
-        }
-
-
-      }
-
-      sketch.mousePressed = function () {
-        var key = sketch.floor(sketch.mouseX/sketch.width * sketch.notes.length);
-        var note = sketch.notes[key];
-
-        sketch.osc.freq(sketch.midiToFreq(note));
-        sketch.osc.fade(.5,.2);
-      }
-
-      sketch.mouseReleased = function () {
-        sketch.osc.fade(0,.2);
-      }
-
+    } else {
+      fill(255);
+    }
+    
+    if (autoplay && i === song[index-1].note) {
+      fill(100,255,200);
     }
 
-    var test = new p5(imageSketch);
+    rect(keyX,0, keyWidth -1, height -1); 
+  }
+
+}
+
+function mousePressed() {
+  var key = floor(mouseX/width * notes.length);
+  playNote(notes[key]);
+}
+
+function mouseReleased() {
+  osc.fade(0,0.5);
+}
+
 
     </script>
   </head>

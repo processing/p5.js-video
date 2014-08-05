@@ -1,23 +1,55 @@
 <html>
   <head>
     <script language="javascript" type="text/javascript" src="/js/vendor/p5.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/vendor/addons/p5.dom.js"></script>
     <script language="javascript" type="text/javascript" src="/js/vendor/addons/p5.sound.js"></script>   
     <script>
 
     var imageSketch = function (sketch) {
-
+      
+      sketch.index = 0;
       sketch.notes = [ 60, 62, 64, 65, 67, 69, 71];
+      sketch.song = [ 
+        { note: 4, duration: 400, display: "D" },  
+        { note: 0, duration: 200, display: "G" },  
+        { note: 1, duration: 200, display: "A" },  
+        { note: 2, duration: 200, display: "B" }, 
+        { note: 3, duration: 200, display: "C" },  
+        { note: 4, duration: 400, display: "D" },  
+        { note: 0, duration: 400, display: "G" },  
+        { note: 0, duration: 400, display: "G" }
+      ];
+      sketch.trigger = 0;
+      sketch.autoplay = true;
+
+      sketch.txt;
 
       sketch.setup = function() {
-        sketch.createCanvas(800,600);
+        sketch.createCanvas(720,400);
         sketch.background(128);
 
         sketch.osc = new sketch.TriOsc();
-        sketch.osc.amp(0);
+        sketch.osc.fade(.5,.2);
         sketch.osc.start();
       }
 
       sketch.draw = function() {
+        
+        if (sketch.autoplay && sketch.millis() > sketch.trigger){
+          var note = sketch.notes[sketch.song[sketch.index].note];
+          var duration = sketch.song[sketch.index].duration;
+          sketch.osc.freq(sketch.midiToFreq(note));
+          sketch.trigger = sketch.millis() + duration;
+          sketch.txt = sketch.createSpan(sketch.song[sketch.index].display);
+          sketch.txt.style('font-size', '70px');
+          sketch.index ++;
+        } 
+
+        if (sketch.autoplay && sketch.index >= sketch.song.length) {
+          sketch.autoplay = false;
+          sketch.osc.fade(0,0.2);
+          // sketch.remove(sketch.txt);
+        }
 
         for (var i = 0; i < sketch.notes.length; i++) {
 
@@ -33,10 +65,15 @@
           } else {
             sketch.fill(255);
           }
+          
+          if (sketch.autoplay && i === sketch.song[sketch.index-1].note) {
+            sketch.fill(100,255,200);
+          }
 
-          sketch.rect(keyX,0, keyWidth -1, sketch.height -1);
-
+          sketch.rect(keyX,0, keyWidth -1, sketch.height -1); 
         }
+
+
       }
 
       sketch.mousePressed = function () {
@@ -53,7 +90,7 @@
 
     }
 
-    new p5(imageSketch);
+    var test = new p5(imageSketch);
 
     </script>
   </head>

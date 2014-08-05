@@ -30,9 +30,10 @@ var introSketch = function( sketch ) {
     sketch.bullets.hide();
     sketch.bulletTime = 0;
 
-    sketch.examples = sketch.createDiv("");
-    sketch.examples.id("examples");
-    sketch.examples.hide();
+    sketch.examples = [];
+    sketch.exampleDiv = sketch.createDiv("");
+    sketch.exampleDiv.id("examples");
+    sketch.exampleDiv.hide();
 
   }
 
@@ -48,7 +49,20 @@ var introSketch = function( sketch ) {
       }
     }
 
+    for ( var i = 0; i < sketch.examples.length; i++) {
+      var example = sketch.examples[i];
+      var text = example.exampleText.substring(0,sketch.floor(example.letterIndex));
+      example.exampleDiv.html(text);
+      example.letterIndex +=.5;
+    }
+
   }
+
+  sketch.Example = function (text, div) {
+    this.exampleText = text;
+    this.exampleDiv = div;
+    this.letterIndex = 0;
+  }  
 
   sketch.showLogo = function(x,y) {
     sketch.logo.position(x,y);
@@ -83,15 +97,17 @@ var introSketch = function( sketch ) {
   }
 
   sketch.showExample = function(text, x, y) {
-    sketch.examples.show();
+    sketch.exampleDiv.show();
 
-    var div = sketch.createDiv(text);
+    var div = sketch.createDiv("");
     div.parent("examples");
     div.addClass("exampleText");
     div.position(x,y);
+
+    sketch.examples.push(new sketch.Example(text,div));
   }
 
   sketch.hideExamples = function() {
-    sketch.examples.hide();
+    sketch.exampleDiv.hide();
   }
 };

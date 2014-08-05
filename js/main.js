@@ -1,6 +1,7 @@
 var main = {
   sketch: null,
   scaleFactor: 1.0,
+  debug: false, 
 
   // Initalize Demo
 
@@ -14,61 +15,55 @@ var main = {
 
     // Events
 
-    $(document).click( function(e) {
-      console.log( script.popcorn.currentTime());
-      var clickX = e.pageX - ($(window).width()/2)
-        clickY = $(window).height() - e.pageY;
-      console.log( "{left:" + clickX + ", top:" + clickY + "}");
-    });
+    if (main.debug) {
+      $(document).click( function(e) {
+        console.log( script.popcorn.currentTime());
+        var clickX = e.pageX - ($(window).width()/2)
+          clickY = $(window).height() - e.pageY;
+        console.log( "{left:" + clickX + ", top:" + clickY + "}");
+      });
+    }
 
     $(window).resize( function() {
-
       main.resize();
-
     });
 
     // Keyboad events
 
-    $('body').keypress(function(e){
-      
-      var keypress = String.fromCharCode(e.which);
+    if (main.debug) { 
+      $('body').keypress(function(e){
+        
+        var keypress = String.fromCharCode(e.which);
 
-      // Pause
+        // Pause
 
-      if(keypress == "p"){
+        if(keypress == "p"){
+          if (script.popcorn.paused())
+            script.popcorn.play();
+          else
+            script.popcorn.pause();
+        }
 
-        if (script.popcorn.paused())
-          script.popcorn.play();
-        else
-          script.popcorn.pause();
-      }
+        if(keypress == "."){
+          if (!script.popcorn.paused()) script.popcorn.pause();
+          script.popcorn.currentTime( script.popcorn.currentTime() + (1.0/30.0));
+          console.log( script.popcorn.currentTime());
+        }   
 
-      if(keypress == "."){
-        if (!script.popcorn.paused()) script.popcorn.pause();
-        script.popcorn.currentTime( script.popcorn.currentTime() + (1.0/30.0));
-        console.log( script.popcorn.currentTime());
-      }   
+        if(keypress == ","){
+          if (!script.popcorn.paused()) script.popcorn.pause();
+          script.popcorn.currentTime( script.popcorn.currentTime() - (1.0/30.0));
+          console.log( script.popcorn.currentTime());
+        }          
 
-      if(keypress == ","){
-        if (!script.popcorn.paused()) script.popcorn.pause();
-        script.popcorn.currentTime( script.popcorn.currentTime() - (1.0/30.0));
-        console.log( script.popcorn.currentTime());
-      }          
-
-      // Rewind
-
-      if(keypress == "4") {
-        console.log("Rewind.")
-        var time = main.getStartTime();
-        script.popcorn.play(time);
-      }
-
-    });    
+      });   
+    } 
 
     // Buttons
 
     $("#pause").click( function () {
       if (script.popcorn.paused()) {
+        console.log("Play");
         script.popcorn.play();
       } else {             
         script.popcorn.pause();

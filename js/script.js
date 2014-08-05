@@ -49,9 +49,10 @@ var script = {
         main.sketch.hideLogo();
         var bullets = [
           "Beginner Friendly",
-          "Powerful Drawing Tools",
           "Video and Audio Support",
-          "Expandable with Add-Ons"
+          "Expandable with Add-Ons",
+          "Free to Download",
+          "Open Source"
         ]
 
         main.sketch.showBullets(bullets, 150, 250);

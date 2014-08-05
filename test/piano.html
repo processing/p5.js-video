@@ -1,0 +1,62 @@
+<html>
+  <head>
+    <script language="javascript" type="text/javascript" src="/js/vendor/p5.js"></script>
+    <script language="javascript" type="text/javascript" src="/js/vendor/addons/p5.sound.js"></script>   
+    <script>
+
+    var imageSketch = function (sketch) {
+
+      sketch.notes = [ 60, 62, 64, 65, 67, 69, 71];
+
+      sketch.setup = function() {
+        sketch.createCanvas(800,600);
+        sketch.background(128);
+
+        sketch.osc = new sketch.TriOsc();
+        sketch.osc.amp(0);
+        sketch.osc.start();
+      }
+
+      sketch.draw = function() {
+
+        for (var i = 0; i < sketch.notes.length; i++) {
+
+          var keyX = i * (sketch.width / sketch.notes.length);
+          var keyWidth = sketch.width /sketch.notes.length;
+
+          if (sketch.mouseX > keyX && sketch.mouseX < (keyX + keyWidth)) {
+            if (sketch.isMousePressed) {
+              sketch.fill(100,255,200);
+            } else {
+              sketch.fill(200);
+            }
+          } else {
+            sketch.fill(255);
+          }
+
+          sketch.rect(keyX,0, keyWidth -1, sketch.height -1);
+
+        }
+      }
+
+      sketch.mousePressed = function () {
+        var key = sketch.floor(sketch.mouseX/sketch.width * sketch.notes.length);
+        var note = sketch.notes[key];
+
+        sketch.osc.freq(sketch.midiToFreq(note));
+        sketch.osc.fade(.5,.2);
+      }
+
+      sketch.mouseReleased = function () {
+        sketch.osc.fade(0,.2);
+      }
+
+    }
+
+    new p5(imageSketch);
+
+    </script>
+  </head>
+
+  <body style="margin:0;padding:0;"></body>
+</html>

@@ -169,13 +169,11 @@ h1, h2 {
  */
 
 #error {
-  position: absolute;
-  width: 480px;
+  position:relative;
+  margin: 10% auto;
+  width: 100%;
+  max-width: 480px;
   text-align: left;
-  top: 50%;
-  left: 50%;
-  margin-left: -240px;
-  margin-top: -76px;
   display: none;
 }
 
@@ -210,6 +208,7 @@ h1, h2 {
   border: 1px solid #ccc;
   border-top: none;
   color: #444;
+  background: white;
 }
 
 .panelBody .btn {

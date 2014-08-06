@@ -10,6 +10,23 @@ title: Home
   <img src="/assets/p5js-rect.svg" alt="" />  
 </div>
 
+<div id="errorContainer">
+  <div id="error">
+    <div class="panelHeader"><h2>Sorry!</h2></div>
+
+    <div class="panelBody">
+
+    <p id="errorWebGL">Your browser doesn't appear to support WebGL or it isn't enabled. Visit <a href="http://get.webgl.org/">get.webgl.org</a> to learn more or try the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>
+
+    <p id="errorFeature">Your browser doesn't support all of the features required for this demo. Please consider using the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>    
+    
+    <p>Don't worry, you can still learn all about p5.js at <a href="http://p5js.org/">p5js.org</a>.</p>
+
+    </div>
+
+  </div>    
+</div>
+
 <div id="main">
 
   <div id="p5"><a href="http://p5js.org/" target="_blank"><img src="assets/p5-sq-reverse.svg" width="48" height="48"/></a></div>
@@ -21,20 +38,6 @@ title: Home
 
     <button id="begin" class="btn btn-default" data-loading-text='<i class="fa fa-spinner fa-spin"></i> Loading'> Click to Begin</button>
   </div>
-
-
-  <div id="error">
-    <div class="panelHeader"><h2>Sorry!</h2></div>
-
-    <div class="panelBody">
-
-    <p id="errorWebGL">Your browser doesn't appear to support WebGL or it isn't enabled. Visit <a href="http://get.webgl.org/">get.webgl.org</a> to learn more or try the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>
-
-    <p id="errorFeature">Your browser doesn't support all of the features required for this demo. Please consider using the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>    
-    
-    </div>
-
-  </div>    
 
   <div id="videoClip"></div>
   <div id="sketchCanvas"></div>
@@ -119,12 +122,14 @@ title: Home
 
     if (Seriously.incompatible()) {
       $("#errorWebGL").show();
-      $("#errorResolution").hide();
+      $("#errorFeature").hide();
       $("#error").fadeIn();
+      $("#main").hide();
     } else if (!Modernizr.webaudio || !Modernizr.csstransforms) {
       $("#errorWebGL").hide();
       $("#errorFeature").show();
       $("#error").fadeIn();
+      $("#main").hide();
     } else {
       main.init();
     }

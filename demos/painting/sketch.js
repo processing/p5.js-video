@@ -23,6 +23,7 @@ var paintingSketch = function( sketch ) {
 
     // Full-window canvas
     sketch._pixelDensity = 1;
+    sketch.masterVolume(.5);
     sketch.createCanvas(1280, 800);
     //sketch.strokeWeight(2);
     sketch.colorMode(sketch.HSB, 100);
@@ -49,8 +50,8 @@ var paintingSketch = function( sketch ) {
 
     // LFO to modify main oscillator
     // 
-    sketch.lfo = new sketch.LFO(2);
-    sketch.lfo.ampMod(sketch.osc);
+    sketch.lfo = new sketch.SinOsc(2);
+    sketch.lfo.mod(sketch.osc.ampNode);
 
 
 

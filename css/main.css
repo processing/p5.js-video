@@ -334,6 +334,7 @@ h1, h2 {
 }
 
 #bullets {
+  font-family: "AvenirNextLTW01-MediumS", Helvetica, sans-serif;  
   font-size: 1.8em;
   line-height: 2.0em;
   color: #2D7BB6;

@@ -48,9 +48,9 @@ var script = {
       onStart: function( options ) {
         main.sketch.hideLogo();
         var bullets = [
-          "Beginner Friendly",
-          "Video and Audio Support",
-          "Expandable with Add-Ons",
+          "Programming for the Arts",
+          "Made for Teaching",
+          "Extensible with Add-Ons",
           "Free to Download",
           "Open Source"
         ]

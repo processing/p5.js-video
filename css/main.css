@@ -395,26 +395,3 @@ h1, h2 {
   color: rgb(45,123,182);  
 }
 
-/**
- * Logo
- */
-
-@-webkit-keyframes rotate {
-  from {
-    -webkit-transform: rotate(0deg);
-  }
-  to { 
-    -webkit-transform: rotate(360deg);
-  }
-}
-
-#loading img
-{
-  -webkit-animation-name:             rotate; 
-  -webkit-animation-duration:         0.5s; 
-  -webkit-animation-iteration-count:  infinite;
-  -webkit-animation-timing-function: linear;
-}
-.asterisk {
-
-}

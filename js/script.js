@@ -17,7 +17,13 @@ var script = {
     pop.on( "pause", function(e) {
         $("#pauseButton").removeClass("fa-pause");
         $("#pauseButton").addClass("fa-play"); 
-    });         
+    });   
+
+    pop.on("timeupdate", function(e) {
+      var position = pop.currentTime() / pop.duration();
+      var width = position * $("#main").width();
+      $("#progress").css('width', width);
+    });
 
     /**
      * Script

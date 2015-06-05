@@ -1,4 +1,4 @@
-/*! p5.sound.js v0.1 2014-08-04 */
+/*! p5.sound.js v0.1MOD 2014-08-04 */
 /**
  * p5.sound extends p5 with <a href="http://www.w3.org/TR/webaudio/"
  * target="_blank">Web Audio</a> functionality including audio input,
@@ -116,7 +116,7 @@ master = function () {
     this.limiter.threshold.value = 0;
     this.limiter.ratio.value = 100;
     this.audiocontext = audiocontext;
-    this.output.disconnect(this.audiocontext.destination);
+    this.output.disconnect();
     // an array of input sources
     this.inputSources = [];
     // connect input to limiter
@@ -1174,7 +1174,7 @@ amplitude = function () {
    *  </code></div>
    */
   p5.prototype.Amplitude.prototype.setInput = function (source, smoothing) {
-    p5sound.meter.disconnect(this.processor);
+    p5sound.meter.disconnect();
     if (smoothing) {
       this.smoothing = smoothing;
     }
@@ -1310,11 +1310,11 @@ fft = function () {
    *  isolates individual frequencies within a waveform.</p>
    *
    *  <p>FFT can return an array based on two types of analyses: <br>
-   *  • <code>FFT.waveform()</code> computes amplitude values along the
+   *  â€¢ <code>FFT.waveform()</code> computes amplitude values along the
    *  time domain. The array indices correspond to samples
    *  across a brief moment in time. Each value represents amplitude
    *  of the waveform at that sample of time.<br>
-   *  • <code>FFT.analyze() </code> computes amplitude values along the
+   *  â€¢ <code>FFT.analyze() </code> computes amplitude values along the
    *  frequency domain. The array indices correspond to frequencies (i.e.
    *  pitches), from the lowest to the highest that humans can hear. Each
    *  value represents amplitude at that slice of the frequency spectrum.
@@ -1786,7 +1786,7 @@ oscillator = function () {
    *  @method  disconnect
    */
   p5.prototype.Oscillator.prototype.disconnect = function (unit) {
-    this.panner.disconnect(unit);
+    this.panner.disconnect();
   };
   /**
    *  Pan between Left (-1) and Right (1)
@@ -2332,7 +2332,7 @@ audioin = function () {
    *  @method  disconnect
    */
   p5.prototype.AudioIn.prototype.disconnect = function (unit) {
-    this.output.disconnect(unit);
+    this.output.disconnect();
     // stay connected to amplitude even if not outputting to p5
     this.output.connect(this.amplitude.input);
   };

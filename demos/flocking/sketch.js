@@ -152,7 +152,8 @@ var flockingSketch = function( sketch ) {
 
   sketch.getWeather = function() {
     console.log("Get Weather");
-    sketch.loadJSON('http://api.openweathermap.org/data/2.5/weather?q=New%20York,NY&units=imperial', sketch.gotWeather);
+    var url = 'http://api.openweathermap.org/data/2.5/weather?q=New%20York,NY&units=imperial&APPID=7bbbb47522848e8b9c26ba35c226c734';
+    sketch.loadJSON(url, sketch.gotWeather);
   }
 
   sketch.gotWeather = function(weather) {

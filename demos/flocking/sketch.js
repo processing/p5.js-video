@@ -37,9 +37,9 @@ var flockingSketch = function( sketch ) {
     sketch.enableStaticRepel();
     sketch.enableMouseRepel();
 
-    //sketch.addBoids(); // Called by Popcorn
-    //sketch.getWeather(); // Called by Popcorn
-    //sketch.enableMouseRepel(); // Called by Popcorn
+// sketch.addBoids(); // Called by Popcorn
+// sketch.getWeather(); // Called by Popcorn
+// sketch.enableMouseRepel(); // Called by Popcorn
 
   }
 
@@ -158,7 +158,7 @@ var flockingSketch = function( sketch ) {
 
   sketch.gotWeather = function(weather) {
 
-    if (! sketch.getElement("temperature")) return;
+    if (! sketch.select("#temperature")) return;
 
     var dir = Number(weather.wind.deg);
     var windmag = Number(weather.wind.speed);
@@ -170,13 +170,13 @@ var flockingSketch = function( sketch ) {
  
     // Setup UI
 
-    sketch.getElement("temperature").html(sketch.floor(weather.main.temp)+'&deg;');
-    sketch.getElement("speed").html("WIND " + windmag + " <small>MPH</small>");
-    sketch.getElement("gust").html("GUST " + gustmag + " <small>MPH</small>");
+    sketch.select("#temperature").html(sketch.floor(weather.main.temp)+'&deg;');
+    sketch.select("#speed").html("WIND " + windmag + " <small>MPH</small>");
+    sketch.select("#gust").html("GUST " + gustmag + " <small>MPH</small>");
 
-    sketch.getElement("gauge").elt.style.transform = 'rotate('+dir+'deg)';
-    sketch.getElement("gauge").elt.style['-webkit-transform'] = 'rotate('+dir+'deg)';
-    sketch.getElement("weather").show();
+    sketch.select("#gauge").elt.style.transform = 'rotate('+dir+'deg)';
+    sketch.select("#gauge").elt.style['-webkit-transform'] = 'rotate('+dir+'deg)';
+    sketch.select("#weather").show();
 
     // Create vectors for animation
 
@@ -349,7 +349,7 @@ var flockingSketch = function( sketch ) {
 
     //
 
-    var difference = this.zero.get();
+    var difference = this.zero.copy();
 
     for (var i = boidIndex + 1; i < boids.length; i++) {
 

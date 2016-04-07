@@ -45,15 +45,18 @@ var paintingSketch = function( sketch ) {
 
     // Main oscillator
     // 
-    sketch.osc = new sketch.SinOsc(440);
-    sketch.osc.amp(.5);
+    sketch.osc = new p5.SinOsc(440);
+    sketch.osc.amp(0);
 
     // LFO to modify main oscillator
     // 
-    sketch.lfo = new sketch.SinOsc(2);
-    sketch.lfo.mod(sketch.osc.ampNode);
+    sketch.lfo = new p5.SinOsc(2);
+    sketch.lfo.disconnect();
+    sketch.lfo.amp(0);
+    sketch.osc.amp(sketch.lfo);
 
-
+    sketch.osc.start();
+    sketch.lfo.start();
 
   };
 
@@ -62,7 +65,7 @@ var paintingSketch = function( sketch ) {
     // Draw image buffer
     // 
     sketch.alphaBuffer.clear();
-    sketch.alphaBuffer.canvas.getContext('2d').globalAlpha =.95;
+    sketch.alphaBuffer.elt.getContext('2d').globalAlpha =.95;
     sketch.alphaBuffer.image(sketch.buffer,0,0);
     sketch.image(sketch.alphaBuffer, 0, 0);
    
@@ -157,8 +160,7 @@ var paintingSketch = function( sketch ) {
   sketch.startDrawing = function() {
     sketch.next = 0;
     sketch.painting = true;
-    sketch.osc.start();
-    sketch.lfo.start();
+
 
     sketch.osc.fade(.5,.2);
     sketch.lfo.fade(.5,.2);
@@ -176,9 +178,7 @@ var paintingSketch = function( sketch ) {
   sketch.stopDrawing = function() {
     sketch.painting = false;
     sketch.osc.fade(0,.4);
-    sketch.lfo.fade(0,.4);
-    sketch.osc.stop(.4);
-    sketch.lfo.stop(.4)    
+    sketch.lfo.fade(0,.4); 
   }
 
   // Class to handle paths of circles

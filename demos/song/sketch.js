@@ -39,12 +39,13 @@ var songSketch = function( sketch ) {
     //sketch.circles = new sketch.Circles;
     sketch.trigger = sketch.millis();
 
-    sketch.triOsc = new sketch.TriOsc();
+    sketch.triOsc = new p5.TriOsc();
     sketch.triOsc.amp(0);
     sketch.triOsc.start();
 
-    sketch.env = new sketch.Env(sketch.attackTime, sketch.attackLevel, sketch.decayTime, sketch.sustainLevel, sketch.sustainTime, sketch.releaseTime);
-  
+    sketch.env = new p5.Env(sketch.attackTime, sketch.attackLevel, sketch.decayTime, sketch.sustainLevel, sketch.sustainTime, sketch.releaseTime);
+    sketch.env.setRange(1, 0);
+
     sketch.noteContainerDiv = sketch.createDiv("");
     sketch.noteContainerDiv.id("noteContainer");
   };
@@ -69,10 +70,10 @@ var songSketch = function( sketch ) {
 
       sketch.triOsc.freq(sketch.midiToFreq(currentNote));
       
-      sketch.env.attackTime = .1 * (currentDuration / 1000.0);
-      sketch.env.decayTime = .3 * (currentDuration / 1000.0);
-      sketch.env.sustainTime = .1 * (currentDuration / 1000.0);
-      sketch.env.releaseTime = .5 * (currentDuration / 1000.0);
+      sketch.env.setADSR(.1 * (currentDuration / 1000.0),
+        .3 * (currentDuration / 1000.0),
+        .1 * (currentDuration / 1000.0),
+        .5 * (currentDuration / 1000.0));
 
       sketch.env.play(sketch.triOsc);
 

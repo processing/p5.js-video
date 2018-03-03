@@ -4,141 +4,118 @@ title: Home
 ---
 
 <div id="preloader">
-  <div class="fontLoadA">SUP</div>
-  <div class="fontLoadB">SUP</div>
-  <img src="/assets/thick-asterisk-alone.svg" alt="" />  
-  <img src="/assets/p5js-rect.svg" alt="" />  
-</div>
-
-<div id="errorContainer">
-  <div id="error">
-    <div class="panelHeader"><h2>Sorry!</h2></div>
-
-    <div class="panelBody">
-
-    <p id="errorWebGL">Your browser doesn't appear to support WebGL or it isn't enabled. Visit <a href="http://get.webgl.org/">get.webgl.org</a> to learn more or try the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>
-
-    <p id="errorFeature">Your browser doesn't support all of the features required for this demo. Please consider using the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>    
-    
-    <p>Don't worry, you can still learn all about p5.js at <a href="http://p5js.org/">p5js.org</a>.</p>
-
-    </div>
-
-  </div>    
-</div>
-
-<div id="main">
-
-  <div id="progressBar">
-    <div id="gutter"></div>
-    <div id="progress"></div>
+    <div class="fontLoadA">SUP</div>
+    <div class="fontLoadB">SUP</div>
+    <img src="/assets/thick-asterisk-alone.svg" alt="" />  
+    <img src="/assets/p5js-rect.svg" alt="" />  
   </div>
-
-  <div id="p5"><a href="http://p5js.org/" target="_blank"><img src="assets/p5-sq-reverse.svg" width="48" height="48"/></a></div>
-
-  <div id="pause"><i id="pauseButton" class="fa fa-pause"></i></div>
-
-  <div id="welcome"> 
-    <img src="assets/p5-sq-reverse.svg" width="128" height="128" /><br/><br/>
-
-    <button id="begin" class="btn btn-default" data-loading-text='<i class="fa fa-spinner fa-spin"></i> Loading'> Click to Begin</button>
-  </div>
-
-  <div id="videoClip"></div>
-  <div id="sketchCanvas"></div>
-  <div id="sketchOverlay"></div>
-  <canvas id="videoCanvas" width="960" height="720"></canvas>
-
-  <div id="cta">
-
-    <div class="panelHeader">
-      <h2>Thanks for Watching</h2>
-      <span>Use the links below to find out more about p5.js.</span>
+  <!-- Shows error message on browser window if browser doesn't support -->
+  <!-- Webgl or it isn't enabled. -->
+  <!-- Checkout https://caniuse.com/#feat=webgl to know if your browser supports webgl. -->
+  <div id="errorContainer">
+    <div id="error">
+      <div class="panelHeader">
+        <h2>Sorry!</h2>
+      </div>
+      <div class="panelBody">
+        <p id="errorWebGL">Your browser doesn't appear to support WebGL or it isn't enabled. Visit <a href="http://get.webgl.org/">get.webgl.org</a> to learn more or try the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>
+        <p id="errorFeature">Your browser doesn't support all of the features required for this demo. Please consider using the latest version of <a href="http://google.com/chrome/">Chrome</a>.</p>
+        <p>Don't worry, you can still learn all about p5.js at <a href="http://p5js.org/">p5js.org</a>.</p>
+      </div>
     </div>
-
-    <div class="panelBody">
-
-      <div >
-
-        <a class="btn btn-primary" target="_blank" href="http://p5js.org/download/">
-         <i class="fa fa-download fa-2x"></i><br/>
+  </div>
+  <!-- Contains video.-->
+  <div id="main">
+    <!-- Progress bar at the bottom of the video. -->
+    <div id="progressBar">
+      <div id="gutter"></div>
+      <div id="progress"></div>
+    </div>
+    <!-- p5 logo. -->
+    <div id="p5"><a href="http://p5js.org/" target="_blank"><img src="assets/p5-sq-reverse.svg" width="48" height="48"/></a></div>
+    <!-- Pause button. -->
+    <div id="pause"><i id="pauseButton" class="fa fa-pause"></i></div>
+    <!-- Landing page. Click to button with p5 logo. -->
+    <div id="welcome"> 
+      <img src="assets/p5-sq-reverse.svg" width="128" height="128" /><br/><br/>
+      <button id="begin" class="btn btn-default" data-loading-text='<i class="fa fa-spinner fa-spin"></i> Loading'> Click to Begin</button>
+    </div>
+    <div id="videoClip"></div>
+    <div id="sketchCanvas"></div>
+    <div id="sketchOverlay"></div>
+    <canvas id="videoCanvas" width="960" height="720"></canvas>
+    <div id="cta">
+      <div class="panelHeader">
+        <h2>Thanks for Watching</h2>
+        <span>Use the links below to find out more about p5.js.</span>
+      </div>
+      <div class="panelBody">
+        <div>
+          <a class="btn btn-primary" target="_blank" href="http://p5js.org/download/">
+          <i class="fa fa-download fa-2x"></i><br/>
           Download p5.js
-        </a>
-
-        <a class="btn btn-primary" target="_blank" href="http://p5js.org/get-started/">
-         <i class="fa fa-mortar-board fa-2x"></i><br/>
-         Get Started
-        </a>  
-
-        <a class="btn btn-primary" target="_blank" href="https://github.com/processing/p5.js/wiki/Processing-transition">
-         <i class="fa fa-laptop fa-2x"></i><br/>
-         Transition Guide
-        </a>  
-
-        <a class="btn btn-primary" target="_blank" href="http://p5js.org/contribute">
+          </a>
+          <a class="btn btn-primary" target="_blank" href="http://p5js.org/get-started/">
+          <i class="fa fa-mortar-board fa-2x"></i><br/>
+          Get Started
+          </a>  
+          <a class="btn btn-primary" target="_blank" href="https://github.com/processing/p5.js/wiki/Processing-transition">
+          <i class="fa fa-laptop fa-2x"></i><br/>
+          Transition Guide
+          </a>  
+          <a class="btn btn-primary" target="_blank" href="http://p5js.org/contribute">
           <i class="fa fa-comment fa-2x"></i><br/>
           Contribute
-        </a>  
-
-        <a class="btn btn-primary" target="_blank" href="http://p5js.org/examples/#demos">
+          </a>  
+          <a class="btn btn-primary" target="_blank" href="http://p5js.org/examples/#demos">
           <i class="fa fa-magic fa-2x"></i><br/>
           View Examples
-        </a>    
-
-        <a class="btn btn-primary" target="_blank" href="http://github.com/scottgarner/p5.js-video/#hello-p5">
+          </a>    
+          <a class="btn btn-primary" target="_blank" href="http://github.com/scottgarner/p5.js-video/#hello-p5">
           <i class="fa fa-video-camera fa-2x"></i><br/>
           About this Video
-        </a>           
+          </a>           
+        </div>
       </div>
-
-
     </div>
-  </div>   
-
-</div>
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
-
-<script src="js/vendor/bootstrap.min.js"></script>
-
-<script src="js/vendor/p5.min.js"></script>
-<script src="js/vendor/addons/p5.dom.min.js"></script>
-<script src="js/vendor/addons/p5.sound.min.js"></script>
-
-<script src="js/vendor/popcorn.min.js"></script>
-
-<script src="js/vendor/seriously.js"></script>
-<script src="js/vendor/effects/seriously.chroma.js"></script>
-
-<script src="js/script.js"></script>
-<script src="js/main.js"></script>
-
-<script src="demos/intro/sketch.js"></script>
-<script src="demos/circle/sketch.js"></script>
-<script src="demos/flocking/sketch.js"></script>
-<script src="demos/song/sketch.js"></script>
-<script src="demos/painting/sketch.js"></script>
-<script src="demos/outro/sketch.js"></script>
-
-<script>
-
-  $(document).ready( function () {
-
-    if (Seriously.incompatible()) {
-      $("#errorWebGL").show();
-      $("#errorFeature").hide();
-      $("#error").fadeIn();
-      $("#main").hide();
-    } else if (!Modernizr.webaudio || !Modernizr.csstransforms) {
-      $("#errorWebGL").hide();
-      $("#errorFeature").show();
-      $("#error").fadeIn();
-      $("#main").hide();
-    } else {
-      main.init();
-    }
-
-  });
-
-</script>
+  </div>
+  <!-- End of main. -->
+  
+  <!-- Javascript -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
+  <script src="js/vendor/bootstrap.min.js"></script>
+  <script src="js/vendor/p5.min.js"></script>
+  <script src="js/vendor/addons/p5.dom.min.js"></script>
+  <script src="js/vendor/addons/p5.sound.min.js"></script>
+  <script src="js/vendor/popcorn.min.js"></script>
+  <script src="js/vendor/seriously.js"></script>
+  <script src="js/vendor/effects/seriously.chroma.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/main.js"></script>
+  <script src="demos/intro/sketch.js"></script>
+  <script src="demos/circle/sketch.js"></script>
+  <script src="demos/flocking/sketch.js"></script>
+  <script src="demos/song/sketch.js"></script>
+  <script src="demos/painting/sketch.js"></script>
+  <script src="demos/outro/sketch.js"></script>
+  <script>
+    // To-Do: Make this script external.
+    $(document).ready( function () {
+      // Checking cross browser support using modernizr library.
+      if (Seriously.incompatible()) {
+        $("#errorWebGL").show();
+        $("#errorFeature").hide();
+        $("#error").fadeIn();
+        $("#main").hide();
+      } else if (!Modernizr.webaudio || !Modernizr.csstransforms) {
+        $("#errorWebGL").hide();
+        $("#errorFeature").show();
+        $("#error").fadeIn();
+        $("#main").hide();
+      } else {
+        main.init();
+      }
+    
+    });
+  </script>

@@ -63,4 +63,4 @@ Tips
 
 * If it seems difficult to summarize what your commit does, it may be because it includes several logical changes or bug fixes, and are better split up into several commits using `git add -p`.
 
-[p5.js](http://p5js.org/) is developed by Lauren McCarthy and other [contributors](http://p5js.org/site/development/#contributors) with the support of the [Processing Foundation](http://processing.org/) and [NYU ITP](http://itp.nyu.edu).
+> [p5.js](http://p5js.org/) is developed by Lauren McCarthy and other [contributors](http://p5js.org/site/development> /#contributors) with the support of the [Processing Foundation](http://processing.org/) and [NYU ITP](http://itp.nyu.edu).

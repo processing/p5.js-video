@@ -61,7 +61,7 @@ var main = {
           main.playVideo();
           $("#begin").button('loading');
         } 
-
+        
       });
     } 
 

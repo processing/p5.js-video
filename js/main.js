@@ -38,7 +38,6 @@ var main = {
         // Pause
 
         if(keypress == "p"){
-          console.log(keypress);
           if (script.popcorn.paused())
             script.popcorn.play();
           else

@@ -4,6 +4,8 @@ Hello! This is a [demo](https://hello.p5js.org/) showing some of the features of
 
 Design and development of this demo was lead by [Scott Garner](http://scott.j38.net/) with input and contributions from [Dan Shiffman](http://shiffman.net/) and support from [NYU ITP](http://itp.nyu.edu). Demo sketches were written by **Dan** and **Scott**.
 
+> [p5.js](http://p5js.org/) is developed by Lauren McCarthy and other [contributors](http://p5js.org/site/development> /#contributors) with the support of the [Processing Foundation](http://processing.org/) and [NYU ITP](http://itp.nyu.edu).
+
 ## Technologies Used 
 
  - [Jekyll](https://jekyllrb.com/) is used for deployment on Github at **gh-pages** branch.
@@ -62,5 +64,3 @@ Tips
 ----
 
 * If it seems difficult to summarize what your commit does, it may be because it includes several logical changes or bug fixes, and are better split up into several commits using `git add -p`.
-
-> [p5.js](http://p5js.org/) is developed by Lauren McCarthy and other [contributors](http://p5js.org/site/development> /#contributors) with the support of the [Processing Foundation](http://processing.org/) and [NYU ITP](http://itp.nyu.edu).

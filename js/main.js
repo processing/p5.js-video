@@ -38,6 +38,7 @@ var main = {
         // Pause
 
         if(keypress == "p"){
+          console.log(keypress);
           if (script.popcorn.paused())
             script.popcorn.play();
           else
@@ -54,9 +55,14 @@ var main = {
           if (!script.popcorn.paused()) script.popcorn.pause();
           script.popcorn.currentTime( script.popcorn.currentTime() - (1.0/30.0));
           console.log( script.popcorn.currentTime());
-        }          
+        }
+        
+        if(e.which == 13){
+          main.playVideo();
+          $("#begin").button('loading');
+        } 
 
-      });   
+      });
     } 
 
     // Buttons

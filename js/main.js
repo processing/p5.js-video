@@ -1,7 +1,20 @@
+//ENTER to start video.
+$('body').keypress(function(e){
+  
+  //if enter key pressed and still on welcome screen.
+  if(e.which == 13 && !main.isPlaying){
+    $("#begin").button('loading');
+    main.playVideo();
+    main.isPlaying = true;
+  } 
+});
+
+
 var main = {
   sketch: null,
   scaleFactor: 1.0,
   debug: false, 
+  isPlaying: false,
 
   // Initalize Demo
 
@@ -34,10 +47,11 @@ var main = {
       $('body').keypress(function(e){
         
         var keypress = String.fromCharCode(e.which);
-
+        console.log(keypress);
         // Pause
 
         if(keypress == "p"){
+          console.log(keypress);
           if (script.popcorn.paused())
             script.popcorn.play();
           else
@@ -54,9 +68,10 @@ var main = {
           if (!script.popcorn.paused()) script.popcorn.pause();
           script.popcorn.currentTime( script.popcorn.currentTime() - (1.0/30.0));
           console.log( script.popcorn.currentTime());
-        }          
-
-      });   
+        }
+        
+        
+      });
     } 
 
     // Buttons
